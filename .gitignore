@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Excel demo/import data
+*.xlsx
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
