@@ -38,6 +38,7 @@ router.post(
     requestOutpass
 );
 
+
 // Get the student linked to this parent
 router.get(
     "/my-student",
@@ -45,6 +46,7 @@ router.get(
     authorize("parent"),
     getMyStudent
 );
+
 
 // Get all outpasses requested by this parent
 router.get(
@@ -67,6 +69,7 @@ router.get(
     getPendingOutpasses
 );
 
+
 // Approve an outpass
 router.patch(
     "/:outpassId/approve",
@@ -75,12 +78,31 @@ router.patch(
     approveOutpass
 );
 
+
 // Reject an outpass
 router.patch(
     "/:outpassId/reject",
     protect,
     authorize("warden"),
     rejectOutpass
+);
+
+
+// ==========================================
+// GATE HISTORY
+// ==========================================
+//
+// SECURITY → Can see ALL hostel gate records
+// WARDEN   → Can see ONLY their own hostel records
+//
+// The controller performs the hostel filtering.
+// ==========================================
+
+router.get(
+    "/gate-history",
+    protect,
+    authorize("security", "warden"),
+    getGateHistory
 );
 
 
@@ -96,6 +118,7 @@ router.post(
     validateOutpass
 );
 
+
 // Record student OUT
 router.post(
     "/scan-out",
@@ -104,20 +127,13 @@ router.post(
     scanOut
 );
 
+
 // Record student IN
 router.post(
     "/scan-in",
     protect,
     authorize("security"),
     scanIn
-);
-
-// Get gate history
-router.get(
-    "/gate-history",
-    protect,
-    authorize("security"),
-    getGateHistory
 );
 
 
@@ -137,11 +153,13 @@ router.get(
 //
 // ==========================================
 
+
 // Check whether the student should EXIT or RETURN
 router.post(
     "/student-status",
     studentGateStatus
 );
+
 
 // Confirm EXIT / RETURN
 router.post(
@@ -149,5 +167,9 @@ router.post(
     studentConfirmGateAction
 );
 
+
+// ==========================================
+// EXPORT ROUTER
+// ==========================================
 
 module.exports = router;
