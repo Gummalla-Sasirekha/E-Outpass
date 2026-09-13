@@ -6,6 +6,7 @@ const {
     getMyOutpasses,
 
     getPendingOutpasses,
+    getWardenOutpassHistory,
     approveOutpass,
     rejectOutpass,
 
@@ -67,6 +68,16 @@ router.get(
     protect,
     authorize("warden"),
     getPendingOutpasses
+);
+
+
+// Get all outpasses for warden's hostel
+// Used for Pending / Approved / Rejected / Completed
+router.get(
+    "/warden-history",
+    protect,
+    authorize("warden"),
+    getWardenOutpassHistory
 );
 
 
@@ -150,7 +161,6 @@ router.post(
 //
 // Second scan:
 //     Confirm Return → records IN
-//
 // ==========================================
 
 

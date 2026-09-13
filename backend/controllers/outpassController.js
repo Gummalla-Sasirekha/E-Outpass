@@ -229,7 +229,6 @@ const getPendingOutpasses = async (req, res) => {
 
                 status:
                     "pending"
-
             })
                 .populate(
                     "student",
@@ -262,6 +261,96 @@ const getPendingOutpasses = async (req, res) => {
         return res.status(500).json({
             message:
                 "Server error while fetching pending requests."
+        });
+    }
+};
+
+
+// ==========================================
+// GET WARDEN OUTPASS HISTORY
+// ==========================================
+//
+// Returns ALL outpasses belonging to the
+// logged-in warden's hostel.
+//
+// Used for:
+// Pending
+// Approved
+// Rejected
+// Completed
+// ==========================================
+
+const getWardenOutpassHistory = async (req, res) => {
+    try {
+
+        // ==========================================
+        // FIND WARDEN'S HOSTEL
+        // ==========================================
+
+        const hostel =
+            await Hostel.findOne({
+                warden:
+                    req.user.userId
+            });
+
+        if (!hostel) {
+            return res.status(404).json({
+                message:
+                    "No hostel is assigned to this warden."
+            });
+        }
+
+
+        // ==========================================
+        // GET ALL OUTPASSES FOR THIS HOSTEL
+        // ==========================================
+
+        const outpasses =
+            await Outpass.find({
+                hostel:
+                    hostel._id
+            })
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "parent",
+                    "name email"
+                )
+                .populate(
+                    "hostel",
+                    "name type"
+                )
+                .sort({
+                    createdAt: -1
+                });
+
+
+        // ==========================================
+        // RETURN DATA
+        // ==========================================
+
+        return res.status(200).json({
+            hostel:
+                hostel.name,
+
+            count:
+                outpasses.length,
+
+            outpasses
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Get warden outpass history error:",
+            error
+        );
+
+        return res.status(500).json({
+            message:
+                "Server error while fetching warden outpass history."
         });
     }
 };
@@ -315,6 +404,7 @@ const approveOutpass = async (req, res) => {
             });
         }
 
+
         // ==========================================
         // APPROVE OUTPASS
         // ==========================================
@@ -324,6 +414,7 @@ const approveOutpass = async (req, res) => {
 
         outpass.approvedAt =
             new Date();
+
 
         // ==========================================
         // CREATE PHONE-ACCESSIBLE QR
@@ -813,6 +904,7 @@ const scanIn = async (req, res) => {
 
         await gateLog.save();
 
+
         // Mark outpass completed
         outpass.status =
             "completed";
@@ -888,6 +980,7 @@ const studentGateStatus = async (req, res) => {
             });
         }
 
+
         // ==========================================
         // PUBLIC QR FLOW
         // No student login required.
@@ -910,6 +1003,7 @@ const studentGateStatus = async (req, res) => {
                     "Outpass not found."
             });
         }
+
 
         // ==========================================
         // STATUS CHECKS
@@ -965,6 +1059,7 @@ const studentGateStatus = async (req, res) => {
             });
         }
 
+
         // ==========================================
         // CHECK ACTIVE OUT RECORD
         // ==========================================
@@ -977,6 +1072,7 @@ const studentGateStatus = async (req, res) => {
                 status:
                     "outside"
             });
+
 
         // ==========================================
         // NO OUT YET → EXIT
@@ -997,6 +1093,7 @@ const studentGateStatus = async (req, res) => {
                     outpass.student
             });
         }
+
 
         // ==========================================
         // ALREADY OUT → RETURN
@@ -1066,6 +1163,7 @@ const studentConfirmGateAction =
                 });
             }
 
+
             // ==========================================
             // PUBLIC QR FLOW
             // No student login required.
@@ -1083,6 +1181,7 @@ const studentConfirmGateAction =
                         "Outpass not found."
                 });
             }
+
 
             // ==========================================
             // STATUS CHECKS
@@ -1138,6 +1237,7 @@ const studentConfirmGateAction =
                 });
             }
 
+
             // ==========================================
             // CHECK CURRENT GATE STATE
             // ==========================================
@@ -1150,6 +1250,7 @@ const studentConfirmGateAction =
                     status:
                         "outside"
                 });
+
 
             // ==========================================
             // FIRST SCAN → EXIT
@@ -1208,6 +1309,7 @@ const studentConfirmGateAction =
                 });
             }
 
+
             // ==========================================
             // SECOND SCAN → RETURN
             // ==========================================
@@ -1224,6 +1326,7 @@ const studentConfirmGateAction =
                     "returned";
 
                 await existingGateLog.save();
+
 
                 // Mark outpass completed
                 outpass.status =
@@ -1270,6 +1373,7 @@ const studentConfirmGateAction =
 
 // ==========================================
 // GET GATE HISTORY
+// ==========================================
 //
 // SECURITY → ALL HOSTELS
 // WARDEN   → OWN HOSTEL ONLY
@@ -1279,6 +1383,7 @@ const getGateHistory = async (req, res) => {
     try {
         const role =
             req.user.role;
+
 
         // ==========================================
         // SECURITY
@@ -1321,6 +1426,7 @@ const getGateHistory = async (req, res) => {
             });
         }
 
+
         // ==========================================
         // WARDEN
         // Only their hostel
@@ -1344,6 +1450,7 @@ const getGateHistory = async (req, res) => {
                 });
             }
 
+
             // Find outpasses belonging
             // to this hostel
             const hostelOutpasses =
@@ -1358,6 +1465,7 @@ const getGateHistory = async (req, res) => {
                     (outpass) =>
                         outpass._id
                 );
+
 
             // Find gate logs for
             // those outpasses
@@ -1399,6 +1507,7 @@ const getGateHistory = async (req, res) => {
             });
         }
 
+
         // ==========================================
         // OTHER ROLES
         // ==========================================
@@ -1434,6 +1543,8 @@ module.exports = {
     getMyOutpasses,
 
     getPendingOutpasses,
+
+    getWardenOutpassHistory,
 
     approveOutpass,
 

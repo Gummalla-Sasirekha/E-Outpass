@@ -2298,3 +2298,607 @@ body {
         border-bottom: none;
     }
 }
+
+/* =========================================================
+   WARDEN STATUS FILTER CARDS
+   ========================================================= */
+
+.warden-status-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin: 0 0 32px;
+}
+
+
+/* =========================================================
+   STATUS CARD
+   ========================================================= */
+
+.warden-status-card {
+    position: relative;
+    width: 100%;
+    min-height: 190px;
+
+    padding: 22px;
+
+    border: 1px solid #e5eaf2;
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+
+    font-family: inherit;
+
+    overflow: hidden;
+}
+
+
+.warden-status-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 4px;
+
+    background: #dbe4f3;
+
+    transition:
+        background 0.2s ease;
+}
+
+
+.warden-status-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 28px rgba(15, 23, 42, 0.08);
+
+    border-color: #cdd8e8;
+}
+
+
+.warden-status-card.active {
+    border-color: #2563eb;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f8fbff 0%,
+            #ffffff 100%
+        );
+
+    box-shadow:
+        0 12px 30px rgba(37, 99, 235, 0.12);
+}
+
+
+.warden-status-card.active::before {
+    background: #2563eb;
+}
+
+
+/* =========================================================
+   STATUS CARD TOP
+   ========================================================= */
+
+.status-card-top {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 14px;
+}
+
+
+.status-card-icon {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: #f1f5f9;
+
+    font-size: 21px;
+    font-weight: 700;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.warden-status-card:hover
+.status-card-icon {
+    transform: scale(1.05);
+}
+
+
+.status-card-arrow {
+    font-size: 20px;
+
+    color: #94a3b8;
+
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.warden-status-card:hover
+.status-card-arrow {
+    transform: translateX(4px);
+
+    color: #2563eb;
+}
+
+
+/* =========================================================
+   STATUS CARD COUNT
+   ========================================================= */
+
+.status-card-count {
+    margin-top: 2px;
+
+    font-size: 32px;
+    line-height: 1;
+
+    font-weight: 800;
+
+    color: #0f172a;
+}
+
+
+.status-card-title {
+    margin-top: 8px;
+
+    font-size: 16px;
+
+    font-weight: 750;
+
+    color: #1e293b;
+}
+
+
+.status-card-description {
+    margin-top: 4px;
+
+    font-size: 12px;
+
+    color: #64748b;
+}
+
+
+.status-card-view {
+    margin-top: 14px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #2563eb;
+}
+
+
+/* =========================================================
+   STATUS CARD VARIANTS
+   ========================================================= */
+
+
+/* PENDING */
+
+.status-pending .status-card-icon {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.status-pending.active {
+    border-color: #f97316;
+}
+
+.status-pending.active::before {
+    background: #f97316;
+}
+
+
+/* APPROVED */
+
+.status-approved .status-card-icon {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.status-approved.active {
+    border-color: #10b981;
+}
+
+.status-approved.active::before {
+    background: #10b981;
+}
+
+
+/* REJECTED */
+
+.status-rejected .status-card-icon {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.status-rejected.active {
+    border-color: #ef4444;
+}
+
+.status-rejected.active::before {
+    background: #ef4444;
+}
+
+
+/* COMPLETED */
+
+.status-completed .status-card-icon {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.status-completed.active {
+    border-color: #2563eb;
+}
+
+.status-completed.active::before {
+    background: #2563eb;
+}
+
+
+/* =========================================================
+   STATUS RECORD BADGE
+   ========================================================= */
+
+.status-record-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 30px;
+
+    padding: 6px 11px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.3px;
+
+    white-space: nowrap;
+}
+
+
+.status-badge-pending {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+
+.status-badge-approved {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+
+.status-badge-rejected {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+
+.status-badge-completed {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+
+/* =========================================================
+   STATUS EXTRA INFORMATION
+   ========================================================= */
+
+.status-extra-info {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    margin-top: 18px;
+
+    padding: 16px 20px;
+
+    border-top: 1px solid #eef2f7;
+
+    background: #fafcff;
+}
+
+
+.status-extra-info > div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.status-extra-info span {
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: #64748b;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.3px;
+}
+
+
+.status-extra-info strong {
+    font-size: 13px;
+
+    color: #1e293b;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   REJECTION INFORMATION
+   ========================================================= */
+
+.rejection-info {
+    margin-top: 18px;
+
+    padding: 15px 18px;
+
+    border-top: 1px solid #fee2e2;
+
+    background: #fff7f7;
+}
+
+
+.rejection-info > span {
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    color: #b91c1c;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.3px;
+}
+
+
+.rejection-info p {
+    margin: 0;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    color: #7f1d1d;
+}
+
+
+/* =========================================================
+   STATUS RECORD VISUAL DIFFERENCES
+   ========================================================= */
+
+.status-record-approved {
+    border-left: 4px solid #10b981;
+}
+
+
+.status-record-rejected {
+    border-left: 4px solid #ef4444;
+}
+
+
+.status-record-completed {
+    border-left: 4px solid #2563eb;
+}
+
+
+.status-record-pending {
+    border-left: 4px solid #f97316;
+}
+
+
+/* =========================================================
+   STATUS SECTION HEADER
+   ========================================================= */
+
+.warden-requests
+.warden-section-header
+.warden-label {
+    margin-bottom: 5px;
+}
+
+
+/* =========================================================
+   MOBILE — TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .warden-status-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 16px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .warden-status-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 12px;
+
+        margin-bottom: 25px;
+    }
+
+
+    .warden-status-card {
+        min-height: 165px;
+
+        padding: 17px;
+
+        border-radius: 15px;
+    }
+
+
+    .status-card-icon {
+        width: 40px;
+        height: 40px;
+
+        border-radius: 11px;
+
+        font-size: 18px;
+    }
+
+
+    .status-card-arrow {
+        font-size: 17px;
+    }
+
+
+    .status-card-count {
+        font-size: 27px;
+    }
+
+
+    .status-card-title {
+        margin-top: 6px;
+
+        font-size: 14px;
+    }
+
+
+    .status-card-description {
+        font-size: 11px;
+    }
+
+
+    .status-card-view {
+        margin-top: 10px;
+
+        font-size: 11px;
+    }
+
+
+    .status-record-badge {
+        padding: 5px 8px;
+
+        font-size: 10px;
+    }
+
+
+    .status-extra-info {
+        grid-template-columns:
+            1fr;
+
+        gap: 12px;
+
+        padding: 14px 16px;
+    }
+
+
+    .rejection-info {
+        padding: 14px 16px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+    .warden-status-grid {
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 10px;
+    }
+
+
+    .warden-status-card {
+        min-height: 150px;
+
+        padding: 14px;
+    }
+
+
+    .status-card-icon {
+        width: 36px;
+        height: 36px;
+
+        font-size: 16px;
+    }
+
+
+    .status-card-count {
+        font-size: 24px;
+    }
+
+
+    .status-card-title {
+        font-size: 13px;
+    }
+
+
+    .status-card-description {
+        font-size: 10px;
+    }
+
+
+    .status-card-view {
+        font-size: 10px;
+    }
+
+}

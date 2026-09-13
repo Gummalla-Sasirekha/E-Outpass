@@ -5,12 +5,19 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 function WardenDashboard() {
     const [outpasses, setOutpasses] = useState([]);
+    const [allOutpasses, setAllOutpasses] = useState([]);
     const [gateHistory, setGateHistory] = useState([]);
 
     const [loading, setLoading] = useState(true);
-    const [historyLoading, setHistoryLoading] = useState(true);
+    const [historyLoading, setHistoryLoading] =
+        useState(true);
+    const [historyDataLoading, setHistoryDataLoading] =
+        useState(true);
 
     const [error, setError] = useState("");
+
+    const [selectedStatus, setSelectedStatus] =
+        useState("pending");
 
     const [showRejectModal, setShowRejectModal] =
         useState(false);
@@ -44,12 +51,14 @@ function WardenDashboard() {
                 `${API_URL}/api/outpass/pending`,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization:
+                            `Bearer ${token}`
                     }
                 }
             );
 
-            const data = await response.json();
+            const data =
+                await response.json();
 
             if (!response.ok) {
                 throw new Error(
@@ -80,6 +89,55 @@ function WardenDashboard() {
 
 
     // ==========================================
+    // FETCH ALL WARDEN OUTPASS HISTORY
+    // ==========================================
+
+    const fetchAllOutpasses = async () => {
+        try {
+            setHistoryDataLoading(true);
+
+            const response = await fetch(
+                `${API_URL}/api/outpass/warden-history`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Unable to fetch outpass history."
+                );
+            }
+
+            setAllOutpasses(
+                data.outpasses || []
+            );
+
+        } catch (err) {
+            console.error(
+                "Fetch warden history error:",
+                err
+            );
+
+            setError(
+                err.message ||
+                "Unable to load outpass history."
+            );
+
+        } finally {
+            setHistoryDataLoading(false);
+        }
+    };
+
+
+    // ==========================================
     // FETCH GATE HISTORY
     // ==========================================
 
@@ -91,12 +149,14 @@ function WardenDashboard() {
                 `${API_URL}/api/outpass/gate-history`,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization:
+                            `Bearer ${token}`
                     }
                 }
             );
 
-            const data = await response.json();
+            const data =
+                await response.json();
 
             if (!response.ok) {
                 throw new Error(
@@ -132,8 +192,20 @@ function WardenDashboard() {
 
     useEffect(() => {
         fetchPendingOutpasses();
+        fetchAllOutpasses();
         fetchGateHistory();
     }, []);
+
+
+    // ==========================================
+    // REFRESH EVERYTHING
+    // ==========================================
+
+    const refreshDashboard = () => {
+        fetchPendingOutpasses();
+        fetchAllOutpasses();
+        fetchGateHistory();
+    };
 
 
     // ==========================================
@@ -149,16 +221,19 @@ function WardenDashboard() {
                 `${API_URL}/api/outpass/${outpassId}/approve`,
                 {
                     method: "PATCH",
+
                     headers: {
                         Authorization:
                             `Bearer ${token}`,
+
                         "Content-Type":
                             "application/json"
                     }
                 }
             );
 
-            const data = await response.json();
+            const data =
+                await response.json();
 
             if (!response.ok) {
                 throw new Error(
@@ -167,6 +242,8 @@ function WardenDashboard() {
                 );
             }
 
+
+            // Remove from pending list
             setOutpasses((previous) =>
                 previous.filter(
                     (outpass) =>
@@ -174,6 +251,10 @@ function WardenDashboard() {
                         outpassId
                 )
             );
+
+
+            // Refresh complete history
+            await fetchAllOutpasses();
 
         } catch (err) {
             console.error(
@@ -242,12 +323,15 @@ function WardenDashboard() {
                 `${API_URL}/api/outpass/${selectedOutpass.outpassId}/reject`,
                 {
                     method: "PATCH",
+
                     headers: {
                         Authorization:
                             `Bearer ${token}`,
+
                         "Content-Type":
                             "application/json"
                     },
+
                     body: JSON.stringify({
                         rejectionReason:
                             rejectionReason.trim()
@@ -255,7 +339,8 @@ function WardenDashboard() {
                 }
             );
 
-            const data = await response.json();
+            const data =
+                await response.json();
 
             if (!response.ok) {
                 throw new Error(
@@ -264,6 +349,8 @@ function WardenDashboard() {
                 );
             }
 
+
+            // Remove from pending
             setOutpasses((previous) =>
                 previous.filter(
                     (outpass) =>
@@ -272,6 +359,12 @@ function WardenDashboard() {
                 )
             );
 
+
+            // Refresh history
+            await fetchAllOutpasses();
+
+
+            // Close modal
             setShowRejectModal(false);
             setSelectedOutpass(null);
             setRejectionReason("");
@@ -312,14 +405,15 @@ function WardenDashboard() {
     const formatDate = (date) => {
         if (!date) return "-";
 
-        return new Date(date).toLocaleDateString(
-            "en-IN",
-            {
-                day: "2-digit",
-                month: "short",
-                year: "numeric"
-            }
-        );
+        return new Date(date)
+            .toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
     };
 
 
@@ -330,15 +424,115 @@ function WardenDashboard() {
     const formatDateTime = (date) => {
         if (!date) return "-";
 
-        return new Date(date).toLocaleString(
-            "en-IN",
-            {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit"
-            }
+        return new Date(date)
+            .toLocaleString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+    };
+
+
+    // ==========================================
+    // GET STATUS COUNTS
+    // ==========================================
+
+    const pendingCount =
+        allOutpasses.filter(
+            (outpass) =>
+                outpass.status === "pending"
+        ).length;
+
+    const approvedCount =
+        allOutpasses.filter(
+            (outpass) =>
+                outpass.status === "approved"
+        ).length;
+
+    const rejectedCount =
+        allOutpasses.filter(
+            (outpass) =>
+                outpass.status === "rejected"
+        ).length;
+
+    const completedCount =
+        allOutpasses.filter(
+            (outpass) =>
+                outpass.status === "completed"
+        ).length;
+
+
+    // ==========================================
+    // STATUS CARD CONFIGURATION
+    // ==========================================
+
+    const statusCards = [
+        {
+            status: "pending",
+            icon: "📋",
+            title: "Pending",
+            count: pendingCount,
+            description:
+                "Awaiting approval"
+        },
+
+        {
+            status: "approved",
+            icon: "✓",
+            title: "Approved",
+            count: approvedCount,
+            description:
+                "Approved outpasses"
+        },
+
+        {
+            status: "rejected",
+            icon: "✕",
+            title: "Rejected",
+            count: rejectedCount,
+            description:
+                "Rejected requests"
+        },
+
+        {
+            status: "completed",
+            icon: "↩",
+            title: "Completed",
+            count: completedCount,
+            description:
+                "Returned students"
+        }
+    ];
+
+
+    // ==========================================
+    // FILTER OUTPASSES
+    // ==========================================
+
+    const filteredOutpasses =
+        allOutpasses.filter(
+            (outpass) =>
+                outpass.status ===
+                selectedStatus
+        );
+
+
+    // ==========================================
+    // FIND GATE LOG
+    // ==========================================
+
+    const getGateLogForOutpass = (
+        outpassId
+    ) => {
+        return gateHistory.find(
+            (log) =>
+                log.outpass?.outpassId ===
+                outpassId
         );
     };
 
@@ -441,10 +635,9 @@ function WardenDashboard() {
 
 
                     <button
-                        onClick={() => {
-                            fetchPendingOutpasses();
-                            fetchGateHistory();
-                        }}
+                        onClick={
+                            refreshDashboard
+                        }
                         className="warden-refresh"
                     >
                         ↻ Refresh
@@ -465,32 +658,76 @@ function WardenDashboard() {
 
 
                 {/* ==================================
-                    STAT
+                    STATUS CARDS
                 ================================== */}
 
-                <section className="warden-stat">
+                <section className="warden-status-grid">
 
-                    <div className="warden-stat-icon">
-                        📋
-                    </div>
+                    {statusCards.map(
+                        (card) => (
 
-                    <div>
+                            <button
+                                key={
+                                    card.status
+                                }
+                                type="button"
+                                className={`warden-status-card ${
+                                    selectedStatus ===
+                                    card.status
+                                        ? "active"
+                                        : ""
+                                } status-${card.status}`}
+                                onClick={() =>
+                                    setSelectedStatus(
+                                        card.status
+                                    )
+                                }
+                            >
 
-                        <span>
-                            Pending Requests
-                        </span>
+                                <div className="status-card-top">
 
-                        <strong>
-                            {outpasses.length}
-                        </strong>
+                                    <div className="status-card-icon">
+                                        {card.icon}
+                                    </div>
 
-                    </div>
+                                    <span className="status-card-arrow">
+                                        →
+                                    </span>
+
+                                </div>
+
+
+                                <div className="status-card-count">
+                                    {historyDataLoading
+                                        ? "—"
+                                        : card.count}
+                                </div>
+
+
+                                <div className="status-card-title">
+                                    {card.title}
+                                </div>
+
+
+                                <div className="status-card-description">
+                                    {card.description}
+                                </div>
+
+
+                                <div className="status-card-view">
+                                    View →
+                                </div>
+
+                            </button>
+
+                        )
+                    )}
 
                 </section>
 
 
                 {/* ==================================
-                    PENDING OUTPASSES
+                    SELECTED STATUS OUTPASSES
                 ================================== */}
 
                 <section className="warden-requests">
@@ -499,39 +736,105 @@ function WardenDashboard() {
 
                         <div>
 
+                            <p className="warden-label">
+                                OUTPASS MANAGEMENT
+                            </p>
+
                             <h2>
-                                Pending Outpasses
+                                {selectedStatus ===
+                                    "pending" &&
+                                    "Pending Outpasses"}
+
+                                {selectedStatus ===
+                                    "approved" &&
+                                    "Approved Outpasses"}
+
+                                {selectedStatus ===
+                                    "rejected" &&
+                                    "Rejected Outpasses"}
+
+                                {selectedStatus ===
+                                    "completed" &&
+                                    "Completed Outpasses"}
                             </h2>
 
                             <p>
-                                Requests awaiting your
-                                approval.
+                                {selectedStatus ===
+                                    "pending" &&
+                                    "Requests awaiting your approval."}
+
+                                {selectedStatus ===
+                                    "approved" &&
+                                    "Outpasses approved by you."}
+
+                                {selectedStatus ===
+                                    "rejected" &&
+                                    "Outpasses rejected by you."}
+
+                                {selectedStatus ===
+                                    "completed" &&
+                                    "Students who have completed their outing."}
                             </p>
 
                         </div>
 
 
                         <span className="request-count">
-                            {outpasses.length}
+                            {filteredOutpasses.length}
                         </span>
 
                     </div>
 
 
-                    {outpasses.length === 0 ? (
+                    {/* ==================================
+                        HISTORY LOADING
+                    ================================== */}
+
+                    {historyDataLoading ? (
 
                         <div className="warden-empty">
 
                             <div>
-                                ✅
+                                🔄
                             </div>
 
                             <h3>
-                                No pending requests
+                                Loading outpasses...
                             </h3>
 
                             <p>
-                                You're all caught up!
+                                Fetching outpass records.
+                            </p>
+
+                        </div>
+
+                    ) : filteredOutpasses.length ===
+                      0 ? (
+
+                        <div className="warden-empty">
+
+                            <div>
+                                {selectedStatus ===
+                                "pending"
+                                    ? "✅"
+                                    : selectedStatus ===
+                                      "approved"
+                                    ? "✓"
+                                    : selectedStatus ===
+                                      "rejected"
+                                    ? "✕"
+                                    : "↩"}
+                            </div>
+
+                            <h3>
+                                No{" "}
+                                {selectedStatus}{" "}
+                                outpasses
+                            </h3>
+
+                            <p>
+                                There are no records in
+                                this category.
                             </p>
 
                         </div>
@@ -540,206 +843,355 @@ function WardenDashboard() {
 
                         <div className="warden-request-list">
 
-                            {outpasses.map(
-                                (outpass) => (
+                            {filteredOutpasses.map(
+                                (outpass) => {
 
-                                    <article
-                                        key={
+                                    const gateLog =
+                                        getGateLogForOutpass(
                                             outpass.outpassId
-                                        }
-                                        className="warden-request-card"
-                                    >
+                                        );
 
-                                        {/* CARD HEADER */}
+                                    return (
 
-                                        <div className="request-card-header">
+                                        <article
+                                            className={`warden-request-card status-record-${outpass.status}`}
+                                            key={
+                                                outpass.outpassId
+                                            }
+                                        >
 
-                                            <div>
 
-                                                <span>
-                                                    OUTPASS ID
+                                            {/* ==================================
+                                                CARD HEADER
+                                            ================================== */}
+
+                                            <div className="request-card-header">
+
+                                                <div>
+
+                                                    <span>
+                                                        OUTPASS ID
+                                                    </span>
+
+                                                    <h3>
+                                                        {
+                                                            outpass.outpassId
+                                                        }
+                                                    </h3>
+
+                                                </div>
+
+
+                                                <span
+                                                    className={`status-record-badge status-badge-${outpass.status}`}
+                                                >
+
+                                                    {outpass.status ===
+                                                        "pending" &&
+                                                        "PENDING"}
+
+                                                    {outpass.status ===
+                                                        "approved" &&
+                                                        "✓ APPROVED"}
+
+                                                    {outpass.status ===
+                                                        "rejected" &&
+                                                        "✕ REJECTED"}
+
+                                                    {outpass.status ===
+                                                        "completed" &&
+                                                        "↩ COMPLETED"}
+
                                                 </span>
 
-                                                <h3>
-                                                    {
-                                                        outpass.outpassId
-                                                    }
-                                                </h3>
+                                            </div>
+
+
+                                            {/* ==================================
+                                                STUDENT
+                                            ================================== */}
+
+                                            <div className="request-student">
+
+                                                <div className="student-avatar">
+                                                    🎓
+                                                </div>
+
+                                                <div>
+
+                                                    <span>
+                                                        STUDENT
+                                                    </span>
+
+                                                    <h3>
+                                                        {
+                                                            outpass.student?.name ||
+                                                            "Unknown Student"
+                                                        }
+                                                    </h3>
+
+                                                    <p>
+                                                        ID:{" "}
+                                                        {
+                                                            outpass.student?.studentId ||
+                                                            "-"
+                                                        }
+
+                                                        {" • "}
+
+                                                        {
+                                                            outpass.student?.course ||
+                                                            "-"
+                                                        }
+                                                    </p>
+
+                                                </div>
 
                                             </div>
 
 
-                                            <span className="pending-badge">
-                                                PENDING
-                                            </span>
+                                            {/* ==================================
+                                                DETAILS
+                                            ================================== */}
 
-                                        </div>
+                                            <div className="request-details">
 
+                                                <div>
 
-                                        {/* STUDENT */}
+                                                    <span>
+                                                        📍 Place
+                                                    </span>
 
-                                        <div className="request-student">
+                                                    <strong>
+                                                        {
+                                                            outpass.placeOfVisit ||
+                                                            "-"
+                                                        }
+                                                    </strong>
 
-                                            <div className="student-avatar">
-                                                🎓
-                                            </div>
-
-                                            <div>
-
-                                                <span>
-                                                    STUDENT
-                                                </span>
-
-                                                <h3>
-                                                    {
-                                                        outpass.student?.name ||
-                                                        "Unknown Student"
-                                                    }
-                                                </h3>
-
-                                                <p>
-                                                    ID:{" "}
-                                                    {
-                                                        outpass.student?.studentId ||
-                                                        "-"
-                                                    }
-
-                                                    {" • "}
-
-                                                    {
-                                                        outpass.student?.course ||
-                                                        "-"
-                                                    }
-                                                </p>
-
-                                            </div>
-
-                                        </div>
+                                                </div>
 
 
-                                        {/* DETAILS */}
+                                                <div>
 
-                                        <div className="request-details">
+                                                    <span>
+                                                        📝 Reason
+                                                    </span>
 
-                                            <div>
+                                                    <strong>
+                                                        {
+                                                            outpass.reason ||
+                                                            "-"
+                                                        }
+                                                    </strong>
 
-                                                <span>
-                                                    📍 Place
-                                                </span>
-
-                                                <strong>
-                                                    {
-                                                        outpass.placeOfVisit ||
-                                                        "-"
-                                                    }
-                                                </strong>
-
-                                            </div>
+                                                </div>
 
 
-                                            <div>
+                                                <div>
 
-                                                <span>
-                                                    📝 Reason
-                                                </span>
+                                                    <span>
+                                                        📅 Date
+                                                    </span>
 
-                                                <strong>
-                                                    {
-                                                        outpass.reason ||
-                                                        "-"
-                                                    }
-                                                </strong>
+                                                    <strong>
+                                                        {formatDate(
+                                                            outpass.dateRequestedFor
+                                                        )}
+                                                    </strong>
 
-                                            </div>
+                                                </div>
 
 
-                                            <div>
+                                                <div>
 
-                                                <span>
-                                                    📅 Date
-                                                </span>
+                                                    <span>
+                                                        🚪 Leaving
+                                                    </span>
 
-                                                <strong>
-                                                    {formatDate(
-                                                        outpass.dateRequestedFor
-                                                    )}
-                                                </strong>
+                                                    <strong>
+                                                        {
+                                                            outpass.timeOfLeaving ||
+                                                            "-"
+                                                        }
+                                                    </strong>
+
+                                                </div>
+
+
+                                                <div>
+
+                                                    <span>
+                                                        🏠 Expected In
+                                                    </span>
+
+                                                    <strong>
+                                                        {
+                                                            outpass.expectedInTime ||
+                                                            "-"
+                                                        }
+                                                    </strong>
+
+                                                </div>
 
                                             </div>
 
 
-                                            <div>
+                                            {/* ==================================
+                                                APPROVED DETAILS
+                                            ================================== */}
 
-                                                <span>
-                                                    🚪 Leaving
-                                                </span>
+                                            {outpass.status ===
+                                                "approved" && (
 
-                                                <strong>
-                                                    {
-                                                        outpass.timeOfLeaving ||
-                                                        "-"
-                                                    }
-                                                </strong>
+                                                <div className="status-extra-info">
 
-                                            </div>
+                                                    <div>
 
+                                                        <span>
+                                                            ✓ Approved On
+                                                        </span>
 
-                                            <div>
+                                                        <strong>
+                                                            {formatDateTime(
+                                                                outpass.approvedAt
+                                                            )}
+                                                        </strong>
 
-                                                <span>
-                                                    🏠 Expected In
-                                                </span>
+                                                    </div>
 
-                                                <strong>
-                                                    {
-                                                        outpass.expectedInTime ||
-                                                        "-"
-                                                    }
-                                                </strong>
+                                                    <div>
 
-                                            </div>
+                                                        <span>
+                                                            🔐 QR Status
+                                                        </span>
 
-                                        </div>
+                                                        <strong>
+                                                            {outpass.qrCode
+                                                                ? "Generated"
+                                                                : "Not Available"}
+                                                        </strong>
 
+                                                    </div>
 
-                                        {/* ACTIONS */}
+                                                </div>
 
-                                        <div className="request-actions">
-
-                                            <button
-                                                className="approve-button"
-                                                onClick={() =>
-                                                    approveOutpass(
-                                                        outpass.outpassId
-                                                    )
-                                                }
-                                                disabled={
-                                                    actionLoading
-                                                }
-                                            >
-                                                ✓ Approve
-                                            </button>
+                                            )}
 
 
-                                            <button
-                                                className="reject-button"
-                                                onClick={() =>
-                                                    openRejectModal(
-                                                        outpass
-                                                    )
-                                                }
-                                                disabled={
-                                                    actionLoading
-                                                }
-                                            >
-                                                ✕ Reject
-                                            </button>
+                                            {/* ==================================
+                                                REJECTED DETAILS
+                                            ================================== */}
 
-                                        </div>
+                                            {outpass.status ===
+                                                "rejected" && (
 
-                                    </article>
+                                                <div className="rejection-info">
 
-                                )
+                                                    <span>
+                                                        ⚠️ Rejection Reason
+                                                    </span>
+
+                                                    <p>
+                                                        {
+                                                            outpass.rejectionReason ||
+                                                            "No reason provided."
+                                                        }
+                                                    </p>
+
+                                                </div>
+
+                                            )}
+
+
+                                            {/* ==================================
+                                                COMPLETED DETAILS
+                                            ================================== */}
+
+                                            {outpass.status ===
+                                                "completed" && (
+
+                                                <div className="status-extra-info">
+
+                                                    <div>
+
+                                                        <span>
+                                                            🚪 Exit Time
+                                                        </span>
+
+                                                        <strong>
+                                                            {formatDateTime(
+                                                                gateLog?.exitTime
+                                                            )}
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <span>
+                                                            🏫 Entry Time
+                                                        </span>
+
+                                                        <strong>
+                                                            {formatDateTime(
+                                                                gateLog?.entryTime
+                                                            )}
+                                                        </strong>
+
+                                                    </div>
+
+                                                </div>
+
+                                            )}
+
+
+                                            {/* ==================================
+                                                PENDING ACTIONS
+                                            ================================== */}
+
+                                            {outpass.status ===
+                                                "pending" && (
+
+                                                <div className="request-actions">
+
+                                                    <button
+                                                        className="approve-button"
+                                                        onClick={() =>
+                                                            approveOutpass(
+                                                                outpass.outpassId
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            actionLoading
+                                                        }
+                                                    >
+                                                        ✓ Approve
+                                                    </button>
+
+
+                                                    <button
+                                                        className="reject-button"
+                                                        onClick={() =>
+                                                            openRejectModal(
+                                                                outpass
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            actionLoading
+                                                        }
+                                                    >
+                                                        ✕ Reject
+                                                    </button>
+
+                                                </div>
+
+                                            )}
+
+                                        </article>
+                                    );
+                                }
                             )}
 
                         </div>
@@ -802,7 +1254,8 @@ function WardenDashboard() {
 
                         </div>
 
-                    ) : gateHistory.length === 0 ? (
+                    ) : gateHistory.length ===
+                      0 ? (
 
                         <div className="warden-empty">
 
@@ -861,9 +1314,11 @@ function WardenDashboard() {
 
 
                                                 <span className="pending-badge">
+
                                                     {returned
                                                         ? "✓ RETURNED"
                                                         : "↗ OUTSIDE"}
+
                                                 </span>
 
                                             </div>
@@ -984,13 +1439,19 @@ function WardenDashboard() {
                                                 style={{
                                                     padding:
                                                         "14px 20px",
+
                                                     borderTop:
                                                         "1px solid #eef2f7",
+
                                                     display:
                                                         "flex",
+
                                                     justifyContent:
                                                         "space-between",
-                                                    gap: "10px",
+
+                                                    gap:
+                                                        "10px",
+
                                                     fontSize:
                                                         "13px"
                                                 }}
@@ -1010,7 +1471,6 @@ function WardenDashboard() {
                                             </div>
 
                                         </article>
-
                                     );
                                 }
                             )}
@@ -1020,7 +1480,6 @@ function WardenDashboard() {
                     )}
 
                 </section>
-
 
             </main>
 
@@ -1033,7 +1492,9 @@ function WardenDashboard() {
 
                 <div
                     className="reject-modal-overlay"
-                    onClick={closeRejectModal}
+                    onClick={
+                        closeRejectModal
+                    }
                 >
 
                     <div
@@ -1071,8 +1532,10 @@ function WardenDashboard() {
 
 
                         <p className="reject-modal-description">
+
                             Please provide a reason for
                             rejecting this outpass request.
+
                         </p>
 
 
@@ -1121,9 +1584,11 @@ function WardenDashboard() {
                                     actionLoading
                                 }
                             >
+
                                 {actionLoading
                                     ? "Rejecting..."
                                     : "Reject Outpass"}
+
                             </button>
 
                         </div>
