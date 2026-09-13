@@ -5,18 +5,35 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 function WardenDashboard() {
     const [outpasses, setOutpasses] = useState([]);
+    const [gateHistory, setGateHistory] = useState([]);
+
     const [loading, setLoading] = useState(true);
+    const [historyLoading, setHistoryLoading] = useState(true);
+
     const [error, setError] = useState("");
 
-    const [showRejectModal, setShowRejectModal] = useState(false);
-    const [selectedOutpass, setSelectedOutpass] = useState(null);
-    const [rejectionReason, setRejectionReason] = useState("");
-    const [actionLoading, setActionLoading] = useState(false);
+    const [showRejectModal, setShowRejectModal] =
+        useState(false);
+
+    const [selectedOutpass, setSelectedOutpass] =
+        useState(null);
+
+    const [rejectionReason, setRejectionReason] =
+        useState("");
+
+    const [actionLoading, setActionLoading] =
+        useState(false);
 
     const token = localStorage.getItem("token");
+
     const user = JSON.parse(
         localStorage.getItem("user") || "null"
     );
+
+
+    // ==========================================
+    // FETCH PENDING OUTPASSES
+    // ==========================================
 
     const fetchPendingOutpasses = async () => {
         try {
@@ -44,6 +61,7 @@ function WardenDashboard() {
             setOutpasses(
                 data.outpasses || []
             );
+
         } catch (err) {
             console.error(
                 "Fetch pending outpasses error:",
@@ -54,14 +72,73 @@ function WardenDashboard() {
                 err.message ||
                 "Unable to connect to server."
             );
+
         } finally {
             setLoading(false);
         }
     };
 
+
+    // ==========================================
+    // FETCH GATE HISTORY
+    // ==========================================
+
+    const fetchGateHistory = async () => {
+        try {
+            setHistoryLoading(true);
+
+            const response = await fetch(
+                `${API_URL}/api/outpass/gate-history`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Unable to fetch gate history."
+                );
+            }
+
+            setGateHistory(
+                data.gateLogs || []
+            );
+
+        } catch (err) {
+            console.error(
+                "Fetch gate history error:",
+                err
+            );
+
+            setError(
+                err.message ||
+                "Unable to fetch gate history."
+            );
+
+        } finally {
+            setHistoryLoading(false);
+        }
+    };
+
+
+    // ==========================================
+    // INITIAL LOAD
+    // ==========================================
+
     useEffect(() => {
         fetchPendingOutpasses();
+        fetchGateHistory();
     }, []);
+
+
+    // ==========================================
+    // APPROVE OUTPASS
+    // ==========================================
 
     const approveOutpass = async (outpassId) => {
         try {
@@ -73,8 +150,10 @@ function WardenDashboard() {
                 {
                     method: "PATCH",
                     headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
+                        Authorization:
+                            `Bearer ${token}`,
+                        "Content-Type":
+                            "application/json"
                     }
                 }
             );
@@ -106,10 +185,16 @@ function WardenDashboard() {
                 err.message ||
                 "Unable to approve outpass."
             );
+
         } finally {
             setActionLoading(false);
         }
     };
+
+
+    // ==========================================
+    // OPEN REJECT MODAL
+    // ==========================================
 
     const openRejectModal = (outpass) => {
         setSelectedOutpass(outpass);
@@ -118,6 +203,11 @@ function WardenDashboard() {
         setError("");
     };
 
+
+    // ==========================================
+    // CLOSE REJECT MODAL
+    // ==========================================
+
     const closeRejectModal = () => {
         if (actionLoading) return;
 
@@ -125,6 +215,11 @@ function WardenDashboard() {
         setSelectedOutpass(null);
         setRejectionReason("");
     };
+
+
+    // ==========================================
+    // REJECT OUTPASS
+    // ==========================================
 
     const rejectOutpass = async () => {
         if (!selectedOutpass) {
@@ -148,8 +243,10 @@ function WardenDashboard() {
                 {
                     method: "PATCH",
                     headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
+                        Authorization:
+                            `Bearer ${token}`,
+                        "Content-Type":
+                            "application/json"
                     },
                     body: JSON.stringify({
                         rejectionReason:
@@ -189,10 +286,16 @@ function WardenDashboard() {
                 err.message ||
                 "Unable to reject outpass."
             );
+
         } finally {
             setActionLoading(false);
         }
     };
+
+
+    // ==========================================
+    // LOGOUT
+    // ==========================================
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -200,6 +303,11 @@ function WardenDashboard() {
 
         window.location.reload();
     };
+
+
+    // ==========================================
+    // FORMAT DATE
+    // ==========================================
 
     const formatDate = (date) => {
         if (!date) return "-";
@@ -214,22 +322,57 @@ function WardenDashboard() {
         );
     };
 
+
+    // ==========================================
+    // FORMAT DATE + TIME
+    // ==========================================
+
+    const formatDateTime = (date) => {
+        if (!date) return "-";
+
+        return new Date(date).toLocaleString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+    };
+
+
+    // ==========================================
+    // LOADING
+    // ==========================================
+
     if (loading) {
         return (
             <div className="warden-loading">
+
                 <div className="warden-spinner"></div>
 
                 <p>
                     Loading pending requests...
                 </p>
+
             </div>
         );
     }
 
+
+    // ==========================================
+    // DASHBOARD
+    // ==========================================
+
     return (
         <div className="warden-dashboard">
 
-            {/* HEADER */}
+
+            {/* ======================================
+                HEADER
+            ====================================== */}
 
             <header className="warden-header">
 
@@ -240,6 +383,7 @@ function WardenDashboard() {
                     </div>
 
                     <div>
+
                         <h1>
                             E-Outpass
                         </h1>
@@ -247,13 +391,15 @@ function WardenDashboard() {
                         <p>
                             Warden Portal
                         </p>
+
                     </div>
 
                 </div>
 
+
                 <button
-                    className="warden-logout"
                     onClick={handleLogout}
+                    className="warden-logout"
                 >
                     Logout
                 </button>
@@ -261,11 +407,16 @@ function WardenDashboard() {
             </header>
 
 
-            {/* MAIN */}
+            {/* ======================================
+                MAIN
+            ====================================== */}
 
             <main className="warden-main">
 
-                {/* TITLE */}
+
+                {/* ==================================
+                    PAGE TITLE
+                ================================== */}
 
                 <section className="warden-title">
 
@@ -288,11 +439,13 @@ function WardenDashboard() {
 
                     </div>
 
+
                     <button
+                        onClick={() => {
+                            fetchPendingOutpasses();
+                            fetchGateHistory();
+                        }}
                         className="warden-refresh"
-                        onClick={
-                            fetchPendingOutpasses
-                        }
                     >
                         ↻ Refresh
                     </button>
@@ -300,7 +453,9 @@ function WardenDashboard() {
                 </section>
 
 
-                {/* ERROR */}
+                {/* ==================================
+                    ERROR
+                ================================== */}
 
                 {error && (
                     <div className="warden-error">
@@ -309,7 +464,9 @@ function WardenDashboard() {
                 )}
 
 
-                {/* STAT */}
+                {/* ==================================
+                    STAT
+                ================================== */}
 
                 <section className="warden-stat">
 
@@ -332,7 +489,9 @@ function WardenDashboard() {
                 </section>
 
 
-                {/* REQUESTS */}
+                {/* ==================================
+                    PENDING OUTPASSES
+                ================================== */}
 
                 <section className="warden-requests">
 
@@ -345,15 +504,16 @@ function WardenDashboard() {
                             </h2>
 
                             <p>
-                                Requests awaiting
-                                your approval.
+                                Requests awaiting your
+                                approval.
                             </p>
 
                         </div>
 
-                        <div className="request-count">
+
+                        <span className="request-count">
                             {outpasses.length}
-                        </div>
+                        </span>
 
                     </div>
 
@@ -384,10 +544,10 @@ function WardenDashboard() {
                                 (outpass) => (
 
                                     <article
-                                        className="warden-request-card"
                                         key={
                                             outpass.outpassId
                                         }
+                                        className="warden-request-card"
                                     >
 
                                         {/* CARD HEADER */}
@@ -407,6 +567,7 @@ function WardenDashboard() {
                                                 </h3>
 
                                             </div>
+
 
                                             <span className="pending-badge">
                                                 PENDING
@@ -461,6 +622,7 @@ function WardenDashboard() {
                                         <div className="request-details">
 
                                             <div>
+
                                                 <span>
                                                     📍 Place
                                                 </span>
@@ -471,9 +633,12 @@ function WardenDashboard() {
                                                         "-"
                                                     }
                                                 </strong>
+
                                             </div>
 
+
                                             <div>
+
                                                 <span>
                                                     📝 Reason
                                                 </span>
@@ -484,9 +649,12 @@ function WardenDashboard() {
                                                         "-"
                                                     }
                                                 </strong>
+
                                             </div>
 
+
                                             <div>
+
                                                 <span>
                                                     📅 Date
                                                 </span>
@@ -496,9 +664,12 @@ function WardenDashboard() {
                                                         outpass.dateRequestedFor
                                                     )}
                                                 </strong>
+
                                             </div>
 
+
                                             <div>
+
                                                 <span>
                                                     🚪 Leaving
                                                 </span>
@@ -509,9 +680,12 @@ function WardenDashboard() {
                                                         "-"
                                                     }
                                                 </strong>
+
                                             </div>
 
+
                                             <div>
+
                                                 <span>
                                                     🏠 Expected In
                                                 </span>
@@ -522,6 +696,7 @@ function WardenDashboard() {
                                                         "-"
                                                     }
                                                 </strong>
+
                                             </div>
 
                                         </div>
@@ -544,6 +719,7 @@ function WardenDashboard() {
                                             >
                                                 ✓ Approve
                                             </button>
+
 
                                             <button
                                                 className="reject-button"
@@ -572,10 +748,286 @@ function WardenDashboard() {
 
                 </section>
 
+
+                {/* ==================================
+                    GATE HISTORY
+                ================================== */}
+
+                <section
+                    className="warden-requests"
+                    style={{
+                        marginTop: "40px"
+                    }}
+                >
+
+                    <div className="warden-section-header">
+
+                        <div>
+
+                            <h2>
+                                Gate History
+                            </h2>
+
+                            <p>
+                                Student exit and entry
+                                records for your hostel.
+                            </p>
+
+                        </div>
+
+
+                        <span className="request-count">
+                            {gateHistory.length}
+                        </span>
+
+                    </div>
+
+
+                    {historyLoading ? (
+
+                        <div className="warden-empty">
+
+                            <div>
+                                🔄
+                            </div>
+
+                            <h3>
+                                Loading gate history...
+                            </h3>
+
+                            <p>
+                                Fetching student movement
+                                records.
+                            </p>
+
+                        </div>
+
+                    ) : gateHistory.length === 0 ? (
+
+                        <div className="warden-empty">
+
+                            <div>
+                                🚪
+                            </div>
+
+                            <h3>
+                                No gate records yet
+                            </h3>
+
+                            <p>
+                                Student movement records
+                                will appear here after
+                                gate verification.
+                            </p>
+
+                        </div>
+
+                    ) : (
+
+                        <div className="warden-request-list">
+
+                            {gateHistory.map(
+                                (log) => {
+
+                                    const returned =
+                                        log.status ===
+                                        "returned";
+
+                                    return (
+
+                                        <article
+                                            key={log._id}
+                                            className="warden-request-card"
+                                        >
+
+                                            {/* HISTORY HEADER */}
+
+                                            <div className="request-card-header">
+
+                                                <div>
+
+                                                    <span>
+                                                        OUTPASS ID
+                                                    </span>
+
+                                                    <h3>
+                                                        {
+                                                            log.outpass?.outpassId ||
+                                                            "-"
+                                                        }
+                                                    </h3>
+
+                                                </div>
+
+
+                                                <span className="pending-badge">
+                                                    {returned
+                                                        ? "✓ RETURNED"
+                                                        : "↗ OUTSIDE"}
+                                                </span>
+
+                                            </div>
+
+
+                                            {/* STUDENT */}
+
+                                            <div className="request-student">
+
+                                                <div className="student-avatar">
+                                                    🎓
+                                                </div>
+
+                                                <div>
+
+                                                    <span>
+                                                        STUDENT
+                                                    </span>
+
+                                                    <h3>
+                                                        {
+                                                            log.student?.name ||
+                                                            "Unknown Student"
+                                                        }
+                                                    </h3>
+
+                                                    <p>
+                                                        ID:{" "}
+                                                        {
+                                                            log.student?.studentId ||
+                                                            "-"
+                                                        }
+
+                                                        {" • "}
+
+                                                        {
+                                                            log.student?.course ||
+                                                            "-"
+                                                        }
+                                                    </p>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            {/* MOVEMENT DETAILS */}
+
+                                            <div className="request-details">
+
+                                                <div>
+
+                                                    <span>
+                                                        🏠 Room
+                                                    </span>
+
+                                                    <strong>
+                                                        {
+                                                            log.student?.roomNumber ||
+                                                            "-"
+                                                        }
+                                                    </strong>
+
+                                                </div>
+
+
+                                                <div>
+
+                                                    <span>
+                                                        📍 Place
+                                                    </span>
+
+                                                    <strong>
+                                                        {
+                                                            log.outpass?.placeOfVisit ||
+                                                            "-"
+                                                        }
+                                                    </strong>
+
+                                                </div>
+
+
+                                                <div>
+
+                                                    <span>
+                                                        🚪 Exit Time
+                                                    </span>
+
+                                                    <strong>
+                                                        {formatDateTime(
+                                                            log.exitTime
+                                                        )}
+                                                    </strong>
+
+                                                </div>
+
+
+                                                <div>
+
+                                                    <span>
+                                                        🏫 Entry Time
+                                                    </span>
+
+                                                    <strong>
+                                                        {formatDateTime(
+                                                            log.entryTime
+                                                        )}
+                                                    </strong>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            {/* SECURITY */}
+
+                                            <div
+                                                style={{
+                                                    padding:
+                                                        "14px 20px",
+                                                    borderTop:
+                                                        "1px solid #eef2f7",
+                                                    display:
+                                                        "flex",
+                                                    justifyContent:
+                                                        "space-between",
+                                                    gap: "10px",
+                                                    fontSize:
+                                                        "13px"
+                                                }}
+                                            >
+
+                                                <span>
+                                                    Verified by Security
+                                                </span>
+
+                                                <strong>
+                                                    {
+                                                        log.security?.name ||
+                                                        "-"
+                                                    }
+                                                </strong>
+
+                                            </div>
+
+                                        </article>
+
+                                    );
+                                }
+                            )}
+
+                        </div>
+
+                    )}
+
+                </section>
+
+
             </main>
 
 
-            {/* REJECTION MODAL */}
+            {/* ======================================
+                REJECTION MODAL
+            ====================================== */}
 
             {showRejectModal && (
 
@@ -605,6 +1057,7 @@ function WardenDashboard() {
 
                             </div>
 
+
                             <button
                                 className="close-modal"
                                 onClick={
@@ -618,10 +1071,8 @@ function WardenDashboard() {
 
 
                         <p className="reject-modal-description">
-
                             Please provide a reason for
                             rejecting this outpass request.
-
                         </p>
 
 
@@ -659,6 +1110,7 @@ function WardenDashboard() {
                             >
                                 Cancel
                             </button>
+
 
                             <button
                                 className="confirm-reject"

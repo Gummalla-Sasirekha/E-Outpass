@@ -32,15 +32,17 @@ const requestOutpass = async (req, res) => {
             !expectedInTime
         ) {
             return res.status(400).json({
-                message: "All fields are required."
+                message:
+                    "All fields are required."
             });
         }
 
 
-        const student = await Student.findOne({
-            studentId: String(studentId),
-            parent: req.user.userId
-        }).populate("hostel");
+        const student =
+            await Student.findOne({
+                studentId: String(studentId),
+                parent: req.user.userId
+            }).populate("hostel");
 
 
         if (!student) {
@@ -65,43 +67,47 @@ const requestOutpass = async (req, res) => {
             )}`;
 
 
-        const outpass = await Outpass.create({
+        const outpass =
+            await Outpass.create({
 
-            outpassId,
+                outpassId,
 
-            student: student._id,
+                student:
+                    student._id,
 
-            parent: req.user.userId,
+                parent:
+                    req.user.userId,
 
-            hostel: student.hostel._id,
+                hostel:
+                    student.hostel._id,
 
-            placeOfVisit,
+                placeOfVisit,
 
-            reason,
+                reason,
 
-            dateRequestedFor,
+                dateRequestedFor,
 
-            timeOfLeaving,
+                timeOfLeaving,
 
-            expectedInTime,
+                expectedInTime,
 
-            status: "pending"
-
-        });
+                status:
+                    "pending"
+            });
 
 
         const populatedOutpass =
-            await Outpass.findById(outpass._id)
-
-            .populate(
-                "student",
-                "studentId name course roomNumber"
+            await Outpass.findById(
+                outpass._id
             )
-
-            .populate(
-                "hostel",
-                "name type"
-            );
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "hostel",
+                    "name type"
+                );
 
 
         return res.status(201).json({
@@ -109,8 +115,8 @@ const requestOutpass = async (req, res) => {
             message:
                 "Outpass request submitted successfully.",
 
-            outpass: populatedOutpass
-
+            outpass:
+                populatedOutpass
         });
 
 
@@ -122,10 +128,8 @@ const requestOutpass = async (req, res) => {
         );
 
         return res.status(500).json({
-
             message:
                 "Server error while requesting outpass."
-
         });
     }
 };
@@ -136,32 +140,31 @@ const requestOutpass = async (req, res) => {
 // ==========================================
 
 const getMyStudent = async (req, res) => {
+
     try {
 
-        const student = await Student.findOne({
-
-            parent: req.user.userId
-
-        }).populate(
-            "hostel",
-            "name type"
-        );
+        const student =
+            await Student.findOne({
+                parent:
+                    req.user.userId
+            })
+                .populate(
+                    "hostel",
+                    "name type"
+                );
 
 
         if (!student) {
-            return res.status(404).json({
 
+            return res.status(404).json({
                 message:
                     "No student is linked to this parent."
-
             });
         }
 
 
         return res.status(200).json({
-
             student
-
         });
 
 
@@ -173,10 +176,8 @@ const getMyStudent = async (req, res) => {
         );
 
         return res.status(500).json({
-
             message:
                 "Server error while fetching linked student."
-
         });
     }
 };
@@ -187,28 +188,25 @@ const getMyStudent = async (req, res) => {
 // ==========================================
 
 const getMyOutpasses = async (req, res) => {
+
     try {
 
         const outpasses =
             await Outpass.find({
-
-                parent: req.user.userId
-
+                parent:
+                    req.user.userId
             })
-
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-
-            .populate(
-                "hostel",
-                "name type"
-            )
-
-            .sort({
-                createdAt: -1
-            });
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "hostel",
+                    "name type"
+                )
+                .sort({
+                    createdAt: -1
+                });
 
 
         return res.status(200).json({
@@ -217,7 +215,6 @@ const getMyOutpasses = async (req, res) => {
                 outpasses.length,
 
             outpasses
-
         });
 
 
@@ -229,10 +226,8 @@ const getMyOutpasses = async (req, res) => {
         );
 
         return res.status(500).json({
-
             message:
                 "Server error while fetching outpasses."
-
         });
     }
 };
@@ -243,23 +238,21 @@ const getMyOutpasses = async (req, res) => {
 // ==========================================
 
 const getPendingOutpasses = async (req, res) => {
+
     try {
 
         const hostel =
             await Hostel.findOne({
-
                 warden:
                     req.user.userId
-
             });
 
 
         if (!hostel) {
-            return res.status(404).json({
 
+            return res.status(404).json({
                 message:
                     "No hostel is assigned to this warden."
-
             });
         }
 
@@ -274,20 +267,17 @@ const getPendingOutpasses = async (req, res) => {
                     "pending"
 
             })
-
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-
-            .populate(
-                "parent",
-                "name email"
-            )
-
-            .sort({
-                createdAt: -1
-            });
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "parent",
+                    "name email"
+                )
+                .sort({
+                    createdAt: -1
+                });
 
 
         return res.status(200).json({
@@ -299,7 +289,6 @@ const getPendingOutpasses = async (req, res) => {
                 outpasses.length,
 
             outpasses
-
         });
 
 
@@ -311,10 +300,8 @@ const getPendingOutpasses = async (req, res) => {
         );
 
         return res.status(500).json({
-
             message:
                 "Server error while fetching pending requests."
-
         });
     }
 };
@@ -325,6 +312,7 @@ const getPendingOutpasses = async (req, res) => {
 // ==========================================
 
 const approveOutpass = async (req, res) => {
+
     try {
 
         const {
@@ -334,19 +322,16 @@ const approveOutpass = async (req, res) => {
 
         const hostel =
             await Hostel.findOne({
-
                 warden:
                     req.user.userId
-
             });
 
 
         if (!hostel) {
-            return res.status(404).json({
 
+            return res.status(404).json({
                 message:
                     "No hostel is assigned to this warden."
-
             });
         }
 
@@ -358,16 +343,14 @@ const approveOutpass = async (req, res) => {
 
                 hostel:
                     hostel._id
-
             });
 
 
         if (!outpass) {
-            return res.status(404).json({
 
+            return res.status(404).json({
                 message:
                     "Outpass not found in your hostel."
-
             });
         }
 
@@ -376,18 +359,15 @@ const approveOutpass = async (req, res) => {
             outpass.status !==
             "pending"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     `Outpass is already ${outpass.status}.`
-
             });
         }
 
 
-        // ==========================================
-        // APPROVE OUTPASS
-        // ==========================================
+        // Approve outpass
 
         outpass.status =
             "approved";
@@ -397,7 +377,7 @@ const approveOutpass = async (req, res) => {
 
 
         // ==========================================
-        // CREATE PHONE ACCESSIBLE QR
+        // CREATE PHONE-ACCESSIBLE QR
         // ==========================================
 
         const frontendUrl =
@@ -430,16 +410,14 @@ const approveOutpass = async (req, res) => {
             await Outpass.findById(
                 outpass._id
             )
-
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-
-            .populate(
-                "hostel",
-                "name type"
-            );
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "hostel",
+                    "name type"
+                );
 
 
         return res.status(200).json({
@@ -449,7 +427,6 @@ const approveOutpass = async (req, res) => {
 
             outpass:
                 populatedOutpass
-
         });
 
 
@@ -461,10 +438,8 @@ const approveOutpass = async (req, res) => {
         );
 
         return res.status(500).json({
-
             message:
                 "Server error while approving outpass."
-
         });
     }
 };
@@ -475,6 +450,7 @@ const approveOutpass = async (req, res) => {
 // ==========================================
 
 const rejectOutpass = async (req, res) => {
+
     try {
 
         const {
@@ -491,30 +467,26 @@ const rejectOutpass = async (req, res) => {
             !rejectionReason ||
             !rejectionReason.trim()
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Rejection reason is required."
-
             });
         }
 
 
         const hostel =
             await Hostel.findOne({
-
                 warden:
                     req.user.userId
-
             });
 
 
         if (!hostel) {
-            return res.status(404).json({
 
+            return res.status(404).json({
                 message:
                     "No hostel is assigned to this warden."
-
             });
         }
 
@@ -526,16 +498,14 @@ const rejectOutpass = async (req, res) => {
 
                 hostel:
                     hostel._id
-
             });
 
 
         if (!outpass) {
-            return res.status(404).json({
 
+            return res.status(404).json({
                 message:
                     "Outpass not found in your hostel."
-
             });
         }
 
@@ -544,11 +514,10 @@ const rejectOutpass = async (req, res) => {
             outpass.status !==
             "pending"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     `Outpass is already ${outpass.status}.`
-
             });
         }
 
@@ -568,16 +537,14 @@ const rejectOutpass = async (req, res) => {
             await Outpass.findById(
                 outpass._id
             )
-
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-
-            .populate(
-                "hostel",
-                "name type"
-            );
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "hostel",
+                    "name type"
+                );
 
 
         return res.status(200).json({
@@ -587,7 +554,6 @@ const rejectOutpass = async (req, res) => {
 
             outpass:
                 populatedOutpass
-
         });
 
 
@@ -599,10 +565,8 @@ const rejectOutpass = async (req, res) => {
         );
 
         return res.status(500).json({
-
             message:
                 "Server error while rejecting outpass."
-
         });
     }
 };
@@ -613,6 +577,7 @@ const rejectOutpass = async (req, res) => {
 // ==========================================
 
 const validateOutpass = async (req, res) => {
+
     try {
 
         const {
@@ -621,40 +586,34 @@ const validateOutpass = async (req, res) => {
 
 
         if (!outpassId) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass ID is required."
-
             });
         }
 
 
         const outpass =
             await Outpass.findOne({
-
                 outpassId:
                     outpassId.trim()
-
             })
-
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-
-            .populate(
-                "hostel",
-                "name type"
-            );
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "hostel",
+                    "name type"
+                );
 
 
         if (!outpass) {
-            return res.status(404).json({
 
+            return res.status(404).json({
                 message:
                     "Outpass not found."
-
             });
         }
 
@@ -663,11 +622,10 @@ const validateOutpass = async (req, res) => {
             outpass.status ===
             "pending"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass is still pending approval."
-
             });
         }
 
@@ -676,11 +634,10 @@ const validateOutpass = async (req, res) => {
             outpass.status ===
             "rejected"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass is rejected. Student cannot exit."
-
             });
         }
 
@@ -689,11 +646,10 @@ const validateOutpass = async (req, res) => {
             outpass.status ===
             "completed"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass has already been completed."
-
             });
         }
 
@@ -702,11 +658,10 @@ const validateOutpass = async (req, res) => {
             outpass.status ===
             "expired"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass has expired."
-
             });
         }
 
@@ -715,11 +670,10 @@ const validateOutpass = async (req, res) => {
             outpass.status !==
             "approved"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass is not valid for gate verification."
-
             });
         }
 
@@ -730,7 +684,6 @@ const validateOutpass = async (req, res) => {
                 "Outpass is valid.",
 
             outpass
-
         });
 
 
@@ -742,10 +695,8 @@ const validateOutpass = async (req, res) => {
         );
 
         return res.status(500).json({
-
             message:
                 "Server error while validating outpass."
-
         });
     }
 };
@@ -756,6 +707,7 @@ const validateOutpass = async (req, res) => {
 // ==========================================
 
 const scanOut = async (req, res) => {
+
     try {
 
         const {
@@ -764,30 +716,26 @@ const scanOut = async (req, res) => {
 
 
         if (!outpassId) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass ID is required."
-
             });
         }
 
 
         const outpass =
             await Outpass.findOne({
-
                 outpassId:
                     outpassId.trim()
-
             });
 
 
         if (!outpass) {
-            return res.status(404).json({
 
+            return res.status(404).json({
                 message:
                     "Outpass not found."
-
             });
         }
 
@@ -796,11 +744,10 @@ const scanOut = async (req, res) => {
             outpass.status ===
             "pending"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass is still pending approval."
-
             });
         }
 
@@ -809,11 +756,10 @@ const scanOut = async (req, res) => {
             outpass.status ===
             "rejected"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass is rejected. Student cannot exit."
-
             });
         }
 
@@ -822,11 +768,10 @@ const scanOut = async (req, res) => {
             outpass.status ===
             "completed"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass is completed. Student cannot exit."
-
             });
         }
 
@@ -835,11 +780,10 @@ const scanOut = async (req, res) => {
             outpass.status ===
             "expired"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass has expired."
-
             });
         }
 
@@ -848,11 +792,10 @@ const scanOut = async (req, res) => {
             outpass.status !==
             "approved"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass is not valid for exit."
-
             });
         }
 
@@ -865,16 +808,14 @@ const scanOut = async (req, res) => {
 
                 status:
                     "outside"
-
             });
 
 
         if (existingGateLog) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Student has already scanned OUT."
-
             });
         }
 
@@ -894,12 +835,8 @@ const scanOut = async (req, res) => {
                 exitTime:
                     new Date(),
 
-                entryTime:
-                    null,
-
                 status:
                     "outside"
-
             });
 
 
@@ -907,21 +844,18 @@ const scanOut = async (req, res) => {
             await GateLog.findById(
                 gateLog._id
             )
-
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-
-            .populate(
-                "outpass",
-                "outpassId placeOfVisit reason"
-            )
-
-            .populate(
-                "security",
-                "name email"
-            );
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "outpass",
+                    "outpassId placeOfVisit reason"
+                )
+                .populate(
+                    "security",
+                    "name email"
+                );
 
 
         return res.status(200).json({
@@ -931,7 +865,6 @@ const scanOut = async (req, res) => {
 
             gateLog:
                 populatedGateLog
-
         });
 
 
@@ -943,10 +876,8 @@ const scanOut = async (req, res) => {
         );
 
         return res.status(500).json({
-
             message:
                 "Server error while scanning OUT."
-
         });
     }
 };
@@ -957,6 +888,7 @@ const scanOut = async (req, res) => {
 // ==========================================
 
 const scanIn = async (req, res) => {
+
     try {
 
         const {
@@ -965,30 +897,26 @@ const scanIn = async (req, res) => {
 
 
         if (!outpassId) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass ID is required."
-
             });
         }
 
 
         const outpass =
             await Outpass.findOne({
-
                 outpassId:
                     outpassId.trim()
-
             });
 
 
         if (!outpass) {
-            return res.status(404).json({
 
+            return res.status(404).json({
                 message:
                     "Outpass not found."
-
             });
         }
 
@@ -1001,26 +929,23 @@ const scanIn = async (req, res) => {
 
                 status:
                     "outside"
-
             });
 
 
         if (!gateLog) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Student has not scanned OUT yet."
-
             });
         }
 
 
         if (gateLog.entryTime) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Student has already scanned IN."
-
             });
         }
 
@@ -1036,6 +961,8 @@ const scanIn = async (req, res) => {
         await gateLog.save();
 
 
+        // Mark outpass completed
+
         outpass.status =
             "completed";
 
@@ -1047,21 +974,18 @@ const scanIn = async (req, res) => {
             await GateLog.findById(
                 gateLog._id
             )
-
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-
-            .populate(
-                "outpass",
-                "outpassId placeOfVisit reason"
-            )
-
-            .populate(
-                "security",
-                "name email"
-            );
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "outpass",
+                    "outpassId placeOfVisit reason"
+                )
+                .populate(
+                    "security",
+                    "name email"
+                );
 
 
         return res.status(200).json({
@@ -1079,9 +1003,7 @@ const scanIn = async (req, res) => {
 
                 status:
                     outpass.status
-
             }
-
         });
 
 
@@ -1093,30 +1015,24 @@ const scanIn = async (req, res) => {
         );
 
         return res.status(500).json({
-
             message:
                 "Server error while scanning IN."
-
         });
     }
 };
 
 
 // ==========================================
-// QR GATE STATUS
+// GET STUDENT GATE STATUS
 // ==========================================
 //
-// NO STUDENT LOGIN
-//
-// FIRST SCAN:
-//      No GateLog → EXIT
-//
-// SECOND SCAN:
-//      GateLog status outside → RETURN
-//
+// No active GateLog → EXIT
+// Active OUT GateLog → RETURN
+// Completed → blocked
 // ==========================================
 
 const studentGateStatus = async (req, res) => {
+
     try {
 
         const {
@@ -1124,66 +1040,75 @@ const studentGateStatus = async (req, res) => {
         } = req.body;
 
 
-        // ==========================================
-        // CHECK OUTPASS ID
-        // ==========================================
-
         if (!outpassId) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "Outpass ID is required."
-
             });
         }
 
 
-        // ==========================================
-        // FIND OUTPASS
-        // ==========================================
+        // Find logged-in student's profile
+
+        const student =
+            await Student.findOne({
+                user:
+                    req.user.userId
+            });
+
+
+        if (!student) {
+
+            return res.status(404).json({
+                message:
+                    "Student profile not found."
+            });
+        }
+
+
+        // Find outpass
 
         const outpass =
             await Outpass.findOne({
-
                 outpassId:
                     outpassId.trim()
-
-            })
-
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-
-            .populate(
-                "hostel",
-                "name type"
-            );
+            });
 
 
         if (!outpass) {
-            return res.status(404).json({
 
+            return res.status(404).json({
                 message:
                     "Outpass not found."
-
             });
         }
 
 
-        // ==========================================
-        // STATUS CHECKS
-        // ==========================================
+        // Ownership check
+
+        if (
+            String(outpass.student) !==
+            String(student._id)
+        ) {
+
+            return res.status(403).json({
+                message:
+                    "This outpass does not belong to you."
+            });
+        }
+
+
+        // Status checks
 
         if (
             outpass.status ===
             "pending"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "This outpass is still pending approval."
-
             });
         }
 
@@ -1192,11 +1117,10 @@ const studentGateStatus = async (req, res) => {
             outpass.status ===
             "rejected"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "This outpass has been rejected."
-
             });
         }
 
@@ -1205,11 +1129,10 @@ const studentGateStatus = async (req, res) => {
             outpass.status ===
             "expired"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "This outpass has expired."
-
             });
         }
 
@@ -1218,11 +1141,10 @@ const studentGateStatus = async (req, res) => {
             outpass.status ===
             "completed"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "This outpass has already been completed."
-
             });
         }
 
@@ -1231,18 +1153,15 @@ const studentGateStatus = async (req, res) => {
             outpass.status !==
             "approved"
         ) {
-            return res.status(400).json({
 
+            return res.status(400).json({
                 message:
                     "This outpass is not valid."
-
             });
         }
 
 
-        // ==========================================
-        // CHECK ACTIVE GATE LOG
-        // ==========================================
+        // Check active OUT record
 
         const existingGateLog =
             await GateLog.findOne({
@@ -1252,22 +1171,12 @@ const studentGateStatus = async (req, res) => {
 
                 status:
                     "outside"
-
             });
 
 
-        // ==========================================
-        // FIRST SCAN → EXIT
-        // ==========================================
+        // No OUT yet → EXIT
 
         if (!existingGateLog) {
-
-            console.log(
-                "GATE STATUS:",
-                outpass.outpassId,
-                "→ EXIT"
-            );
-
 
             return res.status(200).json({
 
@@ -1278,29 +1187,17 @@ const studentGateStatus = async (req, res) => {
                     "Student can confirm exit.",
 
                 outpassId:
-                    outpass.outpassId,
-
-                outpass
-
+                    outpass.outpassId
             });
         }
 
 
-        // ==========================================
-        // SECOND SCAN → RETURN
-        // ==========================================
+        // Already OUT → RETURN
 
         if (
             existingGateLog.status ===
             "outside"
         ) {
-
-            console.log(
-                "GATE STATUS:",
-                outpass.outpassId,
-                "→ RETURN"
-            );
-
 
             return res.status(200).json({
 
@@ -1311,19 +1208,14 @@ const studentGateStatus = async (req, res) => {
                     "Student can confirm return.",
 
                 outpassId:
-                    outpass.outpassId,
-
-                outpass
-
+                    outpass.outpassId
             });
         }
 
 
         return res.status(400).json({
-
             message:
                 "Invalid gate status."
-
         });
 
 
@@ -1335,381 +1227,466 @@ const studentGateStatus = async (req, res) => {
         );
 
         return res.status(500).json({
-
             message:
                 "Server error while checking gate status."
-
         });
     }
 };
 
 
 // ==========================================
-// QR CONFIRM EXIT / RETURN
+// STUDENT CONFIRM GATE ACTION
 // ==========================================
 //
-// NO STUDENT LOGIN
+// First scan:
+//      Confirm Exit → OUT
 //
-// FIRST CONFIRM:
-//      Creates GateLog
-//      exitTime = current time
-//      status = outside
-//
-// SECOND CONFIRM:
-//      entryTime = current time
-//      status = returned
-//      outpass = completed
-//
+// Second scan:
+//      Confirm Return → IN
 // ==========================================
 
-const studentConfirmGateAction = async (req, res) => {
-    try {
+const studentConfirmGateAction =
+    async (req, res) => {
 
-        const {
-            outpassId
-        } = req.body;
+        try {
 
-
-        // ==========================================
-        // CHECK OUTPASS ID
-        // ==========================================
-
-        if (!outpassId) {
-            return res.status(400).json({
-
-                message:
-                    "Outpass ID is required."
-
-            });
-        }
+            const {
+                outpassId
+            } = req.body;
 
 
-        // ==========================================
-        // FIND OUTPASS
-        // ==========================================
+            if (!outpassId) {
 
-        const outpass =
-            await Outpass.findOne({
-
-                outpassId:
-                    outpassId.trim()
-
-            });
+                return res.status(400).json({
+                    message:
+                        "Outpass ID is required."
+                });
+            }
 
 
-        if (!outpass) {
-            return res.status(404).json({
+            // Find logged-in student's profile
 
-                message:
-                    "Outpass not found."
-
-            });
-        }
-
-
-        // ==========================================
-        // STATUS CHECKS
-        // ==========================================
-
-        if (
-            outpass.status ===
-            "pending"
-        ) {
-            return res.status(400).json({
-
-                message:
-                    "This outpass is still pending approval."
-
-            });
-        }
-
-
-        if (
-            outpass.status ===
-            "rejected"
-        ) {
-            return res.status(400).json({
-
-                message:
-                    "This outpass has been rejected."
-
-            });
-        }
-
-
-        if (
-            outpass.status ===
-            "expired"
-        ) {
-            return res.status(400).json({
-
-                message:
-                    "This outpass has expired."
-
-            });
-        }
-
-
-        if (
-            outpass.status ===
-            "completed"
-        ) {
-            return res.status(400).json({
-
-                message:
-                    "This outpass has already been completed."
-
-            });
-        }
-
-
-        if (
-            outpass.status !==
-            "approved"
-        ) {
-            return res.status(400).json({
-
-                message:
-                    "This outpass is not valid."
-
-            });
-        }
-
-
-        // ==========================================
-        // CHECK CURRENT GATE STATE
-        // ==========================================
-
-        const existingGateLog =
-            await GateLog.findOne({
-
-                outpass:
-                    outpass._id,
-
-                status:
-                    "outside"
-
-            });
-
-
-        // ==========================================
-        // FIRST CONFIRM → EXIT
-        // ==========================================
-
-        if (!existingGateLog) {
-
-            console.log(
-                "CONFIRM:",
-                outpass.outpassId,
-                "→ EXIT"
-            );
-
-
-            // ==========================================
-            // FIND COMMON SECURITY USER
-            // ==========================================
-
-            const securityUser =
-                await User.findOne({
-
-                    role:
-                        "security"
-
+            const student =
+                await Student.findOne({
+                    user:
+                        req.user.userId
                 });
 
 
-            if (!securityUser) {
-                return res.status(500).json({
+            if (!student) {
 
+                return res.status(404).json({
                     message:
-                        "Main gate security account not found."
+                        "Student profile not found."
+                });
+            }
 
+
+            // Find outpass
+
+            const outpass =
+                await Outpass.findOne({
+                    outpassId:
+                        outpassId.trim()
+                });
+
+
+            if (!outpass) {
+
+                return res.status(404).json({
+                    message:
+                        "Outpass not found."
+                });
+            }
+
+
+            // SECURITY CHECK
+            // The logged-in student MUST own this outpass.
+
+            if (
+                String(outpass.student) !==
+                String(student._id)
+            ) {
+
+                return res.status(403).json({
+                    message:
+                        "This outpass does not belong to you."
                 });
             }
 
 
             // ==========================================
-            // CREATE GATE LOG
+            // STATUS CHECKS
             // ==========================================
 
-            const gateLog =
-                await GateLog.create({
+            if (
+                outpass.status ===
+                "pending"
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "This outpass is still pending approval."
+                });
+            }
+
+
+            if (
+                outpass.status ===
+                "rejected"
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "This outpass has been rejected."
+                });
+            }
+
+
+            if (
+                outpass.status ===
+                "expired"
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "This outpass has expired."
+                });
+            }
+
+
+            if (
+                outpass.status ===
+                "completed"
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "This outpass has already been completed."
+                });
+            }
+
+
+            if (
+                outpass.status !==
+                "approved"
+            ) {
+
+                return res.status(400).json({
+                    message:
+                        "This outpass is not valid."
+                });
+            }
+
+
+            // ==========================================
+            // CHECK CURRENT GATE STATE
+            // ==========================================
+
+            const existingGateLog =
+                await GateLog.findOne({
 
                     outpass:
                         outpass._id,
 
-                    student:
-                        outpass.student,
-
-                    security:
-                        securityUser._id,
-
-                    exitTime:
-                        new Date(),
-
-                    entryTime:
-                        null,
-
                     status:
                         "outside"
-
                 });
 
 
-            console.log(
-                "GateLog created:",
-                gateLog._id
+            // ==========================================
+            // FIRST SCAN → EXIT
+            // ==========================================
+
+            if (!existingGateLog) {
+
+
+                // Find common main-gate
+                // security account
+
+                const securityUser =
+                    await User.findOne({
+                        role:
+                            "security"
+                    });
+
+
+                if (!securityUser) {
+
+                    return res.status(500).json({
+                        message:
+                            "Main gate security account not found."
+                    });
+                }
+
+
+                const gateLog =
+                    await GateLog.create({
+
+                        outpass:
+                            outpass._id,
+
+                        student:
+                            student._id,
+
+                        security:
+                            securityUser._id,
+
+                        exitTime:
+                            new Date(),
+
+                        entryTime:
+                            null,
+
+                        status:
+                            "outside"
+                    });
+
+
+                return res.status(200).json({
+
+                    action:
+                        "exit",
+
+                    message:
+                        "Exit confirmed successfully.",
+
+                    outpassId:
+                        outpass.outpassId,
+
+                    gateLogId:
+                        gateLog._id
+                });
+            }
+
+
+            // ==========================================
+            // SECOND SCAN → RETURN
+            // ==========================================
+
+            if (
+                existingGateLog.status ===
+                "outside"
+            ) {
+
+                existingGateLog.entryTime =
+                    new Date();
+
+
+                existingGateLog.status =
+                    "returned";
+
+
+                await existingGateLog.save();
+
+
+                // Mark outpass completed
+
+                outpass.status =
+                    "completed";
+
+
+                await outpass.save();
+
+
+                return res.status(200).json({
+
+                    action:
+                        "return",
+
+                    message:
+                        "Return confirmed successfully.",
+
+                    outpassId:
+                        outpass.outpassId,
+
+                    gateLogId:
+                        existingGateLog._id,
+
+                    status:
+                        "completed"
+                });
+            }
+
+
+            return res.status(400).json({
+                message:
+                    "Invalid gate status."
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Student gate confirmation error:",
+                error
             );
 
-
-            return res.status(200).json({
-
-                action:
-                    "exit",
-
+            return res.status(500).json({
                 message:
-                    "Exit confirmed successfully.",
-
-                outpassId:
-                    outpass.outpassId,
-
-                gateLogId:
-                    gateLog._id
-
+                    "Server error while confirming gate action."
             });
         }
-
-
-        // ==========================================
-        // SECOND CONFIRM → RETURN
-        // ==========================================
-
-        if (
-            existingGateLog.status ===
-            "outside"
-        ) {
-
-            console.log(
-                "CONFIRM:",
-                outpass.outpassId,
-                "→ RETURN"
-            );
-
-
-            // ==========================================
-            // RECORD ENTRY
-            // ==========================================
-
-            existingGateLog.entryTime =
-                new Date();
-
-
-            existingGateLog.status =
-                "returned";
-
-
-            await existingGateLog.save();
-
-
-            // ==========================================
-            // COMPLETE OUTPASS
-            // ==========================================
-
-            outpass.status =
-                "completed";
-
-
-            await outpass.save();
-
-
-            console.log(
-                "Return recorded. Outpass completed."
-            );
-
-
-            return res.status(200).json({
-
-                action:
-                    "return",
-
-                message:
-                    "Return confirmed successfully.",
-
-                outpassId:
-                    outpass.outpassId,
-
-                gateLogId:
-                    existingGateLog._id,
-
-                status:
-                    "completed"
-
-            });
-        }
-
-
-        return res.status(400).json({
-
-            message:
-                "Invalid gate status."
-
-        });
-
-
-    } catch (error) {
-
-        console.error(
-            "Student gate confirmation error:",
-            error
-        );
-
-        return res.status(500).json({
-
-            message:
-                "Server error while confirming gate action."
-
-        });
-    }
-};
+    };
 
 
 // ==========================================
-// GET GATE HISTORY - SECURITY
+// GET GATE HISTORY
+//
+// SECURITY → ALL HOSTELS
+// WARDEN   → OWN HOSTEL ONLY
 // ==========================================
 
 const getGateHistory = async (req, res) => {
+
     try {
 
-        const gateLogs =
-            await GateLog.find()
+        const role =
+            req.user.role;
 
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
 
-            .populate(
-                "outpass",
-                "outpassId placeOfVisit reason dateRequestedFor"
-            )
+        // ==========================================
+        // SECURITY
+        // Common main gate
+        // Can see ALL records
+        // ==========================================
 
-            .populate(
-                "security",
-                "name email"
-            )
+        if (
+            role ===
+            "security"
+        ) {
 
-            .sort({
-                createdAt: -1
+            const gateLogs =
+                await GateLog.find()
+
+                    .populate(
+                        "student",
+                        "studentId name course roomNumber"
+                    )
+
+                    .populate(
+                        "outpass",
+                        "outpassId placeOfVisit reason dateRequestedFor hostel"
+                    )
+
+                    .populate(
+                        "security",
+                        "name email"
+                    )
+
+                    .sort({
+                        createdAt: -1
+                    });
+
+
+            return res.status(200).json({
+
+                count:
+                    gateLogs.length,
+
+                gateLogs
             });
+        }
 
 
-        return res.status(200).json({
+        // ==========================================
+        // WARDEN
+        // Only their hostel
+        // ==========================================
 
-            count:
-                gateLogs.length,
+        if (
+            role ===
+            "warden"
+        ) {
 
-            gateLogs
+            const hostel =
+                await Hostel.findOne({
+                    warden:
+                        req.user.userId
+                });
 
+
+            if (!hostel) {
+
+                return res.status(404).json({
+                    message:
+                        "No hostel is assigned to this warden."
+                });
+            }
+
+
+            // Find outpasses belonging
+            // to this hostel
+
+            const hostelOutpasses =
+                await Outpass.find({
+                    hostel:
+                        hostel._id
+                })
+                    .select("_id");
+
+
+            const outpassIds =
+                hostelOutpasses.map(
+                    (outpass) =>
+                        outpass._id
+                );
+
+
+            // Find gate logs for
+            // those outpasses
+
+            const gateLogs =
+                await GateLog.find({
+
+                    outpass: {
+                        $in:
+                            outpassIds
+                    }
+
+                })
+
+                    .populate(
+                        "student",
+                        "studentId name course roomNumber"
+                    )
+
+                    .populate(
+                        "outpass",
+                        "outpassId placeOfVisit reason dateRequestedFor"
+                    )
+
+                    .populate(
+                        "security",
+                        "name email"
+                    )
+
+                    .sort({
+                        createdAt: -1
+                    });
+
+
+            return res.status(200).json({
+
+                hostel:
+                    hostel.name,
+
+                count:
+                    gateLogs.length,
+
+                gateLogs
+            });
+        }
+
+
+        // ==========================================
+        // OTHER ROLES
+        // ==========================================
+
+        return res.status(403).json({
+
+            message:
+                "You are not authorized to view gate history."
         });
 
 
@@ -1724,7 +1701,6 @@ const getGateHistory = async (req, res) => {
 
             message:
                 "Server error while fetching gate history."
-
         });
     }
 };
@@ -1759,5 +1735,4 @@ module.exports = {
     studentConfirmGateAction,
 
     getGateHistory
-
 };

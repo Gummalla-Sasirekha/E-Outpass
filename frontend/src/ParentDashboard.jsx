@@ -26,7 +26,7 @@ function ParentDashboard() {
   // BACKEND URL
   // ==========================================
 
- const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // ==========================================
   // FETCH LINKED STUDENT
@@ -305,10 +305,13 @@ function ParentDashboard() {
             </span>
 
             {studentLoading ? (
+
               <h2>
                 Loading student...
               </h2>
+
             ) : student ? (
+
               <>
                 <h2>
                   {student.name}
@@ -322,7 +325,9 @@ function ParentDashboard() {
                   {student.hostel?.name || "Hostel"}
                 </p>
               </>
+
             ) : (
+
               <>
                 <h2>
                   No Student Linked
@@ -332,6 +337,7 @@ function ParentDashboard() {
                   Please contact the administrator.
                 </p>
               </>
+
             )}
 
           </div>
@@ -695,31 +701,13 @@ function ParentDashboard() {
                       )}
 
 
-                    {/* QR CODE */}
+                    {/* APPROVED MESSAGE */}
 
-                    {outpass.status === "approved" &&
-                      outpass.qrCode && (
-
-                        <div className="qr-preview">
-
-                          <p>
-                            🎉 Your outpass has been
-                            approved!
-                          </p>
-
-                          <img
-                            src={outpass.qrCode}
-                            alt="Outpass QR Code"
-                          />
-
-                          <p>
-                            Show this QR code at the
-                            main gate.
-                          </p>
-
-                        </div>
-
-                      )}
+                    {outpass.status === "approved" && (
+                      <div className="approved-box">
+                        🎉 Your outpass has been approved!
+                      </div>
+                    )}
 
                   </div>
 

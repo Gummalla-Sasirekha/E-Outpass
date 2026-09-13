@@ -1267,3 +1267,251 @@
     white-space: nowrap !important;
   }
 }
+/* ==========================================
+   PREMIUM WELCOME BANNER
+========================================== */
+
+.parent-welcome {
+    padding: 26px 28px;
+
+    margin-bottom: 28px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #f8fbff
+        );
+
+    border: 1px solid #dbeafe;
+
+    box-shadow:
+        0 5px 18px rgba(37, 99, 235, 0.05);
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.parent-welcome::after {
+    content: "";
+
+    position: absolute;
+
+    width: 170px;
+    height: 170px;
+
+    border-radius: 50%;
+
+    background: rgba(37, 99, 235, 0.06);
+
+    right: -60px;
+    top: -70px;
+}
+
+.parent-welcome h2 {
+    position: relative;
+    z-index: 1;
+
+    margin: 0;
+
+    font-size: 29px;
+
+    color: #0f172a;
+}
+
+.parent-welcome p {
+    position: relative;
+    z-index: 1;
+
+    margin: 8px 0 0;
+
+    color: #526987;
+
+    font-size: 14px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .parent-welcome {
+        padding: 22px 20px;
+
+        border-radius: 16px;
+    }
+
+    .parent-welcome h2 {
+        font-size: 24px;
+    }
+
+    .parent-welcome p {
+        font-size: 13px;
+    }
+}
+/* ==========================================
+   REQUEST FORM - FINAL POLISH
+========================================== */
+
+.outpass-form-card {
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #fbfdff 100%
+        );
+
+    box-shadow:
+        0 8px 28px rgba(15, 23, 42, 0.055);
+}
+
+.form-header {
+    padding-bottom: 22px;
+
+    border-bottom: 1px solid #e8eef6;
+}
+
+.form-header h2 {
+    color: #0f172a;
+
+    font-size: 22px;
+
+    letter-spacing: -0.3px;
+}
+
+.form-header p {
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+.form-header strong {
+    color: #1f3c88;
+}
+
+
+/* ==========================================
+   FORM INPUT POLISH
+========================================== */
+
+.form-group input,
+.form-group textarea {
+    border-color: #d4dce8;
+
+    background: #fbfcfe;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+    border-color: #aebbd0;
+
+    background: #ffffff;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #2563eb;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.08);
+}
+
+
+/* ==========================================
+   LABELS
+========================================== */
+
+.form-group label {
+    color: #26364d;
+
+    font-size: 13px;
+
+    font-weight: 650;
+}
+
+
+/* ==========================================
+   SUBMIT BUTTON
+========================================== */
+
+.submit-outpass-button {
+    height: 50px;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #315ee8
+        );
+
+    font-size: 15px;
+
+    font-weight: 650;
+
+    box-shadow:
+        0 8px 18px rgba(37, 99, 235, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+.submit-outpass-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 24px rgba(37, 99, 235, 0.24);
+
+    filter: brightness(1.03);
+}
+
+.submit-outpass-button:active:not(:disabled) {
+    transform: translateY(0);
+
+    box-shadow:
+        0 6px 14px rgba(37, 99, 235, 0.18);
+}
+
+
+/* ==========================================
+   CLOSE BUTTON
+========================================== */
+
+.close-form {
+    background: #f4f7fb;
+
+    border: 1px solid #edf1f6;
+}
+
+.close-form:hover {
+    background: #eaf0f8;
+
+    border-color: #d7e0ec;
+}
+.approved-box {
+    margin-top: 18px;
+    padding: 13px 16px;
+
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+
+    background: #f0fdf4;
+    color: #15803d;
+
+    font-size: 14px;
+    font-weight: 600;
+}
