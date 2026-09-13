@@ -1032,195 +1032,91 @@ const scanIn = async (req, res) => {
 // ==========================================
 
 const studentGateStatus = async (req, res) => {
-
     try {
-
-        const {
-            outpassId
-        } = req.body;
-
+        const { outpassId } = req.body;
 
         if (!outpassId) {
-
             return res.status(400).json({
-                message:
-                    "Outpass ID is required."
+                message: "Outpass ID is required."
             });
         }
 
-
-        // Find logged-in student's profile
-
-        const student =
-            await Student.findOne({
-                user:
-                    req.user.userId
-            });
-
-
-        if (!student) {
-
-            return res.status(404).json({
-                message:
-                    "Student profile not found."
-            });
-        }
-
-
-        // Find outpass
-
-        const outpass =
-            await Outpass.findOne({
-                outpassId:
-                    outpassId.trim()
-            });
-
+        // Find the outpass using the QR-provided outpass ID
+        const outpass = await Outpass.findOne({
+            outpassId: outpassId.trim()
+        }).populate(
+            "student",
+            "studentId name course roomNumber"
+        );
 
         if (!outpass) {
-
             return res.status(404).json({
-                message:
-                    "Outpass not found."
+                message: "Outpass not found."
             });
         }
-
-
-        // Ownership check
-
-        if (
-            String(outpass.student) !==
-            String(student._id)
-        ) {
-
-            return res.status(403).json({
-                message:
-                    "This outpass does not belong to you."
-            });
-        }
-
 
         // Status checks
-
-        if (
-            outpass.status ===
-            "pending"
-        ) {
-
+        if (outpass.status === "pending") {
             return res.status(400).json({
-                message:
-                    "This outpass is still pending approval."
+                message: "This outpass is still pending approval."
             });
         }
 
-
-        if (
-            outpass.status ===
-            "rejected"
-        ) {
-
+        if (outpass.status === "rejected") {
             return res.status(400).json({
-                message:
-                    "This outpass has been rejected."
+                message: "This outpass has been rejected."
             });
         }
 
-
-        if (
-            outpass.status ===
-            "expired"
-        ) {
-
+        if (outpass.status === "expired") {
             return res.status(400).json({
-                message:
-                    "This outpass has expired."
+                message: "This outpass has expired."
             });
         }
 
-
-        if (
-            outpass.status ===
-            "completed"
-        ) {
-
+        if (outpass.status === "completed") {
             return res.status(400).json({
-                message:
-                    "This outpass has already been completed."
+                message: "This outpass has already been completed."
             });
         }
 
-
-        if (
-            outpass.status !==
-            "approved"
-        ) {
-
+        if (outpass.status !== "approved") {
             return res.status(400).json({
-                message:
-                    "This outpass is not valid."
+                message: "This outpass is not valid."
             });
         }
-
 
         // Check active OUT record
-
-        const existingGateLog =
-            await GateLog.findOne({
-
-                outpass:
-                    outpass._id,
-
-                status:
-                    "outside"
-            });
-
-
-        // No OUT yet → EXIT
-
-        if (!existingGateLog) {
-
-            return res.status(200).json({
-
-                action:
-                    "exit",
-
-                message:
-                    "Student can confirm exit.",
-
-                outpassId:
-                    outpass.outpassId
-            });
-        }
-
-
-        // Already OUT → RETURN
-
-        if (
-            existingGateLog.status ===
-            "outside"
-        ) {
-
-            return res.status(200).json({
-
-                action:
-                    "return",
-
-                message:
-                    "Student can confirm return.",
-
-                outpassId:
-                    outpass.outpassId
-            });
-        }
-
-
-        return res.status(400).json({
-            message:
-                "Invalid gate status."
+        const existingGateLog = await GateLog.findOne({
+            outpass: outpass._id,
+            status: "outside"
         });
 
+        // No OUT yet → EXIT
+        if (!existingGateLog) {
+            return res.status(200).json({
+                action: "exit",
+                message: "Student can confirm exit.",
+                outpassId: outpass.outpassId,
+                student: outpass.student
+            });
+        }
+
+        // Already OUT → RETURN
+        if (existingGateLog.status === "outside") {
+            return res.status(200).json({
+                action: "return",
+                message: "Student can confirm return.",
+                outpassId: outpass.outpassId,
+                student: outpass.student
+            });
+        }
+
+        return res.status(400).json({
+            message: "Invalid gate status."
+        });
 
     } catch (error) {
-
         console.error(
             "Student gate status error:",
             error
@@ -1232,7 +1128,6 @@ const studentGateStatus = async (req, res) => {
         });
     }
 };
-
 
 // ==========================================
 // STUDENT CONFIRM GATE ACTION
