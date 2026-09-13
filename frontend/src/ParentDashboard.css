@@ -1,1298 +1,139 @@
-/* ==========================================
-   E-OUTPASS - PARENT DASHBOARD
-========================================== */
+/* =========================================================
+   E-OUTPASS — PARENT DASHBOARD
+   Clean • Modern • Responsive
+========================================================= */
 
 .parent-page {
-  min-height: 100vh;
-  background: #f8fafc;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #0f172a;
+    min-height: 100vh;
+    background: #f5f7fb;
+    color: #172033;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
 }
 
 
-/* ==========================================
+/* =========================================================
    HEADER
-========================================== */
+========================================================= */
 
 .parent-header {
-  min-height: 78px;
-  padding: 16px 50px;
+    min-height: 76px;
+    padding: 0 48px;
 
-  background: rgba(255, 255, 255, 0.97);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid #e7ebf2;
 
-  border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 50;
 
-  position: sticky;
-  top: 0;
-  z-index: 20;
-
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
 }
 
 .parent-header h1 {
-  margin: 0;
+    margin: 0;
 
-  font-size: 25px;
-  font-weight: 700;
+    font-size: 23px;
+    font-weight: 750;
+    letter-spacing: -0.4px;
 
-  color: #0f172a;
+    color: #172033;
 }
 
 .parent-header p {
-  margin: 4px 0 0;
+    margin: 3px 0 0;
 
-  color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
 
-  font-size: 13px;
+    color: #718096;
 }
 
-
 .parent-logout {
-  padding: 10px 20px;
+    padding: 9px 17px;
 
-  border: 1px solid #cbd5e1;
-  border-radius: 9px;
+    border: 1px solid #d8dee9;
+    border-radius: 9px;
 
-  background: white;
+    background: #ffffff;
+    color: #344054;
 
-  color: #334155;
+    font-size: 13px;
+    font-weight: 650;
 
-  font-size: 13px;
-  font-weight: 600;
+    cursor: pointer;
 
-  cursor: pointer;
-
-  transition: all 0.2s ease;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .parent-logout:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
-  transform: translateY(-1px);
+    background: #f8fafc;
+    border-color: #b9c2d0;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+}
+
+.parent-logout:active {
+    transform: translateY(0);
 }
 
 
-/* ==========================================
+/* =========================================================
    MAIN CONTENT
-========================================== */
+========================================================= */
 
 .parent-content {
-  max-width: 1100px;
+    width: 100%;
+    max-width: 1080px;
 
-  margin: 0 auto;
+    margin: 0 auto;
 
-  padding: 42px 30px 60px;
+    padding: 38px 28px 70px;
+
+    box-sizing: border-box;
 }
 
 
-/* ==========================================
-   WELCOME
-========================================== */
+/* =========================================================
+   WELCOME BANNER
+========================================================= */
 
 .parent-welcome {
-  margin-bottom: 25px;
-}
+    position: relative;
 
-.parent-welcome h2 {
-  margin: 0;
+    margin-bottom: 24px;
+    padding: 28px 30px;
 
-  font-size: 30px;
-  line-height: 1.2;
+    overflow: hidden;
 
-  color: #0f172a;
-}
-
-.parent-welcome p {
-  margin: 9px 0 0;
-
-  color: #64748b;
-
-  font-size: 15px;
-}
-
-
-/* ==========================================
-   SUCCESS / ERROR
-========================================== */
-
-.success-box,
-.parent-error-box {
-  margin: 20px 0;
-
-  padding: 14px 18px;
-
-  border-radius: 11px;
-
-  font-size: 14px;
-
-  border: 1px solid;
-}
-
-.success-box {
-  background: #ecfdf5;
-  border-color: #bbf7d0;
-  color: #15803d;
-}
-
-.parent-error-box {
-  background: #fef2f2;
-  border-color: #fecaca;
-  color: #b91c1c;
-}
-
-
-/* ==========================================
-   LINKED STUDENT
-========================================== */
-
-.student-card {
-  margin-top: 28px;
-
-  padding: 25px 28px;
-
-  background: white;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 17px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 20px;
-
-  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.035);
-
-  transition: all 0.2s ease;
-}
-
-.student-card:hover {
-  border-color: #cbd5e1;
-
-  box-shadow: 0 7px 24px rgba(15, 23, 42, 0.06);
-}
-
-
-.student-icon {
-  width: 66px;
-  height: 66px;
-
-  flex-shrink: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 16px;
-
-  background: #dbeafe;
-
-  font-size: 31px;
-}
-
-.student-card span {
-  display: block;
-
-  color: #94a3b8;
-
-  font-size: 12px;
-  font-weight: 600;
-
-  text-transform: uppercase;
-
-  letter-spacing: 0.7px;
-}
-
-.student-card h2 {
-  margin: 5px 0;
-
-  font-size: 21px;
-  font-weight: 700;
-
-  color: #0f172a;
-}
-
-.student-card p {
-  margin: 0;
-
-  color: #64748b;
-
-  font-size: 14px;
-}
-
-
-/* ==========================================
-   REQUEST ACTION
-========================================== */
-
-.parent-action {
-  margin-top: 25px;
-
-  padding: 27px 28px;
-
-  background: white;
-
-  border: 1px solid #e2e8f0;
-  border-radius: 17px;
-
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 25px;
-
-  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.035);
-}
-
-.parent-action h2 {
-  margin: 0;
-
-  font-size: 22px;
-}
-
-.parent-action p {
-  margin: 7px 0 0;
-
-  color: #64748b;
-
-  font-size: 14px;
-}
-
-
-.request-button {
-  padding: 13px 21px;
-
-  border: none;
-
-  border-radius: 10px;
-
-  background: #2563eb;
-
-  color: white;
-
-  font-size: 14px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  white-space: nowrap;
-
-  transition: all 0.2s ease;
-}
-
-.request-button:hover:not(:disabled) {
-  background: #1d4ed8;
-
-  transform: translateY(-1px);
-
-  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.22);
-}
-
-.request-button:disabled {
-  opacity: 0.55;
-
-  cursor: not-allowed;
-}
-
-
-/* ==========================================
-   OUTPASS FORM CARD
-========================================== */
-
-.outpass-form-card {
-  margin-top: 25px;
-
-  padding: 30px;
-
-  background: white;
-
-  border: 1px solid #dbeafe;
-
-  border-radius: 17px;
-
-  box-shadow: 0 5px 20px rgba(15, 23, 42, 0.045);
-}
-
-
-/* ==========================================
-   FORM HEADER
-========================================== */
-
-.form-header {
-  display: flex;
-
-  justify-content: space-between;
-  align-items: flex-start;
-
-  gap: 20px;
-
-  padding-bottom: 20px;
-
-  border-bottom: 1px solid #eef2f7;
-}
-
-.form-header h2 {
-  margin: 0;
-
-  font-size: 21px;
-}
-
-.form-header p {
-  margin: 7px 0 0;
-
-  color: #64748b;
-
-  font-size: 13px;
-}
-
-
-/* ==========================================
-   CLOSE BUTTON
-========================================== */
-
-.close-form {
-  width: 36px;
-  height: 36px;
-
-  flex-shrink: 0;
-
-  border: none;
-
-  border-radius: 9px;
-
-  background: #f1f5f9;
-
-  color: #475569;
-
-  cursor: pointer;
-
-  font-size: 16px;
-
-  transition: all 0.2s ease;
-}
-
-.close-form:hover {
-  background: #e2e8f0;
-
-  color: #0f172a;
-
-  transform: rotate(2deg);
-}
-
-
-/* ==========================================
-   FORM
-========================================== */
-
-.outpass-form {
-  margin-top: 25px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-
-  margin-bottom: 8px;
-
-  color: #334155;
-
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-
-  box-sizing: border-box;
-
-  padding: 13px 14px;
-
-  border: 1px solid #cbd5e1;
-
-  border-radius: 10px;
-
-  outline: none;
-
-  font-family: inherit;
-
-  font-size: 14px;
-
-  color: #0f172a;
-
-  background: white;
-
-  transition: all 0.2s ease;
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-  color: #94a3b8;
-}
-
-.form-group textarea {
-  resize: vertical;
-
-  min-height: 90px;
-}
-
-.form-group input:hover,
-.form-group textarea:hover {
-  border-color: #94a3b8;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  border-color: #2563eb;
-
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-
-/* ==========================================
-   FORM ROW
-========================================== */
-
-.form-row {
-  display: grid;
-
-  grid-template-columns: repeat(3, 1fr);
-
-  gap: 18px;
-}
-
-
-/* ==========================================
-   SUBMIT BUTTON
-========================================== */
-
-.submit-outpass-button {
-  width: 100%;
-
-  padding: 14px;
-
-  margin-top: 3px;
-
-  border: none;
-
-  border-radius: 10px;
-
-  background: #2563eb;
-
-  color: white;
-
-  font-size: 14px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: all 0.2s ease;
-}
-
-.submit-outpass-button:hover:not(:disabled) {
-  background: #1d4ed8;
-
-  box-shadow: 0 5px 13px rgba(37, 99, 235, 0.2);
-
-  transform: translateY(-1px);
-}
-
-.submit-outpass-button:disabled {
-  opacity: 0.65;
-
-  cursor: not-allowed;
-}
-
-
-/* ==========================================
-   HISTORY SECTION
-========================================== */
-
-.history-section {
-  margin-top: 42px;
-}
-
-.history-header {
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  gap: 20px;
-}
-
-.history-header h2 {
-  margin: 0 0 5px;
-
-  font-size: 23px;
-
-  color: #0f172a;
-}
-
-.history-header p {
-  margin: 0;
-
-  color: #64748b;
-
-  font-size: 13px;
-}
-
-
-/* ==========================================
-   REFRESH
-========================================== */
-
-.refresh-history {
-  padding: 9px 15px;
-
-  border: 1px solid #cbd5e1;
-
-  border-radius: 9px;
-
-  background: white;
-
-  color: #334155;
-
-  font-size: 12px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  white-space: nowrap;
-
-  transition: all 0.2s ease;
-}
-
-.refresh-history:hover {
-  background: #f8fafc;
-
-  border-color: #94a3b8;
-
-  transform: translateY(-1px);
-}
-
-
-/* ==========================================
-   EMPTY HISTORY
-========================================== */
-
-.empty-history {
-  margin-top: 20px;
-
-  padding: 50px 25px;
-
-  text-align: center;
-
-  background: white;
-
-  border: 1px solid #e2e8f0;
-
-  border-radius: 17px;
-
-  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
-}
-
-.history-icon {
-  width: 58px;
-  height: 58px;
-
-  margin: 0 auto 14px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: #eff6ff;
-
-  font-size: 27px;
-}
-
-.empty-history h3 {
-  margin: 0 0 7px;
-
-  font-size: 17px;
-}
-
-.empty-history p {
-  margin: 0;
-
-  color: #64748b;
-
-  font-size: 13px;
-}
-
-
-/* ==========================================
-   REQUEST LIST
-========================================== */
-
-.parent-request-list {
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 18px;
-
-  margin-top: 20px;
-}
-
-
-/* ==========================================
-   REQUEST CARD
-========================================== */
-
-.parent-request-card {
-  padding: 24px;
-
-  background: white;
-
-  border: 1px solid #e2e8f0;
-
-  border-radius: 17px;
-
-  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.035);
-
-  transition: all 0.2s ease;
-}
-
-.parent-request-card:hover {
-  border-color: #cbd5e1;
-
-  box-shadow: 0 7px 24px rgba(15, 23, 42, 0.055);
-
-  transform: translateY(-1px);
-}
-
-
-/* ==========================================
-   REQUEST TOP
-========================================== */
-
-.request-top {
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: flex-start;
-
-  gap: 15px;
-}
-
-.request-top h3 {
-  margin: 0;
-
-  font-size: 19px;
-
-  color: #0f172a;
-}
-
-.request-top p {
-  margin: 6px 0 0;
-
-  color: #64748b;
-
-  font-size: 13px;
-}
-
-
-/* ==========================================
-   STATUS BADGES
-========================================== */
-
-.status-badge {
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
-
-  padding: 6px 12px;
-
-  border-radius: 20px;
-
-  font-size: 11px;
-  font-weight: 700;
-
-  text-transform: capitalize;
-
-  white-space: nowrap;
-}
-
-.status-pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.status-approved {
-  background: #dcfce7;
-  color: #15803d;
-}
-
-.status-rejected {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-.status-completed {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.status-expired {
-  background: #e2e8f0;
-  color: #475569;
-}
-
-
-/* ==========================================
-   REQUEST INFO
-========================================== */
-
-.request-info {
-  display: grid;
-
-  grid-template-columns: repeat(4, 1fr);
-
-  gap: 0;
-
-  margin-top: 20px;
-
-  padding-top: 18px;
-
-  border-top: 1px solid #e2e8f0;
-}
-
-.request-info > div {
-  padding: 0 16px;
-
-  border-right: 1px solid #eef2f7;
-}
-
-.request-info > div:first-child {
-  padding-left: 0;
-}
-
-.request-info > div:last-child {
-  padding-right: 0;
-
-  border-right: none;
-}
-
-.request-info span {
-  display: block;
-
-  margin-bottom: 6px;
-
-  color: #94a3b8;
-
-  font-size: 11px;
-  font-weight: 600;
-
-  text-transform: uppercase;
-
-  letter-spacing: 0.4px;
-}
-
-.request-info strong {
-  display: block;
-
-  color: #0f172a;
-
-  font-size: 13px;
-
-  word-break: break-word;
-}
-
-
-/* ==========================================
-   REJECTION BOX
-========================================== */
-
-.rejection-box {
-  margin-top: 18px;
-
-  padding: 13px 15px;
-
-  border: 1px solid #fecaca;
-
-  border-radius: 10px;
-
-  background: #fef2f2;
-
-  color: #b91c1c;
-
-  font-size: 13px;
-
-  line-height: 1.5;
-}
-
-
-/* ==========================================
-   QR PREVIEW
-========================================== */
-
-.qr-preview {
-  margin-top: 20px;
-
-  padding: 22px;
-
-  border: 1px solid #dbeafe;
-
-  border-radius: 13px;
-
-  background: #f8fbff;
-
-  text-align: center;
-}
-
-.qr-preview p {
-  margin: 5px 0;
-
-  color: #475569;
-
-  font-size: 13px;
-}
-
-.qr-preview p:first-child {
-  color: #15803d;
-
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.qr-preview img {
-  width: 180px;
-  height: 180px;
-
-  margin: 12px auto;
-
-  padding: 8px;
-
-  display: block;
-
-  background: white;
-
-  border: 1px solid #e2e8f0;
-
-  border-radius: 10px;
-
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.07);
-}
-
-
-/* ==========================================
-   TABLET
-========================================== */
-
-@media (max-width: 800px) {
-
-  .parent-header {
-    padding: 16px 25px;
-  }
-
-  .parent-content {
-    padding: 32px 20px 50px;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .request-info {
-    grid-template-columns: repeat(2, 1fr);
-
-    gap: 18px 12px;
-  }
-
-  .request-info > div {
-    padding: 0;
-    border-right: none;
-  }
-
-}
-
-
-/* ==========================================
-   MOBILE
-========================================== */
-
-@media (max-width: 600px) {
-
-  .parent-header {
-    min-height: 70px;
-
-    padding: 14px 18px;
-  }
-
-  .parent-header h1 {
-    font-size: 20px;
-  }
-
-  .parent-header p {
-    font-size: 11px;
-  }
-
-  .parent-logout {
-    padding: 8px 13px;
-
-    font-size: 11px;
-  }
-
-
-  .parent-content {
-    padding: 25px 15px 40px;
-  }
-
-
-  .parent-welcome h2 {
-    font-size: 25px;
-  }
-
-  .parent-welcome p {
-    font-size: 13px;
-  }
-
-
-  .student-card {
-    padding: 20px;
-
-    gap: 14px;
-
-    align-items: flex-start;
-  }
-
-  .student-icon {
-    width: 52px;
-    height: 52px;
-
-    font-size: 25px;
-  }
-
-  .student-card h2 {
-    font-size: 18px;
-  }
-
-  .student-card p {
-    font-size: 12px;
-
-    line-height: 1.5;
-  }
-
-
-  .parent-action {
-    padding: 22px;
-
-    flex-direction: column;
-
-    align-items: flex-start;
-
-    gap: 18px;
-  }
-
-  .parent-action h2 {
-    font-size: 20px;
-  }
-
-  .request-button {
-    width: 100%;
-  }
-
-
-  .outpass-form-card {
-    padding: 22px 18px;
-  }
-
-
-  .form-header h2 {
-    font-size: 19px;
-  }
-
-
-  .history-header {
-    align-items: flex-start;
-
-    flex-direction: column;
-
-    gap: 12px;
-  }
-
-  .refresh-history {
-    width: 100%;
-  }
-
-
-  .parent-request-card {
-    padding: 20px 17px;
-  }
-
-
-  .request-top {
-    flex-direction: column;
-
-    gap: 12px;
-  }
-
-
-  /* ======================================
-     MOBILE REQUEST INFO
-
-     OUTPASS ID = FULL WIDTH TOP
-     DATE / LEAVING / EXPECTED = 3 COLUMNS
-  ====================================== */
-
-  .request-info {
-    display: grid;
-
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 0;
-
-    margin-top: 20px;
-
-    padding-top: 0;
-
-    border-top: 1px solid #e2e8f0;
-  }
-
-
-  /* All fields */
-
-  .request-info > div,
-  .request-info > div:nth-child(odd) {
-    padding: 13px 8px;
-
-    border-right: 1px solid #eef2f7;
-    border-bottom: none;
-  }
-
-
-  /* OUTPASS ID - FULL WIDTH AT TOP */
-
-  .request-info > div:last-child {
-
-    grid-column: 1 / -1;
-
-    order: -1;
-
-    padding: 14px 0;
-
-    margin-bottom: 0;
-
-    border-right: none;
-
-    border-bottom: 1px solid #eef2f7;
-  }
-
-
-  /* DATE */
-
-  .request-info > div:nth-child(1) {
-    border-right: 1px solid #eef2f7;
-  }
-
-
-  /* LEAVING */
-
-  .request-info > div:nth-child(2) {
-    border-right: 1px solid #eef2f7;
-  }
-
-
-  /* EXPECTED RETURN */
-
-  .request-info > div:nth-child(3) {
-    border-right: none;
-  }
-
-
-  .request-info span {
-    margin-bottom: 5px;
-
-    font-size: 9px;
-
-    letter-spacing: 0.35px;
-  }
-
-
-  .request-info strong {
-    font-size: 12px;
-
-    line-height: 1.4;
-
-    word-break: break-word;
-  }
-
-
-  .rejection-box {
-    font-size: 12px;
-
-    padding: 12px;
-  }
-
-
-  .qr-preview {
-    padding: 18px;
-  }
-
-
-  .qr-preview img {
-    width: 160px;
-    height: 160px;
-  }
-
-}
-
-
-/* ==========================================
-   VERY SMALL PHONES
-========================================== */
-
-@media (max-width: 380px) {
-
-  .parent-content {
-    padding-left: 12px;
-
-    padding-right: 12px;
-  }
-
-
-  .student-card {
-    padding: 17px;
-  }
-
-
-  .student-icon {
-    width: 46px;
-    height: 46px;
-
-    font-size: 22px;
-  }
-
-
-  .student-card h2 {
-    font-size: 16px;
-  }
-
-
-  .parent-action {
-    padding: 19px;
-  }
-
-
-  .outpass-form-card {
-    padding: 18px 15px;
-  }
-
-
-  /* Slightly tighter 3-column layout */
-
-  .request-info > div,
-  .request-info > div:nth-child(odd) {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-
-
-  .request-info span {
-    font-size: 8px;
-  }
-
-
-  .request-info strong {
-    font-size: 11px;
-  }
-
-}
-/* ==========================================
-   FINAL MOBILE HISTORY HEADER FIX
-========================================== */
-
-@media (max-width: 600px) {
-
-  .history-header {
-    display: grid !important;
-
-    grid-template-columns: 1fr auto !important;
-
-    grid-template-rows: auto auto !important;
-
-    align-items: center !important;
-
-    justify-content: initial !important;
-
-    flex-direction: row !important;
-
-    gap: 4px 10px !important;
-  }
-
-  .history-header h2 {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-
-    margin: 0 !important;
-
-    font-size: 21px !important;
-  }
-
-  .history-header p {
-    grid-column: 1 !important;
-    grid-row: 2 !important;
-
-    margin: 0 !important;
-
-    font-size: 12px !important;
-  }
-
-  .refresh-history {
-    grid-column: 2 !important;
-    grid-row: 1 / 3 !important;
-
-    width: auto !important;
-
-    padding: 8px 12px !important;
-
-    margin: 0 !important;
-
-    font-size: 11px !important;
-
-    white-space: nowrap !important;
-  }
-}
-/* ==========================================
-   PREMIUM WELCOME BANNER
-========================================== */
-
-.parent-welcome {
-    padding: 26px 28px;
-
-    margin-bottom: 28px;
-
+    border: 1px solid #dce7fb;
     border-radius: 18px;
 
     background:
         linear-gradient(
             135deg,
-            #eff6ff,
-            #f8fbff
+            #eef5ff 0%,
+            #f8fbff 55%,
+            #ffffff 100%
         );
 
-    border: 1px solid #dbeafe;
-
     box-shadow:
-        0 5px 18px rgba(37, 99, 235, 0.05);
-
-    position: relative;
-
-    overflow: hidden;
+        0 6px 22px rgba(37, 99, 235, 0.055);
 }
 
 .parent-welcome::after {
@@ -1300,15 +141,17 @@
 
     position: absolute;
 
-    width: 170px;
-    height: 170px;
+    width: 190px;
+    height: 190px;
+
+    right: -75px;
+    top: -90px;
 
     border-radius: 50%;
 
-    background: rgba(37, 99, 235, 0.06);
+    background: rgba(37, 99, 235, 0.055);
 
-    right: -60px;
-    top: -70px;
+    pointer-events: none;
 }
 
 .parent-welcome h2 {
@@ -1318,8 +161,11 @@
     margin: 0;
 
     font-size: 29px;
+    line-height: 1.2;
+    font-weight: 750;
+    letter-spacing: -0.6px;
 
-    color: #0f172a;
+    color: #14213d;
 }
 
 .parent-welcome p {
@@ -1328,127 +174,186 @@
 
     margin: 8px 0 0;
 
-    color: #526987;
-
     font-size: 14px;
+    line-height: 1.6;
+
+    color: #61708a;
 }
 
 
-/* MOBILE */
+/* =========================================================
+   SUCCESS / ERROR
+========================================================= */
 
-@media (max-width: 600px) {
+.success-box,
+.parent-error-box {
+    margin: 18px 0;
 
-    .parent-welcome {
-        padding: 22px 20px;
+    padding: 13px 16px;
 
-        border-radius: 16px;
-    }
-
-    .parent-welcome h2 {
-        font-size: 24px;
-    }
-
-    .parent-welcome p {
-        font-size: 13px;
-    }
-}
-/* ==========================================
-   REQUEST FORM - FINAL POLISH
-========================================== */
-
-.outpass-form-card {
-    background:
-        linear-gradient(
-            180deg,
-            #ffffff 0%,
-            #fbfdff 100%
-        );
-
-    box-shadow:
-        0 8px 28px rgba(15, 23, 42, 0.055);
-}
-
-.form-header {
-    padding-bottom: 22px;
-
-    border-bottom: 1px solid #e8eef6;
-}
-
-.form-header h2 {
-    color: #0f172a;
-
-    font-size: 22px;
-
-    letter-spacing: -0.3px;
-}
-
-.form-header p {
-    color: #64748b;
+    border-radius: 11px;
 
     font-size: 13px;
+    line-height: 1.5;
+
+    border: 1px solid;
 }
 
-.form-header strong {
-    color: #1f3c88;
+.success-box {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+
+    color: #15803d;
+}
+
+.parent-error-box {
+    background: #fef2f2;
+    border-color: #fecaca;
+
+    color: #b91c1c;
 }
 
 
-/* ==========================================
-   FORM INPUT POLISH
-========================================== */
+/* =========================================================
+   LINKED STUDENT CARD
+========================================================= */
 
-.form-group input,
-.form-group textarea {
-    border-color: #d4dce8;
+.student-card {
+    display: flex;
+    align-items: center;
 
-    background: #fbfcfe;
+    gap: 18px;
+
+    margin-top: 22px;
+    padding: 23px 25px;
+
+    background: #ffffff;
+
+    border: 1px solid #e4e9f1;
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 16px rgba(15, 23, 42, 0.035);
 
     transition:
         border-color 0.2s ease,
         box-shadow 0.2s ease,
-        background 0.2s ease,
         transform 0.2s ease;
 }
 
-.form-group input:hover,
-.form-group textarea:hover {
-    border-color: #aebbd0;
-
-    background: #ffffff;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    border-color: #2563eb;
-
-    background: #ffffff;
+.student-card:hover {
+    border-color: #d3dbe7;
 
     box-shadow:
-        0 0 0 4px rgba(37, 99, 235, 0.08);
+        0 8px 22px rgba(15, 23, 42, 0.055);
+
+    transform: translateY(-1px);
 }
 
+.student-icon {
+    width: 62px;
+    height: 62px;
 
-/* ==========================================
-   LABELS
-========================================== */
+    flex-shrink: 0;
 
-.form-group label {
-    color: #26364d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: #edf4ff;
+
+    font-size: 29px;
+}
+
+.student-card span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #7b8799;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+}
+
+.student-card h2 {
+    margin: 0;
+
+    color: #182235;
+
+    font-size: 19px;
+    font-weight: 720;
+    letter-spacing: -0.2px;
+}
+
+.student-card p {
+    margin: 6px 0 0;
+
+    color: #68768b;
 
     font-size: 13px;
-
-    font-weight: 650;
+    line-height: 1.5;
 }
 
 
-/* ==========================================
-   SUBMIT BUTTON
-========================================== */
+/* =========================================================
+   REQUEST ACTION
+========================================================= */
 
-.submit-outpass-button {
-    height: 50px;
+.parent-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    border-radius: 11px;
+    gap: 25px;
+
+    margin-top: 22px;
+    padding: 23px 25px;
+
+    border: 1px solid #dbe6f7;
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fbff,
+            #ffffff
+        );
+
+    box-shadow:
+        0 4px 16px rgba(15, 23, 42, 0.03);
+}
+
+.parent-action h2 {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 19px;
+    font-weight: 720;
+}
+
+.parent-action p {
+    margin: 6px 0 0;
+
+    color: #718096;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.request-button {
+    flex-shrink: 0;
+
+    padding: 12px 19px;
+
+    border: none;
+    border-radius: 10px;
 
     background:
         linear-gradient(
@@ -1457,12 +362,267 @@
             #315ee8
         );
 
-    font-size: 15px;
+    color: #ffffff;
 
+    font-size: 13px;
     font-weight: 650;
 
+    cursor: pointer;
+
     box-shadow:
-        0 8px 18px rgba(37, 99, 235, 0.18);
+        0 7px 16px rgba(37, 99, 235, 0.17);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+.request-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 22px rgba(37, 99, 235, 0.23);
+
+    filter: brightness(1.03);
+}
+
+.request-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.request-button:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   OUTPASS FORM
+========================================================= */
+
+.outpass-form-card {
+    margin-top: 22px;
+    padding: 28px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #fbfdff 100%
+        );
+
+    border: 1px solid #dfe6ef;
+    border-radius: 17px;
+
+    box-shadow:
+        0 9px 30px rgba(15, 23, 42, 0.06);
+}
+
+.form-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #e8edf4;
+}
+
+.form-header h2 {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 21px;
+    font-weight: 750;
+    letter-spacing: -0.3px;
+}
+
+.form-header p {
+    margin: 6px 0 0;
+
+    color: #718096;
+
+    font-size: 13px;
+}
+
+.form-header strong {
+    color: #2855a6;
+}
+
+.close-form {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #e5eaf1;
+    border-radius: 9px;
+
+    background: #f5f7fa;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.close-form:hover {
+    background: #edf2f7;
+
+    border-color: #d5dce6;
+
+    color: #334155;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.outpass-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 19px;
+
+    margin-top: 23px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.form-group label {
+    color: #344054;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 11px 13px;
+
+    border: 1px solid #d5dde8;
+    border-radius: 9px;
+
+    background: #fbfcfe;
+
+    color: #172033;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.form-group input {
+    height: 44px;
+}
+
+.form-group textarea {
+    min-height: 88px;
+
+    resize: vertical;
+
+    line-height: 1.5;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #a0aabb;
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+    background: #ffffff;
+
+    border-color: #b9c5d5;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    background: #ffffff;
+
+    border-color: #3b72e8;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.form-row {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 17px;
+}
+
+
+/* =========================================================
+   SUBMIT BUTTON
+========================================================= */
+
+.submit-outpass-button {
+    width: 100%;
+    height: 48px;
+
+    margin-top: 2px;
+
+    border: none;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #315ee8
+        );
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 17px rgba(37, 99, 235, 0.18);
 
     transition:
         transform 0.2s ease,
@@ -1474,7 +634,7 @@
     transform: translateY(-2px);
 
     box-shadow:
-        0 12px 24px rgba(37, 99, 235, 0.24);
+        0 11px 23px rgba(37, 99, 235, 0.24);
 
     filter: brightness(1.03);
 }
@@ -1486,32 +646,1008 @@
         0 6px 14px rgba(37, 99, 235, 0.18);
 }
 
+.submit-outpass-button:disabled {
+    opacity: 0.6;
 
-/* ==========================================
-   CLOSE BUTTON
-========================================== */
-
-.close-form {
-    background: #f4f7fb;
-
-    border: 1px solid #edf1f6;
+    cursor: not-allowed;
 }
 
-.close-form:hover {
-    background: #eaf0f8;
 
-    border-color: #d7e0ec;
+/* =========================================================
+   HISTORY SECTION
+========================================================= */
+
+.history-section {
+    margin-top: 42px;
 }
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.history-header h2 {
+    margin: 0 0 5px;
+
+    color: #172033;
+
+    font-size: 22px;
+    font-weight: 750;
+    letter-spacing: -0.3px;
+}
+
+.history-header p {
+    margin: 0;
+
+    color: #718096;
+
+    font-size: 13px;
+}
+
+.refresh-history {
+    padding: 9px 14px;
+
+    border: 1px solid #d6dee9;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #344054;
+
+    font-family: inherit;
+
+    font-size: 12px;
+    font-weight: 650;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.refresh-history:hover {
+    background: #f8fafc;
+
+    border-color: #b8c3d2;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   EMPTY HISTORY
+========================================================= */
+
+.empty-history {
+    margin-top: 19px;
+    padding: 48px 25px;
+
+    text-align: center;
+
+    background: #ffffff;
+
+    border: 1px solid #e3e8f0;
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 16px rgba(15, 23, 42, 0.03);
+}
+
+.history-icon {
+    width: 56px;
+    height: 56px;
+
+    margin: 0 auto 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #edf4ff;
+
+    font-size: 25px;
+}
+
+.empty-history h3 {
+    margin: 0 0 7px;
+
+    color: #263246;
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.empty-history p {
+    max-width: 360px;
+
+    margin: 0 auto;
+
+    color: #7a8799;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   REQUEST LIST
+========================================================= */
+
+.parent-request-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+
+    margin-top: 19px;
+}
+
+
+/* =========================================================
+   REQUEST CARD
+========================================================= */
+
+.parent-request-card {
+    padding: 23px 24px;
+
+    background: #ffffff;
+
+    border: 1px solid #e1e7ef;
+    border-radius: 16px;
+
+    box-shadow:
+        0 4px 16px rgba(15, 23, 42, 0.035);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.parent-request-card:hover {
+    border-color: #d0d9e6;
+
+    box-shadow:
+        0 8px 22px rgba(15, 23, 42, 0.055);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   REQUEST TOP
+========================================================= */
+
+.request-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 18px;
+}
+
+.request-top h3 {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 18px;
+    font-weight: 720;
+
+    letter-spacing: -0.2px;
+}
+
+.request-top p {
+    margin: 6px 0 0;
+
+    max-width: 680px;
+
+    color: #68768b;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    min-width: 68px;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 750;
+
+    text-transform: capitalize;
+
+    white-space: nowrap;
+}
+
+.status-pending {
+    background: #fff7df;
+    color: #a16207;
+}
+
+.status-approved {
+    background: #eaf9ef;
+    color: #15803d;
+}
+
+.status-rejected {
+    background: #fff0f0;
+    color: #b91c1c;
+}
+
+.status-completed {
+    background: #edf4ff;
+    color: #2457bd;
+}
+
+.status-expired {
+    background: #eef1f5;
+    color: #596579;
+}
+
+
+/* =========================================================
+   REQUEST INFO
+========================================================= */
+
+.request-info {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    margin-top: 19px;
+    padding-top: 17px;
+
+    border-top: 1px solid #e8edf3;
+}
+
+.request-info > div {
+    min-width: 0;
+
+    padding: 0 15px;
+
+    border-right: 1px solid #edf1f5;
+}
+
+.request-info > div:first-child {
+    padding-left: 0;
+}
+
+.request-info > div:last-child {
+    padding-right: 0;
+
+    border-right: none;
+}
+
+.request-info span {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #8a96a8;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+}
+
+.request-info strong {
+    display: block;
+
+    color: #263246;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    line-height: 1.4;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   REJECTION / APPROVED BOX
+========================================================= */
+
+.rejection-box,
 .approved-box {
-    margin-top: 18px;
-    padding: 13px 16px;
+    margin-top: 17px;
 
-    border: 1px solid #bbf7d0;
+    padding: 12px 14px;
+
     border-radius: 10px;
 
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.rejection-box {
+    background: #fff5f5;
+
+    border: 1px solid #fecaca;
+
+    color: #b91c1c;
+}
+
+.approved-box {
     background: #f0fdf4;
+
+    border: 1px solid #bbf7d0;
+
     color: #15803d;
 
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+
+/* =========================================================
+   QR PREVIEW
+========================================================= */
+
+.qr-preview {
+    margin-top: 18px;
+    padding: 20px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f8fbff,
+            #ffffff
+        );
+
+    border: 1px solid #dce8fa;
+    border-radius: 13px;
+}
+
+.qr-preview p {
+    margin: 5px 0;
+
+    color: #59687c;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.qr-preview p:first-child {
+    color: #15803d;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.qr-preview img {
+    width: 175px;
+    height: 175px;
+
+    display: block;
+
+    margin: 12px auto;
+
+    padding: 8px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e1e7ef;
+    border-radius: 10px;
+
+    box-shadow:
+        0 5px 15px rgba(15, 23, 42, 0.07);
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .parent-header {
+        padding: 0 25px;
+    }
+
+    .parent-content {
+        padding: 32px 20px 55px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .request-info {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 18px 0;
+    }
+
+    .request-info > div {
+        padding: 0 13px;
+
+        border-right: none;
+    }
+
+    .request-info > div:nth-child(odd) {
+        padding-left: 0;
+    }
+
+    .request-info > div:nth-child(even) {
+        padding-right: 0;
+    }
+
+    .request-info > div:nth-child(1),
+    .request-info > div:nth-child(2) {
+        padding-bottom: 0;
+    }
+
+    .request-info > div:nth-child(1) {
+        border-right: 1px solid #edf1f5;
+    }
+
+    .request-info > div:nth-child(3) {
+        border-right: 1px solid #edf1f5;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .parent-header {
+        min-height: 68px;
+
+        padding: 0 17px;
+    }
+
+    .parent-header h1 {
+        font-size: 19px;
+    }
+
+    .parent-header p {
+        margin-top: 2px;
+
+        font-size: 10px;
+    }
+
+    .parent-logout {
+        padding: 8px 12px;
+
+        font-size: 11px;
+    }
+
+
+    .parent-content {
+        padding: 23px 14px 42px;
+    }
+
+
+    /* WELCOME */
+
+    .parent-welcome {
+        padding: 22px 20px;
+
+        margin-bottom: 19px;
+
+        border-radius: 16px;
+    }
+
+    .parent-welcome h2 {
+        font-size: 24px;
+    }
+
+    .parent-welcome p {
+        margin-top: 7px;
+
+        font-size: 12px;
+    }
+
+
+    /* MESSAGES */
+
+    .success-box,
+    .parent-error-box {
+        padding: 12px 13px;
+
+        font-size: 12px;
+    }
+
+
+    /* STUDENT */
+
+    .student-card {
+        align-items: flex-start;
+
+        gap: 13px;
+
+        margin-top: 18px;
+
+        padding: 19px;
+
+        border-radius: 15px;
+    }
+
+    .student-icon {
+        width: 50px;
+        height: 50px;
+
+        border-radius: 13px;
+
+        font-size: 24px;
+    }
+
+    .student-card span {
+        margin-bottom: 4px;
+
+        font-size: 9px;
+    }
+
+    .student-card h2 {
+        font-size: 17px;
+
+        line-height: 1.35;
+    }
+
+    .student-card p {
+        margin-top: 5px;
+
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+
+    /* ACTION */
+
+    .parent-action {
+        flex-direction: column;
+        align-items: stretch;
+
+        gap: 17px;
+
+        margin-top: 18px;
+
+        padding: 20px;
+
+        border-radius: 15px;
+    }
+
+    .parent-action h2 {
+        font-size: 19px;
+    }
+
+    .parent-action p {
+        font-size: 12px;
+    }
+
+    .request-button {
+        width: 100%;
+
+        padding: 12px 16px;
+
+        font-size: 12px;
+    }
+
+
+    /* FORM */
+
+    .outpass-form-card {
+        margin-top: 18px;
+
+        padding: 21px 17px;
+
+        border-radius: 15px;
+    }
+
+    .form-header {
+        padding-bottom: 17px;
+    }
+
+    .form-header h2 {
+        font-size: 19px;
+    }
+
+    .form-header p {
+        font-size: 12px;
+    }
+
+    .close-form {
+        width: 32px;
+        height: 32px;
+    }
+
+    .outpass-form {
+        gap: 17px;
+
+        margin-top: 19px;
+    }
+
+    .form-group {
+        gap: 6px;
+    }
+
+    .form-group label {
+        font-size: 11px;
+    }
+
+    .form-group input {
+        height: 43px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        padding: 10px 12px;
+
+        font-size: 12px;
+    }
+
+    .form-group textarea {
+        min-height: 82px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+
+        gap: 16px;
+    }
+
+    .submit-outpass-button {
+        height: 47px;
+
+        font-size: 13px;
+    }
+
+
+    /* HISTORY */
+
+    .history-section {
+        margin-top: 34px;
+    }
+
+    .history-header {
+        display: grid;
+
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+
+        align-items: center;
+
+        gap: 3px 9px;
+    }
+
+    .history-header h2 {
+        grid-column: 1;
+        grid-row: 1;
+
+        margin: 0;
+
+        font-size: 20px;
+    }
+
+    .history-header p {
+        grid-column: 1;
+        grid-row: 2;
+
+        font-size: 11px;
+    }
+
+    .refresh-history {
+        grid-column: 2;
+        grid-row: 1 / 3;
+
+        width: auto;
+
+        padding: 8px 11px;
+
+        font-size: 10px;
+    }
+
+
+    /* EMPTY */
+
+    .empty-history {
+        margin-top: 17px;
+
+        padding: 40px 18px;
+
+        border-radius: 15px;
+    }
+
+    .history-icon {
+        width: 52px;
+        height: 52px;
+
+        font-size: 23px;
+    }
+
+    .empty-history h3 {
+        font-size: 16px;
+    }
+
+    .empty-history p {
+        font-size: 12px;
+    }
+
+
+    /* REQUEST CARD */
+
+    .parent-request-list {
+        gap: 14px;
+
+        margin-top: 17px;
+    }
+
+    .parent-request-card {
+        padding: 19px 16px;
+
+        border-radius: 15px;
+    }
+
+    .request-top {
+        flex-direction: column;
+
+        gap: 10px;
+    }
+
+    .request-top h3 {
+        font-size: 17px;
+    }
+
+    .request-top p {
+        margin-top: 5px;
+
+        font-size: 12px;
+    }
+
+    .status-badge {
+        align-self: flex-start;
+
+        min-width: 60px;
+
+        padding: 5px 10px;
+
+        font-size: 10px;
+    }
+
+
+    /* REQUEST INFO */
+
+    .request-info {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 0;
+
+        margin-top: 18px;
+        padding-top: 0;
+
+        border-top: 1px solid #e8edf3;
+    }
+
+    .request-info > div,
+    .request-info > div:nth-child(odd),
+    .request-info > div:nth-child(even) {
+        min-width: 0;
+
+        padding: 13px 7px;
+
+        border-right: 1px solid #edf1f5;
+    }
+
+    /* OUTPASS ID */
+
+    .request-info > div:last-child {
+        grid-column: 1 / -1;
+
+        order: -1;
+
+        padding: 12px 0;
+
+        margin: 0;
+
+        border-right: none;
+
+        border-bottom: 1px solid #edf1f5;
+    }
+
+    /* DATE */
+
+    .request-info > div:nth-child(1) {
+        padding-left: 0;
+    }
+
+    /* LEAVING */
+
+    .request-info > div:nth-child(2) {
+        padding-left: 7px;
+        padding-right: 7px;
+    }
+
+    /* RETURN */
+
+    .request-info > div:nth-child(3) {
+        padding-right: 0;
+
+        border-right: none;
+    }
+
+    .request-info span {
+        margin-bottom: 5px;
+
+        font-size: 8px;
+
+        letter-spacing: 0.3px;
+    }
+
+    .request-info strong {
+        font-size: 11px;
+
+        line-height: 1.35;
+    }
+
+
+    /* MESSAGE BOXES */
+
+    .rejection-box,
+    .approved-box {
+        margin-top: 15px;
+
+        padding: 11px 12px;
+
+        font-size: 11px;
+    }
+
+
+    /* QR */
+
+    .qr-preview {
+        padding: 17px;
+
+        border-radius: 11px;
+    }
+
+    .qr-preview p {
+        font-size: 11px;
+    }
+
+    .qr-preview p:first-child {
+        font-size: 12px;
+    }
+
+    .qr-preview img {
+        width: 155px;
+        height: 155px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .parent-header {
+        padding: 0 13px;
+    }
+
+    .parent-header h1 {
+        font-size: 18px;
+    }
+
+    .parent-content {
+        padding-left: 11px;
+        padding-right: 11px;
+    }
+
+    .parent-welcome {
+        padding: 20px 17px;
+    }
+
+    .parent-welcome h2 {
+        font-size: 22px;
+    }
+
+    .student-card {
+        padding: 17px;
+    }
+
+    .student-icon {
+        width: 46px;
+        height: 46px;
+
+        font-size: 22px;
+    }
+
+    .student-card h2 {
+        font-size: 16px;
+    }
+
+    .parent-action {
+        padding: 18px;
+    }
+
+    .outpass-form-card {
+        padding: 18px 14px;
+    }
+
+    .parent-request-card {
+        padding: 17px 14px;
+    }
+
+    .request-info > div,
+    .request-info > div:nth-child(odd),
+    .request-info > div:nth-child(even) {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .request-info > div:first-child {
+        padding-left: 0;
+    }
+
+    .request-info > div:nth-child(3) {
+        padding-right: 0;
+    }
+
+    .request-info span {
+        font-size: 7px;
+    }
+
+    .request-info strong {
+        font-size: 10px;
+    }
+
+    .qr-preview img {
+        width: 145px;
+        height: 145px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY / FOCUS
+========================================================= */
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.16);
+
+    outline-offset: 2px;
 }
