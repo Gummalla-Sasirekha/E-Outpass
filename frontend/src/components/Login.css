@@ -456,3 +456,121 @@ body {
         font-size: 22px;
     }
 }
+
+/* =========================================
+   LOGIN — FINAL PRODUCTION POLISH
+========================================= */
+
+.login-card {
+    backdrop-filter: blur(8px);
+
+    box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.09),
+        0 5px 16px rgba(31, 60, 136, 0.045);
+}
+
+
+.logo-section h1 {
+    color: #21458f;
+}
+
+
+.logo-section p {
+    color: #718096;
+}
+
+
+.login-card h2 {
+    color: #172033;
+}
+
+
+.form-group label {
+    color: #344054;
+}
+
+
+.form-group input {
+    background: #fbfcfe;
+}
+
+
+.form-group input:focus {
+    border-color: #315ee8;
+
+    box-shadow:
+        0 0 0 3px rgba(49, 94, 232, 0.09);
+}
+
+
+.login-button {
+    background:
+        linear-gradient(
+            135deg,
+            #21458f,
+            #315ee8
+        );
+
+    box-shadow:
+        0 7px 17px rgba(33, 69, 143, 0.17);
+}
+
+
+.login-button:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #21458f,
+            #315ee8
+        );
+
+    box-shadow:
+        0 10px 21px rgba(33, 69, 143, 0.22);
+}
+
+
+.success-message,
+.error-message {
+    border-radius: 11px;
+}
+
+
+/* Keyboard accessibility */
+
+.form-group input:focus-visible,
+.login-button:focus-visible {
+    outline: 3px solid rgba(49, 94, 232, 0.18);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================
+   LOGIN — SMALL SCREEN POLISH
+========================================= */
+
+@media (max-width: 480px) {
+
+    .login-page {
+        padding: 14px;
+    }
+
+    .login-card {
+        width: 100%;
+
+        box-shadow:
+            0 12px 32px rgba(15, 23, 42, 0.075);
+    }
+}
+
+
+@media (max-width: 360px) {
+
+    .login-page {
+        padding: 10px;
+    }
+
+    .login-card {
+        padding: 28px 18px;
+    }
+}
