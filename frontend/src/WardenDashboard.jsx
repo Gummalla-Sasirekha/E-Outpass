@@ -474,7 +474,6 @@ function WardenDashboard() {
     const statusCards = [
         {
             status: "pending",
-            icon: "📋",
             title: "Pending",
             count: pendingCount,
             description:
@@ -483,7 +482,6 @@ function WardenDashboard() {
 
         {
             status: "approved",
-            icon: "✓",
             title: "Approved",
             count: approvedCount,
             description:
@@ -492,7 +490,6 @@ function WardenDashboard() {
 
         {
             status: "rejected",
-            icon: "✕",
             title: "Rejected",
             count: rejectedCount,
             description:
@@ -501,7 +498,6 @@ function WardenDashboard() {
 
         {
             status: "completed",
-            icon: "↩",
             title: "Completed",
             count: completedCount,
             description:
@@ -684,19 +680,6 @@ function WardenDashboard() {
                                 }
                             >
 
-                                <div className="status-card-top">
-
-                                    <div className="status-card-icon">
-                                        {card.icon}
-                                    </div>
-
-                                    <span className="status-card-arrow">
-                                        →
-                                    </span>
-
-                                </div>
-
-
                                 <div className="status-card-count">
                                     {historyDataLoading
                                         ? "—"
@@ -711,11 +694,6 @@ function WardenDashboard() {
 
                                 <div className="status-card-description">
                                     {card.description}
-                                </div>
-
-
-                                <div className="status-card-view">
-                                    View →
                                 </div>
 
                             </button>

@@ -2902,3 +2902,98 @@ body {
     }
 
 }
+
+/* =========================================================
+   MOBILE STATUS CARDS — COMPACT SINGLE ROW
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .warden-status-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+
+        margin-bottom: 24px;
+    }
+
+    .warden-status-card {
+        min-height: 82px;
+
+        padding: 12px 5px;
+
+        border-radius: 12px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+    }
+
+    .warden-status-card::before {
+        height: 3px;
+    }
+
+    .status-card-count {
+        margin: 0;
+
+        font-size: 22px;
+        line-height: 1;
+
+        font-weight: 800;
+    }
+
+    .status-card-title {
+        margin-top: 7px;
+
+        font-size: 10px;
+        line-height: 1.15;
+
+        font-weight: 750;
+
+        white-space: nowrap;
+    }
+
+    .status-card-description {
+        display: none;
+    }
+
+    .status-card-icon,
+    .status-card-arrow,
+    .status-card-view {
+        display: none;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .warden-status-grid {
+        gap: 5px;
+    }
+
+    .warden-status-card {
+        min-height: 76px;
+
+        padding: 10px 3px;
+
+        border-radius: 10px;
+    }
+
+    .status-card-count {
+        font-size: 20px;
+    }
+
+    .status-card-title {
+        margin-top: 6px;
+
+        font-size: 9px;
+    }
+
+}
