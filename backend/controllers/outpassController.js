@@ -689,6 +689,51 @@ const validateOutpass = async (req, res) => {
     }
 };
 
+// ==========================================
+// SECURITY - GET APPROVED OUTPASSES
+// ==========================================
+
+const getSecurityApprovedOutpasses = async (req, res) => {
+    try {
+        const outpasses = await Outpass.find({
+            status: "approved"
+        })
+            .populate(
+                "student",
+                "studentId name course roomNumber"
+            )
+            .populate(
+                "hostel",
+                "name type"
+            )
+            .populate(
+                "parent",
+                "name email"
+            )
+            .sort({
+                dateRequestedFor: 1,
+                timeOfLeaving: 1
+            });
+
+        res.status(200).json({
+            success: true,
+            count: outpasses.length,
+            outpasses
+        });
+
+    } catch (error) {
+        console.error(
+            "Get security approved outpasses error:",
+            error
+        );
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch approved outpasses",
+            error: error.message
+        });
+    }
+}
 
 // ==========================================
 // SCAN OUT - SECURITY
@@ -1537,28 +1582,20 @@ const getGateHistory = async (req, res) => {
 
 module.exports = {
     requestOutpass,
-
     getMyStudent,
-
     getMyOutpasses,
 
     getPendingOutpasses,
-
     getWardenOutpassHistory,
-
     approveOutpass,
-
     rejectOutpass,
 
     validateOutpass,
-
+    getSecurityApprovedOutpasses,
     scanOut,
-
     scanIn,
+    getGateHistory,
 
     studentGateStatus,
-
-    studentConfirmGateAction,
-
-    getGateHistory
+    studentConfirmGateAction
 };

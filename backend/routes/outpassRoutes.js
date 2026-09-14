@@ -11,6 +11,7 @@ const {
     rejectOutpass,
 
     validateOutpass,
+    getSecurityApprovedOutpasses,
     scanOut,
     scanIn,
     getGateHistory,
@@ -120,6 +121,15 @@ router.get(
 // ==========================================
 // SECURITY ROUTES
 // ==========================================
+
+
+// Get all approved outpasses for Security
+router.get(
+    "/security-approved",
+    protect,
+    authorize("security"),
+    getSecurityApprovedOutpasses
+);
 
 // Validate an outpass
 router.post(
