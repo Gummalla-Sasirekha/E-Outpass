@@ -2,11 +2,13 @@ const mongoose = require("mongoose");
 const XLSX = require("xlsx");
 const bcrypt = require("bcryptjs");
 const path = require("path");
+
 require("dotenv").config();
 
 const User = require("../models/User");
 const Hostel = require("../models/Hostel");
 const Student = require("../models/Student");
+
 
 // ==========================================
 // EXCEL FILE LOCATIONS
@@ -58,10 +60,13 @@ function normalizeKey(key) {
 // ==========================================
 
 function readExcel(filePath) {
+
     const workbook = XLSX.readFile(filePath);
 
     const sheet =
-        workbook.Sheets[workbook.SheetNames[0]];
+        workbook.Sheets[
+            workbook.SheetNames[0]
+        ];
 
     const rawData =
         XLSX.utils.sheet_to_json(sheet);
@@ -91,6 +96,10 @@ function readExcel(filePath) {
 const importData = async () => {
 
     try {
+
+        // ======================================
+        // CONNECT TO MONGODB
+        // ======================================
 
         await mongoose.connect(
             process.env.MONGO_URI
@@ -160,7 +169,7 @@ const importData = async () => {
 
 
         // ======================================
-        // IMPORT USERS FROM EXCEL
+        // IMPORT ALL USERS FROM EXCEL
         // ======================================
 
         for (const userData of users) {
@@ -274,7 +283,7 @@ const importData = async () => {
 
 
         // ======================================
-        // IMPORT STUDENTS + CREATE LOGIN
+        // IMPORT STUDENTS
         // ======================================
 
         for (const studentData of students) {
@@ -311,6 +320,13 @@ const importData = async () => {
                     .trim()
                     .toLowerCase();
 
+            const studentEmail =
+                String(
+                    studentData.studentemail
+                )
+                    .trim()
+                    .toLowerCase();
+
 
             console.log("");
             console.log(
@@ -319,7 +335,25 @@ const importData = async () => {
 
 
             // ==================================
-            // FIND PARENT
+            // VALIDATE STUDENT EMAIL
+            // ==================================
+
+            if (
+                !studentEmail ||
+                studentEmail === "undefined" ||
+                studentEmail === "null"
+            ) {
+
+                console.log(
+                    `Student email missing for: ${studentName}`
+                );
+
+                continue;
+            }
+
+
+            // ==================================
+            // FIND PARENT USER
             // ==================================
 
             const parentId =
@@ -355,29 +389,26 @@ const importData = async () => {
 
 
             // ==================================
-            // CREATE STUDENT LOGIN
+            // FIND EXISTING STUDENT USER
             // ==================================
 
-            const studentEmail =
-                `student${studentId}@eoutpass.local`;
+            const studentUserId =
+                userMap[studentEmail];
+
+
+            if (!studentUserId) {
+
+                console.log(
+                    `Student user not found: ${studentEmail}`
+                );
+
+                continue;
+            }
 
 
             console.log(
-                `Creating student login: ${studentEmail}`
+                `Student login found: ${studentEmail}`
             );
-
-
-            const studentUser =
-                await User.create({
-                    name: studentName,
-
-                    email: studentEmail,
-
-                    password:
-                        hashedPassword,
-
-                    role: "student"
-                });
 
 
             // ==================================
@@ -399,7 +430,7 @@ const importData = async () => {
 
                     parent: parentId,
 
-                    user: studentUser._id
+                    user: studentUserId
                 });
 
 
@@ -435,8 +466,9 @@ const importData = async () => {
             "===================================="
         );
 
+
         console.log(
-            `Original users imported: ${users.length}`
+            `Users imported: ${users.length}`
         );
 
         console.log(
@@ -447,17 +479,19 @@ const importData = async () => {
             `Students imported: ${students.length}`
         );
 
+
         console.log(
-            "Student login accounts created successfully."
+            "Student login accounts linked successfully."
         );
 
         console.log(
             `Demo password: ${DEFAULT_PASSWORD}`
         );
 
-        console.log(
-            "===================================="
-        );
+
+        // ======================================
+        // STUDENT LOGIN ACCOUNTS
+        // ======================================
 
         console.log("");
 
@@ -469,22 +503,27 @@ const importData = async () => {
             "===================================="
         );
 
-        for (const studentData of students) {
 
-            const studentId =
-                String(
-                    studentData.studentid
-                ).trim();
+        for (const studentData of students) {
 
             const studentName =
                 String(
                     studentData.name
                 ).trim();
 
+            const studentEmail =
+                String(
+                    studentData.studentemail
+                )
+                    .trim()
+                    .toLowerCase();
+
+
             console.log(
-                `${studentName} → student${studentId}@eoutpass.local`
+                `${studentName} → ${studentEmail}`
             );
         }
+
 
         console.log(
             "===================================="

@@ -491,7 +491,7 @@ function StudentDashboard() {
                             "Waiting for Warden Approval",
 
                         text:
-                            "Your parent has submitted this outpass request. Please wait for the warden to review it."
+                            "Your outpass request has been submitted successfully and is waiting for warden approval."
                     };
 
 
@@ -1328,148 +1328,6 @@ function StudentDashboard() {
 
 
                 {/* =================================
-                    MAIN GATE INSTRUCTIONS
-                ================================= */}
-
-                <section className="gate-section">
-
-                    <div className="gate-section-header">
-
-                        <div className="gate-icon">
-                            🚪
-                        </div>
-
-                        <div>
-
-                            <span>
-                                MAIN GATE
-                            </span>
-
-                            <h2>
-                                QR Gate Verification
-                            </h2>
-
-                        </div>
-
-                    </div>
-
-
-                    <div className="gate-instructions">
-
-                        <div className="gate-step">
-
-                            <div className="gate-step-number">
-                                1
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Go to the Main Gate
-                                </strong>
-
-                                <p>
-                                    Carry your approved
-                                    outpass information
-                                    with you.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div className="gate-step">
-
-                            <div className="gate-step-number">
-                                2
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Scan Security's QR
-                                </strong>
-
-                                <p>
-                                    Security will display
-                                    a QR code on the gate
-                                    screen. Scan it using
-                                    your phone camera.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div className="gate-step">
-
-                            <div className="gate-step-number">
-                                3
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Confirm Exit
-                                </strong>
-
-                                <p>
-                                    After scanning, review
-                                    your outpass and confirm
-                                    your exit.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div className="gate-step">
-
-                            <div className="gate-step-number">
-                                4
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Confirm Return
-                                </strong>
-
-                                <p>
-                                    When you return, scan
-                                    Security's QR again and
-                                    confirm your return.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div className="gate-note">
-
-                        <span>
-                            💡
-                        </span>
-
-                        <p>
-                            The QR code is displayed by
-                            Security at the main gate.
-                            You do not need to display a
-                            QR code from this dashboard.
-                        </p>
-
-                    </div>
-
-                </section>
-
-
-                {/* =================================
                     MY OUTPASSES
                 ================================= */}
 
@@ -1667,35 +1525,6 @@ function StudentDashboard() {
                                                     </div>
 
                                                 )}
-
-                                            </div>
-
-
-                                            <div
-                                                className={`outpass-status-message status-message-${outpass.status}`}
-                                            >
-
-                                                <div className="status-message-icon">
-                                                    {
-                                                        statusMessage.icon
-                                                    }
-                                                </div>
-
-                                                <div>
-
-                                                    <strong>
-                                                        {
-                                                            statusMessage.title
-                                                        }
-                                                    </strong>
-
-                                                    <p>
-                                                        {
-                                                            statusMessage.text
-                                                        }
-                                                    </p>
-
-                                                </div>
 
                                             </div>
 
