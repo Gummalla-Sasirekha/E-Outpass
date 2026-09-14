@@ -1,46 +1,136 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./SecurityDashboard.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
+console.log("SECURITY API URL:", API_URL);
 
 function SecurityDashboard() {
+
+    // ==========================================
+    // OUTPASS / QR
+    // ==========================================
 
     const [outpassId, setOutpassId] = useState("");
     const [outpass, setOutpass] = useState(null);
 
     const [loading, setLoading] = useState(false);
 
+    // ==========================================
+    // APPROVED OUTPASSES
+    // ==========================================
+
+    const [approvedOutpasses, setApprovedOutpasses] = useState([]);
+    const [approvedLoading, setApprovedLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // ==========================================
+    // MESSAGES
+    // ==========================================
+
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    // Gate history
+    // ==========================================
+    // GATE HISTORY
+    // ==========================================
+
     const [gateHistory, setGateHistory] = useState([]);
     const [historyLoading, setHistoryLoading] = useState(false);
 
     const token = localStorage.getItem("token");
 
+    // Scroll to the QR card after a successful verification.
+    const scrollToVerifiedOutpass = () => {
+        setTimeout(() => {
+            document
+                .getElementById("verified-outpass-card")
+                ?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+        }, 50);
+    };
+
+
 
     // ==========================================
-    // DISPLAY QR
+    // FETCH APPROVED OUTPASSES
     // ==========================================
 
-    const handleDisplayQR = async () => {
+    const fetchApprovedOutpasses = async () => {
 
-        const cleanId = outpassId.trim();
+        try {
+
+            setApprovedLoading(true);
+
+            const response = await fetch(
+                `${API_URL}/api/outpass/security-approved`,
+                {
+                    method: "GET",
+
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Unable to fetch approved outpasses."
+                );
+            }
+
+            setApprovedOutpasses(
+                data.outpasses || []
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Approved outpasses error:",
+                error
+            );
+
+            setError(
+                error.message ||
+                "Unable to load approved outpasses."
+            );
+
+        } finally {
+
+            setApprovedLoading(false);
+
+        }
+    };
+
+
+    // ==========================================
+    // LOAD APPROVED OUTPASSES ON PAGE LOAD
+    // ==========================================
+
+    useEffect(() => {
+
+        fetchApprovedOutpasses();
+
+    }, []);
+
+
+    // ==========================================
+    // DISPLAY QR FROM APPROVED OUTPASS
+    // ==========================================
+
+    const handleDisplayQRFromApproved = async (
+        selectedOutpassId
+    ) => {
+
+        setOutpassId(selectedOutpassId);
 
         setError("");
         setSuccess("");
         setOutpass(null);
-
-        if (!cleanId) {
-
-            setError(
-                "Please enter an Outpass ID."
-            );
-
-            return;
-        }
-
 
         try {
 
@@ -59,15 +149,14 @@ function SecurityDashboard() {
                     },
 
                     body: JSON.stringify({
-                        outpassId: cleanId
+                        outpassId:
+                            selectedOutpassId
                     })
                 }
             );
 
-
             const data =
                 await response.json();
-
 
             if (!response.ok) {
 
@@ -75,6 +164,7 @@ function SecurityDashboard() {
                     data.message ||
                     "Unable to validate outpass."
                 );
+
             }
 
 
@@ -83,6 +173,7 @@ function SecurityDashboard() {
                 throw new Error(
                     "Outpass details were not returned."
                 );
+
             }
 
 
@@ -92,8 +183,9 @@ function SecurityDashboard() {
             ) {
 
                 throw new Error(
-                    `This outpass is ${data.outpass.status}. Only approved outpasses can be displayed at the gate.`
+                    `This outpass is ${data.outpass.status}.`
                 );
+
             }
 
 
@@ -102,6 +194,7 @@ function SecurityDashboard() {
                 throw new Error(
                     "QR code is not available for this outpass."
                 );
+
             }
 
 
@@ -109,11 +202,11 @@ function SecurityDashboard() {
                 data.outpass
             );
 
+            scrollToVerifiedOutpass();
 
             setSuccess(
                 "Outpass verified. QR code is ready for the student to scan."
             );
-
 
         } catch (error) {
 
@@ -130,6 +223,132 @@ function SecurityDashboard() {
         } finally {
 
             setLoading(false);
+
+        }
+    };
+
+
+    // ==========================================
+    // DISPLAY QR USING OUTPASS ID
+    // ==========================================
+
+    const handleDisplayQR = async () => {
+
+        const cleanId =
+            outpassId.trim();
+
+        setError("");
+        setSuccess("");
+        setOutpass(null);
+
+
+        if (!cleanId) {
+
+            setError(
+                "Please enter an Outpass ID."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            setLoading(true);
+
+
+            const response = await fetch(
+                `${API_URL}/api/outpass/validate`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        Authorization:
+                            `Bearer ${token}`
+                    },
+
+                    body: JSON.stringify({
+                        outpassId:
+                            cleanId
+                    })
+                }
+            );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to validate outpass."
+                );
+
+            }
+
+
+            if (!data.outpass) {
+
+                throw new Error(
+                    "Outpass details were not returned."
+                );
+
+            }
+
+
+            if (
+                data.outpass.status !==
+                "approved"
+            ) {
+
+                throw new Error(
+                    `This outpass is ${data.outpass.status}. Only approved outpasses can be displayed at the gate.`
+                );
+
+            }
+
+
+            if (!data.outpass.qrCode) {
+
+                throw new Error(
+                    "QR code is not available for this outpass."
+                );
+
+            }
+
+
+            setOutpass(
+                data.outpass
+            );
+
+            scrollToVerifiedOutpass();
+
+            setSuccess(
+                "Outpass verified. QR code is ready for the student to scan."
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Display QR error:",
+                error
+            );
+
+            setError(
+                error.message ||
+                "Unable to display QR."
+            );
+
+        } finally {
+
+            setLoading(false);
+
         }
     };
 
@@ -144,6 +363,7 @@ function SecurityDashboard() {
 
             setHistoryLoading(true);
             setError("");
+
 
             const response = await fetch(
                 `${API_URL}/api/outpass/gate-history`,
@@ -168,13 +388,13 @@ function SecurityDashboard() {
                     data.message ||
                     "Unable to fetch gate history."
                 );
+
             }
 
 
             setGateHistory(
                 data.gateLogs || []
             );
-
 
         } catch (error) {
 
@@ -191,6 +411,7 @@ function SecurityDashboard() {
         } finally {
 
             setHistoryLoading(false);
+
         }
     };
 
@@ -210,6 +431,7 @@ function SecurityDashboard() {
         );
 
         window.location.reload();
+
     };
 
 
@@ -260,6 +482,7 @@ function SecurityDashboard() {
             return "-";
         }
 
+
         return new Date(date)
             .toLocaleString(
                 "en-IN",
@@ -272,6 +495,41 @@ function SecurityDashboard() {
                 }
             );
     };
+
+
+    // ==========================================
+    // FILTER APPROVED OUTPASSES
+    // ==========================================
+
+    const filteredOutpasses =
+        approvedOutpasses.filter((item) => {
+
+            const search =
+                searchTerm
+                    .trim()
+                    .toLowerCase();
+
+
+            if (!search) {
+                return true;
+            }
+
+
+            const studentName =
+                item.student?.name
+                    ?.toLowerCase() || "";
+
+
+            const id =
+                item.outpassId
+                    ?.toLowerCase() || "";
+
+
+            return (
+                studentName.includes(search) ||
+                id.includes(search)
+            );
+        });
 
 
     // ==========================================
@@ -357,8 +615,9 @@ function SecurityDashboard() {
                         </h2>
 
                         <p>
-                            Display the approved student's
-                            QR code on the Security screen.
+                            Search approved outpasses
+                            and display the student's
+                            QR code at the main gate.
                         </p>
 
                     </div>
@@ -383,10 +642,260 @@ function SecurityDashboard() {
                         </strong>
 
                         <p>
-                            Security only displays the QR.
-                            The student scans it using their
-                            phone and confirms Exit or Return.
+                            Security searches the
+                            approved outpass and
+                            displays the QR. The student
+                            scans it using their phone
+                            and confirms Exit or Return.
                         </p>
+
+                    </div>
+
+                </section>
+
+
+                {/* ==================================
+                    APPROVED OUTPASSES
+                ================================== */}
+
+                <section className="approved-outpasses-card">
+
+                    <div className="approved-header">
+
+                        <div>
+
+                            <p className="card-label">
+                                APPROVED OUTPASSES
+                            </p>
+
+                            <h2>
+                                Search Student
+                            </h2>
+
+                            <p>
+                                Search by student name
+                                or Outpass ID.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {/* REFRESH + SEARCH */}
+
+                    <div className="approved-tools">
+
+                        <button
+                            type="button"
+                            className="approved-refresh-button"
+                            onClick={fetchApprovedOutpasses}
+                            disabled={approvedLoading}
+                        >
+                            {approvedLoading
+                                ? "Refreshing..."
+                                : "↻ Refresh"}
+                        </button>
+
+                        <div className="approved-search-box">
+
+                            <input
+                                type="text"
+                                id="approved-student-search"
+                                name="approved-student-search"
+                                value={searchTerm}
+                                onChange={(e) =>
+                                    setSearchTerm(
+                                        e.target.value
+                                    )
+                                }
+                                placeholder="Search student name or Outpass ID..."
+                            />
+
+                        </div>
+
+                    </div>
+
+
+                    {/* APPROVED LIST */}
+
+                    <div className="approved-list">
+
+                        {approvedLoading ? (
+
+                            <div className="approved-empty">
+
+                                <div className="empty-icon">
+                                    ⏳
+                                </div>
+
+                                <h3>
+                                    Loading approved
+                                    outpasses...
+                                </h3>
+
+                            </div>
+
+                        ) : approvedOutpasses.length === 0 ? (
+
+                            <div className="approved-empty">
+
+                                <div className="empty-icon">
+                                    📋
+                                </div>
+
+                                <h3>
+                                    No approved outpasses
+                                </h3>
+
+                                <p>
+                                    Approved outpasses will
+                                    appear here after the
+                                    warden approves them.
+                                </p>
+
+                            </div>
+
+                        ) : filteredOutpasses.length === 0 ? (
+
+                            <div className="approved-empty">
+
+                                <div className="empty-icon">
+                                    🔍
+                                </div>
+
+                                <h3>
+                                    No matching student
+                                </h3>
+
+                                <p>
+                                    Try searching with another
+                                    student name or Outpass ID.
+                                </p>
+
+                            </div>
+
+                        ) : (
+
+                            filteredOutpasses.map(
+                                (item) => (
+
+                                    <div
+                                        className="approved-outpass-item"
+                                        key={item._id}
+                                    >
+
+                                        {/* STUDENT */}
+
+                                        <div className="approved-student-info">
+
+                                            <div className="approved-student-avatar">
+                                                🎓
+                                            </div>
+
+                                            <div>
+
+                                                <h3>
+                                                    {item.student?.name ||
+                                                        "Unknown Student"}
+                                                </h3>
+
+                                                <p>
+                                                    {item.student?.course ||
+                                                        "-"}
+                                                    {" • "}
+                                                    Room{" "}
+                                                    {item.student?.roomNumber ||
+                                                        "-"}
+                                                </p>
+
+                                                <span>
+                                                    {item.hostel?.name ||
+                                                        "-"}
+                                                    {" • "}
+                                                    {item.outpassId}
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        {/* DETAILS */}
+
+                                        <div className="approved-item-details">
+
+                                            <div>
+
+                                                <small>
+                                                    DATE
+                                                </small>
+
+                                                <strong>
+                                                    {formatDate(
+                                                        item.dateRequestedFor
+                                                    )}
+                                                </strong>
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <small>
+                                                    LEAVING
+                                                </small>
+
+                                                <strong>
+                                                    {formatTime(
+                                                        item.timeOfLeaving
+                                                    )}
+                                                </strong>
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <small>
+                                                    RETURN
+                                                </small>
+
+                                                <strong>
+                                                    {formatTime(
+                                                        item.expectedInTime
+                                                    )}
+                                                </strong>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        {/* DISPLAY QR */}
+
+                                        <button
+                                            className="approved-view-button"
+                                            onClick={() =>
+                                                handleDisplayQRFromApproved(
+                                                    item.outpassId
+                                                )
+                                            }
+                                            disabled={loading}
+                                        >
+                                            {loading &&
+                                            outpassId ===
+                                                item.outpassId
+                                                ? "Loading..."
+                                                : "📱 Display QR"}
+                                        </button>
+
+                                    </div>
+
+                                )
+                            )
+
+                        )}
 
                     </div>
 
@@ -416,8 +925,9 @@ function SecurityDashboard() {
                             </h2>
 
                             <p>
-                                Enter the approved Outpass ID
-                                to display its secure QR code.
+                                Enter an Outpass ID manually
+                                if needed, or select an
+                                approved outpass above.
                             </p>
 
                         </div>
@@ -425,9 +935,7 @@ function SecurityDashboard() {
                     </div>
 
 
-                    {/* ==================================
-                        SEARCH FORM
-                    ================================== */}
+                    {/* SEARCH FORM */}
 
                     <div className="outpass-form">
 
@@ -470,8 +978,7 @@ function SecurityDashboard() {
 
                                 {loading
                                     ? "Verifying..."
-                                    : "📱 Display QR"
-                                }
+                                    : "📱 Display QR"}
 
                             </button>
 
@@ -480,9 +987,7 @@ function SecurityDashboard() {
                     </div>
 
 
-                    {/* ==================================
-                        ERROR
-                    ================================== */}
+                    {/* ERROR */}
 
                     {error && (
 
@@ -501,9 +1006,7 @@ function SecurityDashboard() {
                     )}
 
 
-                    {/* ==================================
-                        SUCCESS
-                    ================================== */}
+                    {/* SUCCESS */}
 
                     {success && (
 
@@ -530,7 +1033,7 @@ function SecurityDashboard() {
 
                 {outpass && (
 
-                    <section className="verified-card">
+                    <section id="verified-outpass-card" className="verified-card">
 
 
                         {/* HEADER */}
@@ -670,11 +1173,12 @@ function SecurityDashboard() {
                             <div className="detail-item">
 
                                 <span>
-                                    📊 Status
+                                    🏢 Hostel
                                 </span>
 
-                                <strong className="approved-text">
-                                    APPROVED
+                                <strong>
+                                    {outpass.hostel?.name ||
+                                        "-"}
                                 </strong>
 
                             </div>
@@ -708,13 +1212,24 @@ function SecurityDashboard() {
 
                             <div className="qr-wrapper">
 
-                                <img
-                                    src={
-                                        outpass.qrCode
-                                    }
-                                    alt="Main Gate QR Code"
-                                    className="gate-qr"
-                                />
+                                {outpass?.qrCode ? (
+                                    <img
+                                        src={outpass.qrCode}
+                                        alt="Main Gate QR Code"
+                                        className="gate-qr"
+                                    />
+                                ) : (
+                                    <div className="qr-error">
+                                        <strong>
+                                            QR code unavailable
+                                        </strong>
+
+                                        <p>
+                                            This approved outpass
+                                            does not contain a QR code.
+                                        </p>
+                                    </div>
+                                )}
 
                             </div>
 
@@ -732,8 +1247,9 @@ function SecurityDashboard() {
                                     </strong>
 
                                     <p>
-                                        Scan this QR → confirm
-                                        the action on your phone.
+                                        Scan this QR →
+                                        confirm the action
+                                        on your phone.
                                     </p>
 
                                 </div>
@@ -758,12 +1274,13 @@ function SecurityDashboard() {
                                 <div>
 
                                     <strong>
-                                        Display QR
+                                        Search & Display
                                     </strong>
 
                                     <p>
-                                        Security displays
-                                        this QR.
+                                        Security finds the
+                                        approved outpass
+                                        and displays the QR.
                                     </p>
 
                                 </div>
@@ -787,8 +1304,8 @@ function SecurityDashboard() {
                                     </strong>
 
                                     <p>
-                                        Student scans
-                                        the QR.
+                                        Student scans the
+                                        displayed QR.
                                     </p>
 
                                 </div>
@@ -862,8 +1379,7 @@ function SecurityDashboard() {
 
                             {historyLoading
                                 ? "Loading..."
-                                : "🔄 Refresh"
-                            }
+                                : "🔄 Refresh"}
 
                         </button>
 
@@ -1014,8 +1530,7 @@ function SecurityDashboard() {
                                                         {log.status ===
                                                         "returned"
                                                             ? "✓ Returned"
-                                                            : "🚪 Outside"
-                                                        }
+                                                            : "🚪 Outside"}
 
                                                     </span>
 
@@ -1054,8 +1569,9 @@ function SecurityDashboard() {
                         </h3>
 
                         <p>
-                            Enter the Outpass ID above to
-                            display the student's QR code.
+                            Search for a student above
+                            or enter an Outpass ID to
+                            display the QR code.
                         </p>
 
                     </section>
@@ -1102,11 +1618,12 @@ function SecurityDashboard() {
                             <div>
 
                                 <strong>
-                                    Verify Outpass
+                                    Search Approved Outpass
                                 </strong>
 
                                 <p>
-                                    Enter the approved
+                                    Search using the
+                                    student's name or
                                     Outpass ID.
                                 </p>
 
