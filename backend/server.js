@@ -7,6 +7,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const outpassRoutes = require("./routes/outpassRoutes");
 const studentRoutes = require("./routes/studentRoutes");
+const wardenStudentRoutes = require("./routes/wardenStudentRoutes");
 
 const app = express();
 
@@ -39,6 +40,10 @@ app.use(
     studentRoutes
 );
 
+app.use(
+    "/api/outpass",
+    wardenStudentRoutes
+);
 
 // ==========================================
 // ROOT ROUTE
