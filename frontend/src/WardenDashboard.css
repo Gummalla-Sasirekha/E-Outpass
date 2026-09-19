@@ -2997,31 +2997,3 @@ body {
     }
 
 }
-
-<div className="approved-tools">
-
-    <button
-        type="button"
-        className="approved-refresh-button"
-        onClick={fetchApprovedOutpasses}
-        disabled={approvedLoading}
-    >
-        {approvedLoading ? "Refreshing..." : "↻ Refresh"}
-    </button>
-
-    <div className="approved-search-box">
-        <span className="approved-search-icon">⌕</span>
-
-        <input
-            type="text"
-            id="approved-student-search"
-            name="approved-student-search"
-            value={searchTerm}
-            onChange={(e) =>
-                setSearchTerm(e.target.value)
-            }
-            placeholder="Search student name or Outpass ID..."
-        />
-    </div>
-
-</div>
