@@ -1,1148 +1,1763 @@
-/* ================================
-   STUDENT DASHBOARD
-================================ */
-
-.student-dashboard {
-    min-height: 100vh;
-    background: #f4f7fb;
-    color: #1f2937;
+* {
+  box-sizing:border-box
 }
 
+body {
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4faf8;
+  color:#102b3c
+}
 
-/* ================================
-   HEADER
-================================ */
+.student-page {
+  min-height:100vh;
+  background:#f4faf8
+}
 
-.student-header {
-    height: 78px;
-    background: white;
-    border-bottom: 1px solid #e5e7eb;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 40px;
-
-    position: sticky;
-    top: 0;
-    z-index: 100;
+.student-sidebar {
+  position:fixed;
+  inset:0 auto 0 0;
+  width:220px;
+  background:#fff;
+  border-right:1px solid #dce8e4;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:32px 16px 18px;
+  z-index:20
 }
 
 .student-brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  padding:0 16px
 }
 
-.student-logo {
-    width: 44px;
-    height: 44px;
-
-    border-radius: 12px;
-
-    background: #2563eb;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 22px;
+.student-brand strong {
+  display:block;
+  color:#0b6a5a;
+  font-size:25px;
+  letter-spacing:-.6px
 }
 
-.student-brand h1 {
-    margin: 0;
-
-    font-size: 21px;
-    font-weight: 700;
-
-    color: #111827;
+.student-brand span {
+  display:block;
+  margin-top:6px;
+  color:#75868e;
+  font-size:11px;
+  line-height:1.35
 }
 
-.student-brand p {
-    margin: 2px 0 0;
-
-    font-size: 12px;
-
-    color: #6b7280;
+.student-nav {
+  margin-top:36px;
+  display:grid;
+  gap:5px
 }
 
-.student-header-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.student-nav-link {
+  display:flex;
+  align-items:center;
+  gap:13px;
+  min-height:46px;
+  padding:0 12px;
+  color:#617987;
+  text-decoration:none;
+  border-radius:10px;
+  font-size:13px
 }
 
-
-/* ================================
-   BUTTONS
-================================ */
-
-.refresh-button,
-.logout-button {
-    border: none;
-
-    padding: 10px 16px;
-
-    border-radius: 9px;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition: 0.2s ease;
+.student-nav-link.active {
+  background:#e4f4ef;
+  color:#087461;
+  font-weight:700;
+  border-left:3px solid #0d806b;
+  padding-left:9px
 }
 
-.refresh-button {
-    background: #eff6ff;
-    color: #2563eb;
+.student-sidebar-bottom {
+  display:grid;
+  gap:30px;
+  padding-left:10px
 }
 
-.refresh-button:hover {
-    background: #dbeafe;
+.student-sidebar-bottom button {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border:0;
+  background:transparent;
+  color:#617987;
+  padding:0;
+  font-size:13px;
+  cursor:pointer
 }
 
-.logout-button {
-    background: #111827;
-    color: white;
+.student-sidebar-bottom>div {
+  color:#0d806b;
+  font-size:16px;
+  font-style:italic;
+  line-height:1.15
 }
-
-.logout-button:hover {
-    background: #374151;
-}
-
-
-/* ================================
-   MAIN
-================================ */
 
 .student-main {
-    max-width: 1200px;
-
-    margin: 0 auto;
-
-    padding: 35px 30px 60px;
+  margin-left:220px;
+  min-height:100vh
 }
 
-
-/* ================================
-   WELCOME
-================================ */
-
-.student-welcome {
-    background: white;
-
-    border-radius: 18px;
-
-    padding: 28px 32px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    border: 1px solid #e5e7eb;
-
-    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+.student-topbar {
+  height:68px;
+  background:#fff;
+  border-bottom:1px solid #dce8e4;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:12px;
+  padding:0 28px
 }
 
-.welcome-label {
-    margin: 0 0 5px;
-
-    font-size: 14px;
-
-    color: #6b7280;
+.student-profile {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:170px;
+  padding:5px 11px 5px 7px;
+  border:1px solid #dce8e4;
+  border-radius:22px
 }
 
-.student-welcome h2 {
-    margin: 0;
-
-    font-size: 30px;
-
-    color: #111827;
+.student-profile>span {
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:#e4f4ef;
+  color:#087461;
+  display:grid;
+  place-items:center;
+  font-weight:700
 }
 
-.student-subtitle {
-    margin: 8px 0 0;
-
-    color: #6b7280;
-
-    font-size: 14px;
+.student-profile strong {
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:120px
 }
 
-.student-profile-icon {
-    width: 64px;
-    height: 64px;
-
-    border-radius: 50%;
-
-    background: #eff6ff;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 32px;
+.student-profile small {
+  color:#75868e;
+  font-size:14px
 }
 
-
-/* ================================
-   STUDENT INFORMATION
-================================ */
-
-.student-info-card {
-    margin-top: 20px;
-
-    background: white;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 15px;
-
-    padding: 20px 25px;
-
-    display: grid;
-
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 20px;
+.student-content {
+  width:min(1180px,calc(100% - 48px));
+  margin:0 auto;
+  padding:24px 0 28px
 }
 
-.info-item {
-    display: flex;
-    flex-direction: column;
-
-    gap: 5px;
+.student-heading {
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:13px
 }
 
-.info-label {
-    font-size: 12px;
-
-    color: #6b7280;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.5px;
+.student-eyebrow {
+  margin:0 0 7px;
+  color:#a87925;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:2px
 }
 
-.info-item strong {
-    font-size: 15px;
-
-    color: #111827;
+.student-heading h1 {
+  margin:0;
+  color:#102b3c;
+  font-size:31px;
+  line-height:1.12;
+  letter-spacing:-.7px
 }
 
-
-/* ================================
-   STATISTICS
-================================ */
-
-.student-stats {
-    margin-top: 20px;
-
-    display: grid;
-
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 16px;
+.student-heading>div>p:last-child {
+  margin:7px 0 0;
+  color:#607b88;
+  font-size:14px
 }
 
-.stat-card {
-    background: white;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 15px;
-
-    padding: 20px;
-
-    display: flex;
-    align-items: center;
-
-    gap: 14px;
-
-    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.03);
+.student-refresh {
+  border:1px solid #cce5de;
+  border-radius:10px;
+  background:#e7f5f1;
+  color:#087461;
+  padding:10px 15px;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer
 }
 
-.stat-icon {
-    width: 45px;
-    height: 45px;
-
-    border-radius: 12px;
-
-    background: #f3f4f6;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 21px;
+.student-profile-card,
+.student-activity-card,
+.student-panel,
+.student-records {
+  border:1px solid #dce8e4;
+  border-radius:13px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 4px 16px rgba(24,68,59,.035)
 }
 
-.stat-card span {
-    display: block;
-
-    font-size: 12px;
-
-    color: #6b7280;
-
-    margin-bottom: 4px;
+.student-profile-card {
+  min-height:78px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:11px 17px;
+  margin-bottom:10px
 }
 
-.stat-card strong {
-    font-size: 23px;
-
-    color: #111827;
+.student-avatar-large {
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:#e1f5ef;
+  color:#087461;
+  display:grid;
+  place-items:center;
+  font-size:21px;
+  font-weight:700;
+  flex:0 0 auto
 }
 
-
-/* ================================
-   OUTPASS SECTION
-================================ */
-
-.outpass-section {
-    margin-top: 35px;
+.student-profile-info {
+  flex:1;
+  min-width:0
 }
 
-.section-heading {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-
-    margin-bottom: 18px;
+.student-profile-info>span,
+.student-hostel>span {
+  display:block;
+  color:#7b8c93;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1.4px
 }
 
-.section-heading h2 {
-    margin: 0;
-
-    font-size: 22px;
-
-    color: #111827;
+.student-profile-info h2 {
+  margin:3px 0 1px;
+  font-size:16px
 }
 
-.section-heading p {
-    margin: 5px 0 0;
-
-    color: #6b7280;
-
-    font-size: 13px;
+.student-profile-info p {
+  margin:0;
+  color:#607b88;
+  font-size:10px
 }
 
-.outpass-count {
-    background: #eff6ff;
-
-    color: #2563eb;
-
-    font-size: 12px;
-
-    font-weight: 700;
-
-    padding: 7px 12px;
-
-    border-radius: 20px;
+.student-hostel {
+  min-width:145px;
+  padding-left:20px;
+  border-left:1px solid #e4ece9
 }
 
-
-/* ================================
-   OUTPASS LIST
-================================ */
-
-.outpass-list {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 18px;
+.student-hostel strong {
+  display:block;
+  margin-top:5px;
+  color:#087461;
+  font-size:13px
 }
 
-.student-outpass-card {
-    background: white;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 17px;
-
-    overflow: hidden;
-
-    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+.student-activity-card {
+  padding:11px 9px 9px;
+  margin-bottom:12px
 }
 
-
-/* ================================
-   OUTPASS HEADER
-================================ */
-
-.outpass-card-header {
-    padding: 20px 24px;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    border-bottom: 1px solid #f0f0f0;
+.student-activity-heading {
+  padding:0 1px 8px
 }
 
-.outpass-label {
-    font-size: 10px;
-
-    font-weight: 700;
-
-    letter-spacing: 1px;
-
-    color: #9ca3af;
+.student-activity-heading h2 {
+  margin:0;
+  color:#102b3c;
+  font-size:17px
 }
 
-.outpass-card-header h3 {
-    margin: 5px 0 0;
-
-    font-size: 16px;
-
-    color: #111827;
+.student-activity-heading h2 span {
+  color:#809099;
+  font-size:12px;
+  font-weight:500
 }
 
-
-/* ================================
-   STATUS
-================================ */
-
-.status-badge {
-    padding: 7px 12px;
-
-    border-radius: 20px;
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.4px;
+.student-activity-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px
 }
 
-.status-pending {
-    background: #fff7ed;
-
-    color: #c2410c;
+.student-stat {
+  min-height:66px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:9px;
+  border-radius:11px
 }
 
-.status-approved {
-    background: #ecfdf5;
-
-    color: #047857;
+.student-stat.blue {
+  background:#eef7ff
 }
 
-.status-rejected {
-    background: #fef2f2;
-
-    color: #dc2626;
+.student-stat.yellow {
+  background:#fff8e9
 }
 
-.status-completed {
-    background: #eff6ff;
-
-    color: #2563eb;
+.student-stat.green {
+  background:#e9f8f0
 }
 
-.status-expired {
-    background: #f3f4f6;
-
-    color: #6b7280;
+.student-stat.green-soft {
+  background:#edf7f2
 }
 
-
-/* ================================
-   OUTPASS DETAILS
-================================ */
-
-.outpass-details {
-    padding: 22px 24px;
-
-    display: grid;
-
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 20px;
+.student-stat-icon {
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+  border-radius:50%
 }
 
-.detail-item {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 6px;
+.blue .student-stat-icon {
+  background:#d9edff;
+  color:#257db7
 }
 
-.detail-item span {
-    font-size: 12px;
-
-    color: #6b7280;
+.yellow .student-stat-icon {
+  background:#ffedbb;
+  color:#d18b12
 }
 
-.detail-item strong {
-    font-size: 14px;
-
-    color: #111827;
-
-    word-break: break-word;
+.green .student-stat-icon,
+.green-soft .student-stat-icon {
+  background:#ccefe0;
+  color:#138363
 }
 
-
-/* ================================
-   QR SECTION
-================================ */
-
-.qr-section {
-    margin: 0 24px 24px;
-
-    background: #f8fafc;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 14px;
-
-    padding: 20px;
+.student-stat strong {
+  display:block;
+  color:#102b3c;
+  font-size:20px;
+  line-height:1
 }
 
-.qr-content {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 25px;
+.student-stat span {
+  display:block;
+  margin-top:3px;
+  color:#607681;
+  font-size:9px
 }
 
-.qr-content h3 {
-    margin: 0 0 7px;
+.student-action-grid {
+
+  display:grid;
+
+  grid-template-columns:1.15fr .85fr;
+
+  gap:12px;
+
+  margin-bottom:12px;
+
+  align-items:stretch;
+
+}
+
+.student-panel {
+
+  min-width:0;
+
+  min-height:150px;
+
+  padding:15px 17px;
+
+}
+
+.student-action-grid .latest-panel {
+
+  grid-column:1 / -1;
+
+  min-height:156px;
+
+}
+
+.student-panel-head {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start
+}
+
+.student-panel-head h2 {
+  margin:0;
+  color:#102b3c;
+  font-size:17px
+}
+
+.student-panel-head p:not(.student-eyebrow) {
+  margin:4px 0 0;
+  color:#7a8b92;
+  font-size:10px;
+  line-height:1.4
+}
+
+.student-status {
+  padding:5px 8px;
+  border-radius:20px;
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap
+}
+
+.student-status.pending {
+  background:#fff8e9;
+  color:#a66b00
+}
+
+.student-status.approved {
+  background:#e4f4ef;
+  color:#087461
+}
+
+.student-status.rejected {
+  background:#fff0f0;
+  color:#d34d4d
+}
+
+.student-status.completed {
+  background:#eef7ff;
+  color:#257db7
+}
+
+.student-status.expired {
+  background:#f1f2f3;
+  color:#6b7479
+}
+
+.student-status-content {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  margin-top:18px;
+  max-width:900px
+}
+
+.status-icon {
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  flex:0 0 auto
+}
+
+.status-icon.pending {
+  background:#fff4d9;
+  color:#a66b00
+}
+
+.status-icon.approved {
+  background:#e4f4ef;
+  color:#087461
+}
+
+.status-icon.rejected {
+  background:#fff0f0;
+  color:#c64a54
+}
+
+.status-icon.completed {
+  background:#e9f4ff;
+  color:#356d9b
+}
+
+.status-icon.expired {
+  background:#f1f2f3;
+  color:#6b7479
+}
+
+.student-status-content h3 {
+  margin:0;
+  font-size:13px
+}
+
+.student-status-content p {
+  margin:4px 0;
+  color:#607b88;
+  font-size:10px;
+  line-height:1.4
+}
+
+.student-status-content small {
+  color:#819097;
+  font-size:8px
+}
+
+.student-empty-small {
+  min-height:110px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#75868e
+}
+
+.student-empty-small svg {
+  margin-bottom:7px;
+  color:#0d806b
+}
+
+.student-empty-small strong {
+  font-size:12px;
+  color:#102b3c
+}
+
+.student-empty-small span {
+  margin-top:3px;
+  font-size:10px
+}
+
+.student-info-list {
+  margin-top:8px
+}
+
+.student-info-list>div {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:9px 0;
+  border-top:1px solid #dce8e4
+}
+
+.student-info-list>div:first-child {
+  border-top:0
+}
+
+.info-icon,
+.quick-icon {
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:#e4f4ef;
+  color:#087461;
+  flex:0 0 auto
+}
+
+.student-info-list strong,
+.student-actions-panel strong {
+  display:block;
+  color:#102b3c;
+  font-size:11px
+}
+
+.student-info-list small,
+.student-actions-panel small {
+  display:block;
+  margin-top:2px;
+  color:#7a8b92;
+  font-size:8px;
+  line-height:1.35
+}
+
+.student-actions-panel {
+  display:flex;
+  flex-direction:column;
+  gap:3px
+}
+
+.student-actions-panel .student-panel-head {
+  margin-bottom:2px
+}
+
+.student-actions-panel>a {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:7px 0;
+  border-top:1px solid #dce8e4;
+  text-decoration:none;
+  color:#102b3c
+}
+
+.student-actions-panel>a .student-actions-text {
+  flex:1
+}
+
+.student-actions-panel>a>svg:last-child {
+  color:#8a999f
+}
+
+.student-records {
+  padding:15px 17px
+}
+
+.student-records-head {
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:flex-start;
+  margin-bottom:9px
+}
+
+.student-records-head h2 {
+  margin:0;
+  color:#102b3c;
+  font-size:18px
+}
+
+.student-records-head p:not(.student-eyebrow) {
+  margin:4px 0 0;
+  color:#7a8b92;
+  font-size:10px
+}
+
+.student-total-pill {
+  padding:6px 9px;
+  border-radius:18px;
+  background:#edf7f3;
+  color:#087461;
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap
+}
+
+.student-outpass-list {
+  border:1px solid #dce8e4;
+  border-radius:11px;
+  overflow:hidden
+}
+
+.student-outpass {
+  background:#fff;
+  border-top:1px solid #dce8e4
+}
+
+.student-outpass:first-child {
+  border-top:0
+}
+
+.student-outpass-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:10px 12px
+}
+
+.student-outpass-top span:first-child,
+.student-outpass-info span {
+  display:block;
+  color:#89989e;
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.5px
+}
+
+.student-outpass-top strong {
+  display:block;
+  margin-top:3px;
+  color:#102b3c;
+  font-size:12px
+}
+
+.student-outpass-info {
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  border-top:1px solid #dce8e4
+}
+
+.student-outpass-info>div {
+  padding:9px 11px;
+  border-right:1px solid #dce8e4
+}
+
+.student-outpass-info>div:last-child {
+  border-right:0
+}
+
+.student-outpass-info strong {
+  display:block;
+  margin-top:4px;
+  color:#304a57;
+  font-size:11px
+}
+
+.student-rejection,
+.student-approved-note,
+.student-completed-note {
+  padding:8px 11px;
+  border-top:1px solid #dce8e4
+}
+
+.student-rejection {
+  background:#fff8f8;
+  color:#7f3030
+}
+
+.student-rejection strong {
+  font-size:9px;
+  color:#b42318;
+  text-transform:uppercase
+}
+
+.student-rejection p {
+  margin:3px 0 0;
+  font-size:10px
+}
+
+.student-approved-note,
+.student-completed-note {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  background:#f7fbfa;
+  color:#49616c;
+  font-size:9px
+}
+
+.student-approved-note svg,
+.student-completed-note svg {
+  color:#087461;
+  flex:0 0 auto
+}
+
+.student-approved-note strong {
+  color:#087461
+}
+
+.student-approved-time {
+  padding:7px 11px;
+  border-top:1px solid #dce8e4;
+  color:#7f8e94;
+  font-size:8px
+}
+
+.student-empty {
+  min-height:110px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  border:1px dashed #dce8e4;
+  border-radius:11px;
+  text-align:center
+}
+
+.student-empty>div {
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  margin-bottom:6px;
+  border-radius:11px;
+  background:#e4f4ef;
+  color:#087461
+}
+
+.student-empty h3 {
+  margin:0 0 3px;
+  font-size:13px
+}
+
+.student-empty p {
+  margin:0;
+  color:#75868e;
+  font-size:10px
+}
+
+.student-footer-note {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin:10px 3px 0;
+  color:#7b8b92;
+  font-size:9px
+}
+
+.student-footer-note svg {
+  color:#84969d
+}
+
+.student-mobile-nav {
+  display:none
+}
+
+.student-loading {
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:10px;
+  background:#f4faf8;
+  color:#5d7682
+}
+
+.student-spinner {
+  width:30px;
+  height:30px;
+  border:3px solid #d7e9e4;
+  border-top-color:#0d806b;
+  border-radius:50%;
+  animation:student-spin .8s linear infinite
+}
+
+@keyframes student-spin {
+  to {
+    transform:rotate(360deg)
+  }
+
+}
+
+.student-error-page {
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  background:#f4faf8;
+  padding:20px
+}
+
+.student-error-card {
+  width:min(420px,100%);
+  text-align:center;
+  background:#fff;
+  border:1px solid #dce8e4;
+  border-radius:15px;
+  padding:28px
+}
+
+.student-error-icon {
+  width:50px;
+  height:50px;
+  margin:0 auto 10px;
+  border-radius:50%;
+  background:#fff0f1;
+  color:#c64a54;
+  display:grid;
+  place-items:center;
+  font-weight:800
+}
+
+.student-error-card h2 {
+  margin:0;
+  font-size:20px
+}
+
+.student-error-card p {
+  color:#75868e;
+  font-size:12px;
+  line-height:1.5
+}
+
+.student-error-card button {
+  border:0;
+  border-radius:8px;
+  padding:10px 16px;
+  background:#0d806b;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  margin:4px
+}
+
+.student-error-card .error-logout {
+  background:#edf2f0;
+  color:#49616c
+}
+
+.gate-modal-backdrop {
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(16,43,60,.35);
+  display:grid;
+  place-items:center;
+  padding:20px
+}
+
+.gate-modal {
+  width:min(490px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:15px;
+  padding:22px;
+  box-shadow:0 20px 55px rgba(16,43,60,.2)
+}
+
+.gate-modal-head {
+  display:flex;
+  justify-content:space-between;
+  gap:15px
+}
+
+.gate-modal-head h2 {
+  margin:0;
+  font-size:20px
+}
+
+.gate-modal-head button {
+  width:32px;
+  height:32px;
+  border:0;
+  border-radius:50%;
+  background:#f1f5f3;
+  font-size:20px;
+  cursor:pointer
+}
+
+.gate-pass-summary {
+  margin:15px 0;
+  padding:11px 12px;
+  background:#f3faf7;
+  border-radius:9px
+}
+
+.gate-pass-summary strong {
+  display:block;
+  font-size:13px
+}
+
+.gate-pass-summary span {
+  display:block;
+  margin-top:3px;
+  color:#75868e;
+  font-size:10px
+}
+
+.gate-alert {
+  padding:10px 12px;
+  border-radius:8px;
+  font-size:11px;
+  margin-bottom:10px
+}
+
+.gate-alert.error {
+  background:#fff0f1;
+  color:#b43e47
+}
+
+.gate-alert.success {
+  background:#e4f4ef;
+  color:#087461
+}
+
+.gate-action {
+  text-align:center;
+  padding:12px 5px 4px
+}
+
+.gate-action-icon {
+  width:58px;
+  height:58px;
+  margin:0 auto 10px;
+  border-radius:50%;
+  background:#e4f4ef;
+  color:#087461;
+  display:grid;
+  place-items:center
+}
+
+.gate-action h3 {
+  margin:0;
+  font-size:16px
+}
+
+.gate-action p {
+  margin:5px auto 14px;
+  max-width:360px;
+  color:#75868e;
+  font-size:11px;
+  line-height:1.45
+}
+
+.gate-action button {
+  border:0;
+  border-radius:8px;
+  background:#0d806b;
+  color:#fff;
+  padding:10px 18px;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer
+}
+
+.gate-action button.secondary {
+  background:#edf2f0;
+  color:#49616c
+}
+
+.gate-action button:disabled {
+  opacity:.6;
+  cursor:not-allowed
+}
+
+@media(max-width:1000px) {
+
+  .student-sidebar {
+    width:200px
+  }
+
+  .student-main {
+    margin-left:200px
+  }
+
+  .student-content {
+    width:min(100% - 32px,920px)
+  }
+
+  .student-action-grid {
+    grid-template-columns:1fr 1fr
+  }
+
+  .student-action-grid .latest-panel {
+    grid-column:1/-1
+  }
+
+  .student-outpass-info {
+    grid-template-columns:repeat(3,1fr)
+  }
+
+  .student-outpass-info>div:nth-child(3) {
+    border-right:0
+  }
+
+}
+
+@media(max-width:700px) {
+
+  body {
+    padding-bottom:68px
+  }
+
+  .student-sidebar {
+    display:none
+  }
+
+  .student-main {
+    margin-left:0
+  }
+
+  .student-topbar {
+    height:64px;
+    padding:0 13px;
+    justify-content:flex-end
+  }
+
+  .student-profile {
+    min-width:0;
+    padding:3px;
+    border:0;
+    background:transparent
+  }
+
+  .student-profile strong,
+.student-profile small {
+    display:none
+  }
+
+  .student-profile>span {
+    width:34px;
+    height:34px
+  }
+
+  .student-content {
+    width:100%;
+    padding:22px 14px 84px
+  }
+
+  .student-heading {
+    align-items:flex-start;
+    margin-bottom:17px
+  }
+
+  .student-heading h1 {
+    font-size:27px;
+    max-width:320px
+  }
+
+  .student-heading>div>p:last-child {
+    max-width:320px;
+    font-size:11px;
+    line-height:1.45
+  }
+
+  .student-refresh {
+    padding:9px 12px
+  }
+
+  .student-profile-card {
+    padding:15px;
+    flex-wrap:wrap
+  }
+
+  .student-hostel {
+    width:100%;
+    border-left:0;
+    border-top:1px solid #e4ece9;
+    padding:11px 0 0
+  }
+
+  .student-activity-card {
+    padding:12px 9px 10px
+  }
+
+  .student-activity-grid {
+    grid-template-columns:repeat(4,1fr);
+    gap:7px
+  }
+
+  .student-stat {
+    min-height:72px;
+    flex-direction:column;
+    justify-content:center;
+    gap:4px;
+    padding:7px 3px;
+    text-align:center
+  }
+
+  .student-stat-icon {
+    width:30px;
+    height:30px
+  }
+
+  .student-stat strong {
+    font-size:18px
+  }
+
+  .student-stat span {
+    font-size:8px
+  }
+
+  .student-action-grid {
+    grid-template-columns:1fr;
+    gap:10px
+  }
+
+  .student-action-grid .latest-panel {
+    grid-column:auto;
+    min-height:0
+  }
+
+  .student-panel {
+    min-height:0;
+    padding:15px
+  }
+
+  .student-records {
+    padding:15px
+  }
+
+  .student-outpass-info {
+    grid-template-columns:1fr 1fr
+  }
+
+  .student-outpass-info>div {
+    border-right:1px solid #edf3f1!important
+  }
+
+  .student-outpass-info>div:nth-child(2n) {
+    border-right:0!important
+  }
+
+  .student-mobile-nav {
+    position:fixed;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    left:0;
+    right:0;
+    bottom:0;
+    height:67px;
+    background:#fff;
+    border-top:1px solid #dce8e4;
+    z-index:50
+  }
+
+  .student-mobile-nav a {
+    text-decoration:none;
+    color:#75868e;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    font-size:10px
+  }
+
+  .student-mobile-nav a.active {
+    color:#087461;
+    font-weight:700
+  }
+
+}
+
+@media(max-width:430px) {
+
+  .student-heading {
+    display:block
+  }
+
+  .student-refresh {
+    margin-top:11px
+  }
+
+  .student-profile-info h2 {
+    font-size:16px
+  }
+
+  .student-activity-heading h2 {
+    font-size:16px
+  }
+
+  .student-action-grid {
+    gap:10px
+  }
+
+  .student-outpass-info {
+    grid-template-columns:1fr 1fr
+  }
+
+}
+
+/* =========================================================
+STUDENT DASHBOARD — FINAL POLISH
+   ========================================================= */
+
+.student-heading {
+
+  margin-bottom: 16px;
+
+}
+
+.student-profile-card {
+
+  margin-bottom: 14px;
+
+}
+
+.student-activity-card {
+
+  margin-bottom: 14px;
+
+}
+
+.student-action-grid {
+
+  margin-bottom: 14px;
+
+}
+
+.student-panel-head h2,
+.student-records-head h2 {
+
+  letter-spacing: -0.2px;
+
+}
+
+.student-status-content h3 {
+
+  font-size: 14px;
+
+}
+
+.student-status-content p {
+
+  font-size: 11px;
+
+}
+
+.student-status-content small {
+
+  font-size: 9px;
+
+}
+
+.student-outpass-top strong {
+
+  font-size: 13px;
+
+}
+
+.student-outpass-info strong {
+
+  font-size: 11px;
+
+}
+
+.student-footer-note {
+
+  margin-top: 12px;
+
+}
+
+@media (max-width: 700px) {
+
+  .student-heading h1 {
+
+    font-size: 27px;
+
+  }
+
+  .student-profile-card {
+
+    margin-bottom: 12px;
+
+  }
+
+  .student-activity-card {
+
+    margin-bottom: 12px;
+
+  }
+
+  .student-panel-head h2 {
 
     font-size: 17px;
 
-    color: #111827;
-}
+  }
 
-.qr-content p {
-    margin: 0;
-
-    max-width: 400px;
-
-    font-size: 13px;
-
-    line-height: 1.6;
-
-    color: #6b7280;
-}
-
-.qr-container {
-    width: 150px;
-    height: 150px;
-
-    background: white;
-
-    padding: 8px;
-
-    border-radius: 10px;
-
-    border: 1px solid #e5e7eb;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-}
-
-.qr-container img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: contain;
-}
-
-
-/* ================================
-   REJECTION
-================================ */
-
-.rejection-box {
-    margin: 0 24px 24px;
-
-    padding: 15px 17px;
-
-    border-radius: 10px;
-
-    background: #fef2f2;
-
-    border: 1px solid #fecaca;
-}
-
-.rejection-box strong {
-    display: block;
-
-    color: #b91c1c;
-
-    font-size: 13px;
-
-    margin-bottom: 5px;
-}
-
-.rejection-box p {
-    margin: 0;
-
-    color: #7f1d1d;
-
-    font-size: 13px;
-}
-
-
-/* ================================
-   COMPLETED
-================================ */
-
-.completed-box {
-    margin: 0 24px 24px;
-
-    padding: 13px 16px;
-
-    background: #eff6ff;
-
-    color: #1d4ed8;
-
-    border-radius: 10px;
-
-    font-size: 13px;
-
-    font-weight: 600;
-}
-
-
-/* ================================
-   EMPTY STATE
-================================ */
-
-.empty-outpass {
-    background: white;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 16px;
-
-    padding: 55px 20px;
-
-    text-align: center;
-}
-
-.empty-icon {
-    font-size: 40px;
-
-    margin-bottom: 10px;
-}
-
-.empty-outpass h3 {
-    margin: 0;
-
-    font-size: 18px;
-
-    color: #111827;
-}
-
-.empty-outpass p {
-    margin: 7px 0 0;
-
-    font-size: 13px;
-
-    color: #6b7280;
-}
-
-
-/* ================================
-   LOADING
-================================ */
-
-.student-loading {
-    min-height: 100vh;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    background: #f4f7fb;
-}
-
-.loading-spinner {
-    width: 38px;
-    height: 38px;
-
-    border: 4px solid #dbeafe;
-
-    border-top-color: #2563eb;
-
-    border-radius: 50%;
-
-    animation: spin 0.8s linear infinite;
-}
-
-.student-loading p {
-    margin-top: 14px;
-
-    color: #6b7280;
-
-    font-size: 14px;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-
-/* ================================
-   ERROR PAGE
-================================ */
-
-.student-error-page {
-    min-height: 100vh;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: #f4f7fb;
-
-    padding: 20px;
-}
-
-.error-card {
-    background: white;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 16px;
-
-    padding: 35px;
-
-    text-align: center;
-
-    max-width: 420px;
-
-    width: 100%;
-
-    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.06);
-}
-
-.error-card h2 {
-    margin: 0 0 10px;
-
-    color: #111827;
-}
-
-.error-card p {
-    color: #6b7280;
+  .student-status-content h3 {
 
     font-size: 14px;
 
-    margin-bottom: 20px;
+  }
+
+  .student-status-content p {
+
+    font-size: 10.5px;
+
+  }
+
+  .student-outpass-top strong {
+
+    font-size: 12px;
+
+  }
+
 }
 
-.retry-button,
-.logout-error-button {
-    border: none;
-
-    padding: 10px 16px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-weight: 600;
-
-    margin: 5px;
+/* =========================================================
+STUDENT DASHBOARD — LARGER, MORE READABLE TYPOGRAPHY
+   ========================================================= */
+.student-brand span {
+  font-size:12px
 }
 
-.retry-button {
-    background: #2563eb;
-
-    color: white;
+.student-nav-link {
+  font-size:14px
 }
 
-.logout-error-button {
-    background: #e5e7eb;
+.student-sidebar-bottom button {
+  font-size:14px
+}
 
-    color: #111827;
+.student-profile strong {
+  font-size:13px
+}
+
+.student-profile-info>span,
+.student-hostel>span {
+  font-size:10px
+}
+
+.student-profile-info h2 {
+  font-size:17px
+}
+
+.student-profile-info p {
+  font-size:11px
+}
+
+.student-hostel strong {
+  font-size:14px
+}
+
+.student-eyebrow {
+  font-size:11px
+}
+
+.student-heading h1 {
+  font-size:32px
+}
+
+.student-heading>div>p:last-child {
+  font-size:15px
+}
+
+.student-refresh {
+  font-size:13px
+}
+
+.student-activity-heading h2 {
+  font-size:18px
+}
+
+.student-activity-heading h2 span {
+  font-size:13px
+}
+
+.student-stat strong {
+  font-size:22px
+}
+
+.student-stat span {
+  font-size:10px
+}
+
+.student-panel-head h2,
+.student-records-head h2 {
+  font-size:18px
+}
+
+.student-panel-head p:not(.student-eyebrow),
+.student-records-head p:not(.student-eyebrow) {
+  font-size:11px
+}
+
+.student-status {
+  font-size:10px
+}
+
+.student-status-content h3 {
+  font-size:15px
+}
+
+.student-status-content p {
+  font-size:12px
+}
+
+.student-status-content small {
+  font-size:9px
+}
+
+.student-info-list strong,
+.student-actions-panel strong {
+  font-size:12px
+}
+
+.student-info-list small,
+.student-actions-panel small {
+  font-size:9px
+}
+
+.student-outpass-top span:first-child,
+.student-outpass-info span {
+  font-size:10px
+}
+
+.student-outpass-top strong {
+  font-size:13px
+}
+
+.student-outpass-info strong {
+  font-size:12px
+}
+
+.student-approved-note,
+.student-completed-note {
+  font-size:10px
+}
+
+.student-approved-time {
+  font-size:9px
+}
+
+.student-footer-note {
+  font-size:10px
+}
+
+@media(max-width:700px) {
+
+  .student-heading h1 {
+    font-size:28px
+  }
+
+  .student-heading>div>p:last-child {
+    font-size:12px
+  }
+
+  .student-nav-link {
+    font-size:14px
+  }
+
+  .student-profile-info h2 {
+    font-size:17px
+  }
+
+  .student-profile-info p {
+    font-size:11px
+  }
+
+  .student-activity-heading h2 {
+    font-size:17px
+  }
+
+  .student-stat strong {
+    font-size:19px
+  }
+
+  .student-stat span {
+    font-size:9px
+  }
+
+  .student-panel-head h2,
+.student-records-head h2 {
+    font-size:18px
+  }
+
+  .student-status-content h3 {
+    font-size:15px
+  }
+
+  .student-status-content p {
+    font-size:11px
+  }
+
+  .student-outpass-top strong {
+    font-size:13px
+  }
+
+  .student-outpass-info strong {
+    font-size:12px
+  }
+
+}
+
+/* FINAL TYPOGRAPHY PASS — intentionally more readable on desktop */
+.student-nav-link {
+  font-size:15px!important
+}
+
+.student-sidebar-bottom button {
+  font-size:15px!important
+}
+
+.student-brand strong {
+  font-size:27px!important
+}
+
+.student-brand span {
+  font-size:12px!important
+}
+
+.student-heading h1 {
+  font-size:34px!important
+}
+
+.student-heading>div>p:last-child {
+  font-size:15px!important
+}
+
+.student-eyebrow {
+  font-size:12px!important
+}
+
+.student-refresh {
+  font-size:14px!important
+}
+
+.student-profile-info h2 {
+  font-size:18px!important
+}
+
+.student-profile-info p {
+  font-size:12px!important
+}
+
+.student-hostel strong {
+  font-size:15px!important
+}
+
+.student-activity-heading h2 {
+  font-size:19px!important
+}
+
+.student-activity-heading h2 span {
+  font-size:13px!important
+}
+
+.student-stat strong {
+  font-size:24px!important
+}
+
+.student-stat span {
+  font-size:11px!important
+}
+
+.student-panel-head h2,
+.student-records-head h2 {
+  font-size:19px!important
+}
+
+.student-panel-head p:not(.student-eyebrow),
+.student-records-head p:not(.student-eyebrow) {
+  font-size:12px!important
+}
+
+.student-status {
+  font-size:11px!important
+}
+
+.student-status-content h3 {
+  font-size:16px!important
+}
+
+.student-status-content p {
+  font-size:12px!important
+}
+
+.student-status-content small {
+  font-size:10px!important
+}
+
+.student-info-list strong,
+.student-actions-panel strong {
+  font-size:13px!important
+}
+
+.student-info-list small,
+.student-actions-panel small {
+  font-size:10px!important
+}
+
+.student-outpass-top span:first-child,
+.student-outpass-info span {
+  font-size:11px!important
+}
+
+.student-outpass-top strong {
+  font-size:14px!important
+}
+
+.student-outpass-info strong {
+  font-size:13px!important
+}
+
+.student-approved-note,
+.student-completed-note {
+  font-size:10px!important
+}
+
+.student-approved-time {
+  font-size:9px!important
+}
+
+.student-footer-note {
+  font-size:10px!important
+}
+
+@media (max-width:700px) {
+
+  .student-heading h1 {
+    font-size:29px!important
+  }
+
+  .student-heading>div>p:last-child {
+    font-size:12px!important
+  }
+
+  .student-nav-link {
+    font-size:14px!important
+  }
+
+  .student-panel-head h2,
+.student-records-head h2 {
+    font-size:18px!important
+  }
+
+  .student-stat strong {
+    font-size:20px!important
+  }
+
+  .student-stat span {
+    font-size:9px!important
+  }
+
 }
 
 
-/* ================================
-   RESPONSIVE
-================================ */
 
-@media (max-width: 900px) {
+/* =========================================================
+   STUDENT DASHBOARD — FINAL MOBILE NAVIGATION
+   Home | Outpasses | Profile | Logout
+   ========================================================= */
 
-    .student-stats {
-        grid-template-columns: repeat(2, 1fr);
+@media (max-width: 700px) {
+
+    .student-mobile-nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 67px;
+        padding: 0;
+        background: #ffffff;
+        border-top: 1px solid #dce8e4;
+        z-index: 50;
     }
 
-    .outpass-details {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-
-@media (max-width: 650px) {
-
-    .student-header {
-        padding: 0 18px;
-
-        height: auto;
-
-        min-height: 70px;
-    }
-
-    .student-header-actions {
-        gap: 5px;
-    }
-
-    .refresh-button,
-    .logout-button {
-        padding: 8px 10px;
-
-        font-size: 12px;
-    }
-
-    .student-main {
-        padding: 20px 15px 40px;
-    }
-
-    .student-welcome {
-        padding: 22px;
-
-        align-items: flex-start;
-    }
-
-    .student-welcome h2 {
-        font-size: 24px;
-    }
-
-    .student-profile-icon {
-        width: 50px;
-        height: 50px;
-
-        font-size: 25px;
-    }
-
-    .student-info-card {
-        grid-template-columns: 1fr;
-
-        gap: 15px;
-    }
-
-    .student-stats {
-        grid-template-columns: 1fr 1fr;
-
-        gap: 10px;
-    }
-
-    .stat-card {
-        padding: 15px;
-
-        gap: 10px;
-    }
-
-    .stat-icon {
-        width: 38px;
-        height: 38px;
-
-        font-size: 18px;
-    }
-
-    .stat-card strong {
-        font-size: 20px;
-    }
-
-    .section-heading {
-        align-items: flex-start;
-
-        gap: 10px;
-    }
-
-    .outpass-details {
-        grid-template-columns: 1fr;
-
-        gap: 15px;
-    }
-
-    .qr-content {
+    .student-mobile-nav a,
+    .student-mobile-nav button {
+        min-width: 0;
+        width: 100%;
+        height: 67px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #75868e;
+        display: flex;
         flex-direction: column;
-
-        align-items: flex-start;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        font-family: inherit;
+        font-size: 10px;
+        line-height: 1;
+        text-decoration: none;
+        cursor: pointer;
     }
 
-    .qr-container {
-        align-self: center;
-    }
-}
-
-
-@media (max-width: 430px) {
-
-    .student-brand p {
-        display: none;
+    .student-mobile-nav a.active {
+        color: #087461;
+        font-weight: 700;
     }
 
-    .student-header {
-        padding: 0 12px;
+    .student-mobile-nav svg {
+        width: 19px;
+        height: 19px;
+        flex: 0 0 auto;
+        stroke-width: 1.8;
     }
 
-    .student-logo {
-        width: 38px;
-        height: 38px;
+    /*
+       Logout uses a wider arrow-shaped SVG than the other icons.
+       Scale the drawing itself so its visual size matches the
+       Home, Outpasses, and Profile icons.
+    */
+    .student-mobile-nav .student-mobile-logout svg {
+        width: 19px;
+        height: 19px;
+        transform: scale(0.72);
+        transform-origin: center;
+        stroke-width: 1.8;
     }
 
-    .student-brand h1 {
-        font-size: 18px;
+    .student-mobile-nav .student-mobile-logout:hover {
+        color: #087461;
     }
 
-    .student-stats {
-        grid-template-columns: 1fr;
-    }
-
-    .outpass-card-header {
-        align-items: flex-start;
-
-        gap: 10px;
-    }
-}
-
-
-/* =========================================================
-   STUDENT DASHBOARD — OUTPASS NOTIFICATION
-   ========================================================= */
-
-/* The notification classes are used by StudentDashboard.jsx.
-   These were missing from the uploaded stylesheet, which is why
-   the notification appeared as plain, oversized text. */
-
-.student-notification {
-    margin-top: 28px;
-    margin-bottom: 34px;
-
-    background: #ffffff;
-    border: 1px solid #e1e7ef;
-    border-radius: 16px;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 4px 16px rgba(15, 23, 42, 0.035);
-}
-
-.notification-header {
-    padding: 18px 22px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 18px;
-
-    background: #fbfcfe;
-    border-bottom: 1px solid #eef2f7;
-}
-
-.notification-label {
-    display: block;
-
-    margin-bottom: 4px;
-
-    color: #2563eb;
-
-    font-size: 10px;
-    font-weight: 800;
-
-    letter-spacing: 1px;
-}
-
-.notification-header h2 {
-    margin: 0;
-
-    color: #172033;
-
-    font-size: 20px;
-    line-height: 1.25;
-    font-weight: 750;
-}
-
-.notification-header .status-badge {
-    flex-shrink: 0;
-}
-
-.notification-content {
-    display: flex;
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 18px 22px;
-}
-
-.notification-icon {
-    width: 46px;
-    height: 46px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 12px;
-
-    background: #fff7ed;
-    border: 1px solid #fed7aa;
-
-    font-size: 22px;
-}
-
-.notification-content h3 {
-    margin: 0 0 5px;
-
-    color: #172033;
-
-    font-size: 16px;
-    line-height: 1.35;
-    font-weight: 750;
-}
-
-.notification-content p {
-    margin: 0;
-
-    color: #64748b;
-
-    font-size: 13px;
-    line-height: 1.55;
-}
-
-/* Status-specific notification appearance */
-
-.student-notification:has(.status-approved) .notification-icon {
-    background: #ecfdf5;
-    border-color: #a7f3d0;
-}
-
-.student-notification:has(.status-rejected) .notification-icon {
-    background: #fef2f2;
-    border-color: #fecaca;
-}
-
-.student-notification:has(.status-completed) .notification-icon {
-    background: #eff6ff;
-    border-color: #bfdbfe;
-}
-
-.student-notification:has(.status-expired) .notification-icon {
-    background: #f3f4f6;
-    border-color: #d1d5db;
-}
-
-/* =========================================================
-   STUDENT DASHBOARD — SECTION SPACING
-   ========================================================= */
-
-.outpass-section {
-    margin-top: 0;
-}
-
-.section-heading {
-    margin-bottom: 16px;
-}
-
-.outpass-list {
-    gap: 16px;
-}
-
-/* =========================================================
-   STUDENT DASHBOARD — MOBILE NOTIFICATION
-   ========================================================= */
-
-@media (max-width: 650px) {
-
-    .student-notification {
-        margin-top: 22px;
-        margin-bottom: 28px;
-        border-radius: 14px;
-    }
-
-    .notification-header {
-        padding: 15px 17px;
-        gap: 12px;
-    }
-
-    .notification-label {
-        font-size: 9px;
-    }
-
-    .notification-header h2 {
-        font-size: 18px;
-    }
-
-    .notification-content {
-        padding: 16px 17px;
-        gap: 12px;
-        align-items: flex-start;
-    }
-
-    .notification-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        font-size: 19px;
-    }
-
-    .notification-content h3 {
-        font-size: 14px;
-    }
-
-    .notification-content p {
-        font-size: 12px;
-    }
-}
-
-@media (max-width: 430px) {
-
-    .student-notification {
-        margin-top: 18px;
-        margin-bottom: 24px;
-    }
-
-    .notification-header {
-        padding: 14px;
-    }
-
-    .notification-header h2 {
-        font-size: 17px;
-    }
-
-    .notification-content {
-        padding: 14px;
-    }
-
-    .notification-icon {
-        width: 36px;
-        height: 36px;
-        font-size: 17px;
-    }
-
-    .notification-content h3 {
-        font-size: 13px;
-    }
-
-    .notification-content p {
-        font-size: 11px;
-        line-height: 1.5;
-    }
 }

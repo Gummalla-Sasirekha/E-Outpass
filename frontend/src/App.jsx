@@ -8,7 +8,6 @@ import SecurityDashboard from "./SecurityDashboard";
 import StudentDashboard from "./StudentDashboard";
 import GateConfirmation from "./GateConfirmation";
 
-
 function App() {
 
     const [user, setUser] = useState(() => {
@@ -66,9 +65,10 @@ function App() {
     // ==========================================
 
     if (user.role === "parent") {
-        return (
-            <ParentDashboard />
-        );
+        if (currentPath === "/request-outpass") {
+            return <RequestOutpass />;
+        }
+        return <ParentDashboard />;
     }
 
 

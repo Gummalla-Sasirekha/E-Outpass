@@ -1,32 +1,180 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./ParentDashboard.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+const Icon = ({ name, size = 20 }) => {
+  const paths = {
+    dashboard: (
+      <>
+        <rect x="4" y="4" width="6" height="6" rx="1" />
+        <rect x="14" y="4" width="6" height="6" rx="1" />
+        <rect x="4" y="14" width="6" height="6" rx="1" />
+        <rect x="14" y="14" width="6" height="6" rx="1" />
+      </>
+    ),
+
+    request: (
+      <>
+        <path d="M7 3h7l4 4v14H7z" />
+        <path d="M14 3v5h5" />
+        <path d="M10 13h6M13 10v6" />
+      </>
+    ),
+
+    child: (
+      <>
+        <circle cx="12" cy="8" r="3.5" />
+        <path d="M5 20a7 7 0 0 1 14 0" />
+      </>
+    ),
+
+    history: (
+      <>
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 8v5l3 2" />
+        <path d="M4 5v4h4" />
+      </>
+    ),
+
+    bell: (
+      <>
+        <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 8h18c0-1-3-1-3-8" />
+        <path d="M10 21h4" />
+      </>
+    ),
+
+    profile: (
+      <>
+        <circle cx="12" cy="8" r="3.5" />
+        <path d="M5 20a7 7 0 0 1 14 0" />
+      </>
+    ),
+
+    logout: (
+      <>
+        <path d="M10 4H5v16h5" />
+        <path d="M13 8l4 4-4 4M9 12h8" />
+      </>
+    ),
+
+    arrow: (
+      <>
+        <path d="M5 12h13" />
+        <path d="m13 7 5 5-5 5" />
+      </>
+    ),
+
+    total: (
+      <>
+        <path d="M6 3h9l4 4v14H6z" />
+        <path d="M15 3v5h4" />
+        <path d="M9 13h6M9 17h4" />
+      </>
+    ),
+
+    pending: (
+      <>
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 8v5l3 2" />
+      </>
+    ),
+
+    approved: (
+      <>
+        <circle cx="12" cy="12" r="8" />
+        <path d="m8.5 12 2.3 2.3 4.8-5" />
+      </>
+    ),
+
+    rejected: (
+      <>
+        <circle cx="12" cy="12" r="8" />
+        <path d="m9 9 6 6M15 9l-6 6" />
+      </>
+    ),
+
+    location: (
+      <>
+        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+        <circle cx="12" cy="10" r="2.5" />
+      </>
+    ),
+
+    refresh: (
+      <>
+        <path d="M20 11a8 8 0 0 0-14.8-4L4 9" />
+        <path d="M4 4v5h5" />
+        <path d="M4 13a8 8 0 0 0 14.8 4L20 15" />
+        <path d="M20 20v-5h-5" />
+      </>
+    ),
+    mail: (
+      <>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m3 7 9 6 9-6" />
+      </>
+    ),
+
+    phone: (
+      <>
+        <path d="M7 4h3l1.5 4-2 1.5a14 14 0 0 0 5 5l1.5-2 4 1.5v3c0 1-1 2-2 1.9C10.5 18.1 5.9 13.5 4.1 6.9 3.8 5.4 5.1 4 7 4Z" />
+      </>
+    ),
+
+    shield: (
+      <>
+        <path d="M12 3 19 6v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" />
+        <path d="m9 12 2 2 4-4" />
+      </>
+    ),
+
+    calendar: (
+      <>
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M16 3v4M8 3v4M3 10h18" />
+      </>
+    ),
+  };
+
+  return (
+    <svg
+      className="ui-icon"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {paths[name]}
+    </svg>
+  );
+};
+
 function ParentDashboard() {
-  const [showForm, setShowForm] = useState(false);
-
-  const [placeOfVisit, setPlaceOfVisit] = useState("");
-  const [reason, setReason] = useState("");
-  const [dateRequestedFor, setDateRequestedFor] = useState("");
-  const [timeOfLeaving, setTimeOfLeaving] = useState("");
-  const [expectedInTime, setExpectedInTime] = useState("");
-
   const [outpasses, setOutpasses] = useState([]);
-
-  // Linked student
   const [student, setStudent] = useState(null);
-  const [studentLoading, setStudentLoading] = useState(true);
 
-  const [loading, setLoading] = useState(false);
+  const [studentLoading, setStudentLoading] = useState(true);
   const [fetching, setFetching] = useState(true);
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  // ==========================================
-  // BACKEND URL
-  // ==========================================
+  const [parentUser, setParentUser] = useState(null);
 
-  const API_URL = import.meta.env.VITE_API_URL;
+  // REQUEST OUTPASS FORM
+  const [showForm, setShowForm] = useState(false);
+  const [placeOfVisit, setPlaceOfVisit] = useState("");
+  const [reason, setReason] = useState("");
+  const [dateRequestedFor, setDateRequestedFor] = useState("");
+  const [timeOfLeaving, setTimeOfLeaving] = useState("");
+  const [expectedInTime, setExpectedInTime] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   // ==========================================
   // FETCH LINKED STUDENT
@@ -41,7 +189,6 @@ function ParentDashboard() {
       const response = await fetch(
         `${API_URL}/api/outpass/my-student`,
         {
-          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -50,6 +197,8 @@ function ParentDashboard() {
 
       const data = await response.json();
 
+      console.log("Outpass request response:", data);
+
       if (!response.ok) {
         throw new Error(
           data.message || "Failed to fetch linked student"
@@ -57,9 +206,10 @@ function ParentDashboard() {
       }
 
       setStudent(data.student);
-    } catch (error) {
-      console.error("Fetch student error:", error);
-      setError(error.message);
+    } catch (err) {
+      console.error("Fetch student error:", err);
+
+      setError(err.message);
       setStudent(null);
     } finally {
       setStudentLoading(false);
@@ -79,7 +229,6 @@ function ParentDashboard() {
       const response = await fetch(
         `${API_URL}/api/outpass/my`,
         {
-          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -95,95 +244,32 @@ function ParentDashboard() {
       }
 
       setOutpasses(data.outpasses || []);
-    } catch (error) {
-      console.error(error);
-      setError(error.message);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
     } finally {
       setFetching(false);
     }
   };
 
   // ==========================================
-  // LOAD DASHBOARD DATA
+  // LOAD DASHBOARD
   // ==========================================
 
   useEffect(() => {
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem("user") || "null"
+      );
+
+      setParentUser(saved);
+    } catch {
+      setParentUser(null);
+    }
+
     fetchStudent();
     fetchOutpasses();
   }, []);
-
-  // ==========================================
-  // SUBMIT OUTPASS
-  // ==========================================
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!student) {
-      setError(
-        "No student is linked to this parent account."
-      );
-      return;
-    }
-
-    setLoading(true);
-    setMessage("");
-    setError("");
-
-    try {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(
-        `${API_URL}/api/outpass/request`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-
-          body: JSON.stringify({
-            studentId: student.studentId,
-            placeOfVisit,
-            reason,
-            dateRequestedFor,
-            timeOfLeaving,
-            expectedInTime,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Failed to submit request"
-        );
-      }
-
-      setMessage(
-        `Outpass request submitted successfully! ID: ${data.outpass?.outpassId}`
-      );
-
-      // Clear form
-      setPlaceOfVisit("");
-      setReason("");
-      setDateRequestedFor("");
-      setTimeOfLeaving("");
-      setExpectedInTime("");
-
-      setShowForm(false);
-
-      // Refresh request history
-      fetchOutpasses();
-    } catch (error) {
-      console.error(error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // ==========================================
   // LOGOUT
@@ -197,11 +283,102 @@ function ParentDashboard() {
   };
 
   // ==========================================
-  // STATUS CLASS
+  // REQUEST OUTPASS
   // ==========================================
 
-  const getStatusClass = (status) => {
-    return `status-badge status-${status}`;
+  const openRequestPage = () => {
+    setMessage("");
+    setError("");
+    setShowForm(true);
+
+    setTimeout(() => {
+      document
+        .getElementById("request-outpass-form")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    }, 100);
+  };
+
+  const handleRequestSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!student) {
+      setError("No linked student found.");
+      return;
+    }
+
+    if (!student.studentId) {
+      console.error("Linked student is missing studentId:", student);
+      setError("Student ID is missing. Please check the linked student record.");
+      return;
+    }
+
+    if (
+      !placeOfVisit.trim() ||
+      !reason.trim() ||
+      !dateRequestedFor ||
+      !timeOfLeaving ||
+      !expectedInTime
+    ) {
+      setError("Please fill in all the required fields.");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setMessage("");
+      setError("");
+
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `${API_URL}/api/outpass/request`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            // Backend expects Student.studentId, NOT MongoDB _id
+            studentId: student.studentId,
+            placeOfVisit: placeOfVisit.trim(),
+            reason: reason.trim(),
+            dateRequestedFor,
+            timeOfLeaving,
+            expectedInTime,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to submit outpass request"
+        );
+      }
+
+      setMessage(
+        data.message || "Outpass request submitted successfully."
+      );
+
+      setPlaceOfVisit("");
+      setReason("");
+      setDateRequestedFor("");
+      setTimeOfLeaving("");
+      setExpectedInTime("");
+      setShowForm(false);
+
+      await fetchOutpasses();
+    } catch (err) {
+      console.error("Request outpass error:", err);
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   // ==========================================
@@ -210,12 +387,13 @@ function ParentDashboard() {
 
   const handleRefresh = () => {
     setError("");
+
     fetchStudent();
     fetchOutpasses();
   };
 
   // ==========================================
-  // DASHBOARD STATISTICS
+  // STATISTICS
   // ==========================================
 
   const totalRequests = outpasses.length;
@@ -232,531 +410,756 @@ function ParentDashboard() {
     (outpass) => outpass.status === "rejected"
   ).length;
 
+  const recentOutpasses = outpasses.slice(0, 4);
+
   // ==========================================
-  // RECENT REQUESTS
+  // PARENT INITIAL
   // ==========================================
 
-  const recentOutpasses = outpasses.slice(0, 3);
+  const parentInitial = useMemo(
+    () =>
+      (
+        parentUser?.name ||
+        parentUser?.email ||
+        "P"
+      )
+        .charAt(0)
+        .toUpperCase(),
+    [parentUser]
+  );
+
+  // ==========================================
+  // FORMAT DATE
+  // ==========================================
+
+  const formatDate = (value) => {
+    if (!value) return "—";
+
+    return new Date(value).toLocaleDateString(
+      undefined,
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }
+    );
+  };
+
+  // ==========================================
+  // STATUS CLASS
+  // ==========================================
+
+  const statusClass = (status) =>
+    `status-badge status-${String(
+      status || ""
+    ).toLowerCase()}`;
+
+  // ==========================================
+  // NAVIGATION
+  // ==========================================
+
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const goToDashboard = () => {
+    scrollToSection("parent-dashboard-top");
+  };
+
+  const goToChild = () => {
+    scrollToSection("my-child-section");
+  };
+
+  const goToHistory = () => {
+    scrollToSection("outpass-history-section");
+  };
+
+  const goToProfile = () => {
+    scrollToSection("parent-profile-section");
+  };
+
+  // ==========================================
+  // UI
+  // ==========================================
 
   return (
     <div className="parent-page">
 
       {/* ======================================
-          HEADER
+          SIDEBAR
       ====================================== */}
 
-      <header className="parent-header">
+      <aside className="parent-sidebar">
 
-        <div className="brand-area">
+        <div>
 
-          <div className="brand-mark">
-            E
+          <div className="sidebar-brand">
+            <strong>E Outpass</strong>
+
+            <span>
+              Safer Campuses. Brighter Tomorrows.
+            </span>
           </div>
 
-          <div className="brand-text">
-            <h1>E-Outpass</h1>
-            <p>Parent Portal</p>
-          </div>
+
+          <nav className="sidebar-nav">
+
+            <button
+              className="sidebar-link active"
+              onClick={goToDashboard}
+            >
+              <Icon name="dashboard" />
+              Dashboard
+            </button>
+
+
+            <button
+              className="sidebar-link"
+              onClick={goToChild}
+            >
+              <Icon name="child" />
+              My Child
+            </button>
+
+
+            <button
+              className="sidebar-link"
+              onClick={goToHistory}
+            >
+              <Icon name="history" />
+              Outpass History
+            </button>
+
+
+            <button
+              className="sidebar-link"
+              onClick={goToProfile}
+            >
+              <Icon name="profile" />
+              Profile
+            </button>
+
+          </nav>
 
         </div>
 
-        <div className="header-actions">
+
+        <div className="sidebar-bottom">
 
           <button
-            className="header-icon-button"
-            aria-label="Notifications"
-          >
-            🔔
-          </button>
-
-          <button
-            className="parent-logout"
+            className="sidebar-link"
             onClick={handleLogout}
           >
+            <Icon name="logout" />
             Logout
           </button>
 
+          <div className="sidebar-note">
+            Same People.
+            <br />
+            Safer Paths.
+          </div>
+
         </div>
 
-      </header>
+      </aside>
 
 
       {/* ======================================
           MAIN
       ====================================== */}
 
-      <main className="parent-content">
+      <main className="parent-main" id="parent-dashboard-top">
 
+        {/* TOPBAR */}
 
-        {/* ====================================
-            WELCOME
-        ==================================== */}
+        <header className="parent-topbar">
 
-        <section className="parent-welcome">
+          <div className="mobile-brand">
 
-          <div className="welcome-content">
-
-            <span className="welcome-label">
-              PARENT PORTAL
-            </span>
-
-            <h2>
-              Good morning 👋
-            </h2>
-
-            <p>
-              Manage your child's outpass requests
-              with ease.
-            </p>
-
-          </div>
-
-          <div className="welcome-accent">
-            ✦
-          </div>
-
-        </section>
-
-
-        {/* ====================================
-            SUCCESS / ERROR
-        ==================================== */}
-
-        {message && (
-          <div className="success-box">
-            <span className="message-icon">✓</span>
-            <span>{message}</span>
-          </div>
-        )}
-
-        {error && (
-          <div className="parent-error-box">
-            <span className="message-icon">!</span>
-            <span>{error}</span>
-          </div>
-        )}
-
-
-        {/* ====================================
-            LINKED STUDENT
-        ==================================== */}
-
-        <section className="student-card">
-
-          <div className="student-avatar">
-            {student?.name
-              ? student.name.charAt(0).toUpperCase()
-              : "S"}
-          </div>
-
-          <div className="student-details">
-
-            <span className="card-eyebrow">
-              YOUR CHILD
-            </span>
-
-            {studentLoading ? (
-
-              <>
-                <h2>Loading student...</h2>
-                <p>Please wait...</p>
-              </>
-
-            ) : student ? (
-
-              <>
-                <h2>
-                  {student.name}
-                </h2>
-
-                <p>
-                  {student.course}
-                  {" • "}
-                  Room {student.roomNumber}
-                  {" • "}
-                  {student.hostel?.name || "Hostel"}
-                </p>
-              </>
-
-            ) : (
-
-              <>
-                <h2>
-                  No Student Linked
-                </h2>
-
-                <p>
-                  Please contact the administrator.
-                </p>
-              </>
-
-            )}
-
-          </div>
-
-          <div className="student-arrow">
-            →
-          </div>
-
-        </section>
-
-
-        {/* ====================================
-            STATISTICS
-        ==================================== */}
-
-        <section className="stats-section">
-
-          <div className="section-heading">
-
-            <div>
-              <span className="section-eyebrow">
-                OVERVIEW
-              </span>
-
-              <h2>
-                Outpass activity
-              </h2>
-            </div>
-
-          </div>
-
-
-          <div className="stats-grid">
-
-            <div className="stat-card">
-
-              <div className="stat-icon stat-total">
-                ↗
-              </div>
-
-              <div className="stat-content">
-                <strong>{totalRequests}</strong>
-                <span>Total</span>
-              </div>
-
-            </div>
-
-
-            <div className="stat-card">
-
-              <div className="stat-icon stat-pending">
-                ◷
-              </div>
-
-              <div className="stat-content">
-                <strong>{pendingRequests}</strong>
-                <span>Pending</span>
-              </div>
-
-            </div>
-
-
-            <div className="stat-card">
-
-              <div className="stat-icon stat-approved">
-                ✓
-              </div>
-
-              <div className="stat-content">
-                <strong>{approvedRequests}</strong>
-                <span>Approved</span>
-              </div>
-
-            </div>
-
-
-            <div className="stat-card">
-
-              <div className="stat-icon stat-rejected">
-                ×
-              </div>
-
-              <div className="stat-content">
-                <strong>{rejectedRequests}</strong>
-                <span>Rejected</span>
-              </div>
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-        {/* ====================================
-            REQUEST ACTION
-        ==================================== */}
-
-        <section className="parent-action">
-
-          <div className="action-content">
-
-            <span className="action-label">
-              QUICK ACTION
-            </span>
-
-            <h2>
-              Need an outpass?
-            </h2>
-
-            <p>
-              Submit a request for your child
-              to leave the campus.
-            </p>
-
-          </div>
-
-
-          <button
-            className="request-button"
-            onClick={() => {
-              setShowForm(!showForm);
-              setMessage("");
-              setError("");
-            }}
-            disabled={!student || studentLoading}
-          >
-
-            <span className="request-button-icon">
-              +
-            </span>
+            <strong>
+              E Outpass
+            </strong>
 
             <span>
-              Request Outpass
+              Safer Campuses. Brighter Tomorrows.
             </span>
 
-            <span className="request-arrow">
-              →
-            </span>
-
-          </button>
-
-        </section>
+          </div>
 
 
-        {/* ====================================
-            REQUEST FORM
-        ==================================== */}
+          <div className="topbar-actions">
 
-        {showForm && student && (
 
-          <section className="outpass-form-card">
+            <div className="profile-chip">
 
-            <div className="form-header">
+              <span className="profile-avatar">
+                {parentInitial}
+              </span>
 
-              <div>
+              <span className="profile-role">
+                Parent
+              </span>
 
-                <span className="section-eyebrow">
-                  NEW REQUEST
-                </span>
+              <span className="profile-chevron">
+                ⌄
+              </span>
 
-                <h2>
-                  Request an Outpass
-                </h2>
+            </div>
 
-                <p>
-                  Requesting for{" "}
-                  <strong>{student.name}</strong>
-                </p>
+          </div>
 
-              </div>
+        </header>
 
-              <button
-                className="close-form"
-                onClick={() => setShowForm(false)}
-                aria-label="Close form"
-              >
-                ×
-              </button>
+
+        <div className="parent-content">
+
+          {/* ==================================
+              HERO
+          ================================== */}
+
+          <section className="parent-hero">
+
+            <div>
+
+              <span className="hero-eyebrow">
+                PARENT PORTAL
+              </span>
+
+              <h1>
+                Good morning, Parent!
+              </h1>
+
+              <p>
+                Manage your child's outpasses
+                easily and stay informed.
+              </p>
 
             </div>
 
 
-            <form
-              className="outpass-form"
-              onSubmit={handleSubmit}
-            >
+            <div className="hero-message">
 
+              <span />
 
-              {/* PLACE */}
+              <p>
+                A smarter campus for a safer
+                tomorrow.
+              </p>
 
-              <div className="form-group">
-
-                <label>
-                  Place of Visit
-                </label>
-
-                <input
-                  type="text"
-                  placeholder="Example: Kochi"
-                  value={placeOfVisit}
-                  onChange={(e) =>
-                    setPlaceOfVisit(e.target.value)
-                  }
-                  required
-                />
-
-              </div>
-
-
-              {/* REASON */}
-
-              <div className="form-group">
-
-                <label>
-                  Reason
-                </label>
-
-                <textarea
-                  placeholder="Enter reason for the outpass"
-                  value={reason}
-                  onChange={(e) =>
-                    setReason(e.target.value)
-                  }
-                  rows="3"
-                  required
-                />
-
-              </div>
-
-
-              {/* DATE */}
-
-              <div className="form-group">
-
-                <label>
-                  Date
-                </label>
-
-                <input
-                  type="date"
-                  value={dateRequestedFor}
-                  onChange={(e) =>
-                    setDateRequestedFor(e.target.value)
-                  }
-                  required
-                />
-
-              </div>
-
-
-              {/* TIME ROW */}
-
-              <div className="form-row">
-
-                <div className="form-group">
-
-                  <label>
-                    Leaving Time
-                  </label>
-
-                  <input
-                    type="time"
-                    value={timeOfLeaving}
-                    onChange={(e) =>
-                      setTimeOfLeaving(e.target.value)
-                    }
-                    required
-                  />
-
-                </div>
-
-
-                <div className="form-group">
-
-                  <label>
-                    Expected Return
-                  </label>
-
-                  <input
-                    type="time"
-                    value={expectedInTime}
-                    onChange={(e) =>
-                      setExpectedInTime(e.target.value)
-                    }
-                    required
-                  />
-
-                </div>
-
-              </div>
-
-
-              <button
-                type="submit"
-                className="submit-outpass-button"
-                disabled={loading}
-              >
-
-                {loading
-                  ? "Submitting..."
-                  : "Submit Outpass Request →"}
-
-              </button>
-
-            </form>
+            </div>
 
           </section>
 
-        )}
 
+          {/* ==================================
+              SUCCESS MESSAGE
+          ================================== */}
 
-        {/* ====================================
-            RECENT OUTPASSES
-        ==================================== */}
+          {message && (
 
-        <section className="history-section">
+            <div className="alert success-alert">
 
-          <div className="history-header">
-
-            <div>
-
-              <span className="section-eyebrow">
-                ACTIVITY
+              <span className="alert-check">
+                ✓
               </span>
 
+              <span>
+                {message}
+              </span>
+
+            </div>
+
+          )}
+
+
+          {/* ==================================
+              ERROR MESSAGE
+          ================================== */}
+
+          {error && (
+
+            <div className="alert error-alert">
+
+              <span className="alert-check">
+                !
+              </span>
+
+              <span>
+                {error}
+              </span>
+
+            </div>
+
+          )}
+
+
+          {/* ==================================
+              CHILD CARD
+          ================================== */}
+
+          <section className="child-card" id="my-child-section">
+
+            <div className="card-heading-row">
+
               <h2>
-                Recent Outpasses
+                Your Child
+              </h2>
+
+            </div>
+
+
+            <div className="child-main">
+
+              <div className="child-avatar">
+
+                {student?.name
+                  ?.charAt(0)
+                  .toUpperCase() || "S"}
+
+              </div>
+
+
+              <div className="child-info">
+
+                {studentLoading ? (
+
+                  <>
+                    <h3>
+                      Loading student...
+                    </h3>
+
+                    <p>
+                      Please wait...
+                    </p>
+                  </>
+
+                ) : student ? (
+
+                  <>
+                    <h3>
+                      {student.name}
+                    </h3>
+
+                    <p>
+                      {student.course ||
+                        "Student"}
+
+                      <span>
+                        |
+                      </span>
+
+                      Room{" "}
+                      {student.roomNumber ||
+                        "—"}
+
+                      <span>
+                        |
+                      </span>
+
+                      {student.hostel?.name ||
+                        "Hostel"}
+                    </p>
+                  </>
+
+                ) : (
+
+                  <>
+                    <h3>
+                      No Student Linked
+                    </h3>
+
+                    <p>
+                      Please contact the
+                      administrator.
+                    </p>
+                  </>
+
+                )}
+
+              </div>
+
+
+              <button
+                className="outline-action"
+                type="button"
+                onClick={goToProfile}
+              >
+                View Details
+
+                <Icon
+                  name="arrow"
+                  size={17}
+                />
+
+              </button>
+
+            </div>
+
+          </section>
+
+
+          {/* ==================================
+              ACTIVITY
+          ================================== */}
+
+          <section className="activity-section">
+
+            <div className="section-title-row">
+
+              <h2>
+                Outpass Activity
+              </h2>
+
+            </div>
+
+
+            <div className="stats-grid">
+
+              <div className="stat-card stat-blue">
+
+                <div className="stat-icon">
+                  <Icon name="total" />
+                </div>
+
+                <div>
+
+                  <strong>
+                    {totalRequests}
+                  </strong>
+
+                  <span>
+                    Total Requests
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div className="stat-card stat-yellow">
+
+                <div className="stat-icon">
+                  <Icon name="pending" />
+                </div>
+
+                <div>
+
+                  <strong>
+                    {pendingRequests}
+                  </strong>
+
+                  <span>
+                    Pending
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div className="stat-card stat-green">
+
+                <div className="stat-icon">
+                  <Icon name="approved" />
+                </div>
+
+                <div>
+
+                  <strong>
+                    {approvedRequests}
+                  </strong>
+
+                  <span>
+                    Approved
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div className="stat-card stat-red">
+
+                <div className="stat-icon">
+                  <Icon name="rejected" />
+                </div>
+
+                <div>
+
+                  <strong>
+                    {rejectedRequests}
+                  </strong>
+
+                  <span>
+                    Rejected
+                  </span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </section>
+
+
+          {/* ==================================
+              REQUEST BANNER
+          ================================== */}
+
+          <section className="request-banner">
+
+            <div className="request-banner-icon">
+
+              <Icon
+                name="request"
+                size={28}
+              />
+
+            </div>
+
+
+            <div className="request-banner-copy">
+
+              <h2>
+                Need an outpass?
               </h2>
 
               <p>
-                Track your child's latest requests.
+                Request an outpass for your child.
               </p>
 
             </div>
 
 
             <button
-              className="refresh-history"
-              onClick={handleRefresh}
+              className="primary-button"
+              onClick={openRequestPage}
+              disabled={
+                !student ||
+                studentLoading
+              }
             >
-              ↻ Refresh
+              Request Outpass
+
+              <Icon
+                name="arrow"
+                size={18}
+              />
+
             </button>
 
-          </div>
+          </section>
 
 
-          {/* LOADING */}
+          {/* ==================================
+              REQUEST OUTPASS FORM
+          ================================== */}
 
-          {fetching && (
+          {showForm && (
+            <section 
+              className="form-card"
+              id="request-outpass-form"
+              style={{ scrollMarginTop: "88px" }}
+            >
 
-            <div className="empty-history loading-state">
-              Loading requests...
-            </div>
+              <div className="form-card-header">
+                <div>
+                  <span className="hero-eyebrow">
+                    NEW REQUEST
+                  </span>
+                  <h2>Request an Outpass</h2>
+                  <p>
+                    Submit an outpass request for your child.
+                  </p>
+                </div>
 
+                <button
+                  type="button"
+                  className="outline-action"
+                  onClick={() => setShowForm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+
+              <form
+                className="outpass-form"
+                onSubmit={handleRequestSubmit}
+              >
+
+                <div className="form-row">
+
+                  <div className="form-group">
+                    <label htmlFor="placeOfVisit">
+                      Place of Visit
+                    </label>
+                    <input
+                      id="placeOfVisit"
+                      type="text"
+                      value={placeOfVisit}
+                      onChange={(e) =>
+                        setPlaceOfVisit(e.target.value)
+                      }
+                      placeholder="Enter destination"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="dateRequestedFor">
+                      Date
+                    </label>
+                    <input
+                      id="dateRequestedFor"
+                      type="date"
+                      value={dateRequestedFor}
+                      onChange={(e) =>
+                        setDateRequestedFor(e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+
+                </div>
+
+
+                <div className="form-group">
+                  <label htmlFor="reason">
+                    Reason
+                  </label>
+                  <textarea
+                    id="reason"
+                    value={reason}
+                    onChange={(e) =>
+                      setReason(e.target.value)
+                    }
+                    placeholder="Enter the reason for the outpass"
+                    rows="3"
+                    required
+                  />
+                </div>
+
+
+                <div className="form-row">
+
+                  <div className="form-group">
+                    <label htmlFor="timeOfLeaving">
+                      Time of Leaving
+                    </label>
+                    <input
+                      id="timeOfLeaving"
+                      type="time"
+                      value={timeOfLeaving}
+                      onChange={(e) =>
+                        setTimeOfLeaving(e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="expectedInTime">
+                      Expected Return Time
+                    </label>
+                    <input
+                      id="expectedInTime"
+                      type="time"
+                      value={expectedInTime}
+                      onChange={(e) =>
+                        setExpectedInTime(e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+
+                </div>
+
+
+                <div className="form-actions">
+                  <button
+                    type="button"
+                    className="outline-action"
+                    onClick={() => setShowForm(false)}
+                    disabled={submitting}
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="submit-button"
+                    disabled={submitting || !student}
+                  >
+                    {submitting
+                      ? "Submitting..."
+                      : "Submit Request"}
+                  </button>
+                </div>
+
+              </form>
+
+            </section>
           )}
 
 
-          {/* NO REQUESTS */}
+          {/* ==================================
+              RECENT OUTPASSES
+          ================================== */}
 
-          {!fetching &&
-            outpasses.length === 0 && (
+          <section className="recent-section" id="outpass-history-section">
 
-              <div className="empty-history">
+            <div className="recent-heading">
 
-                <div className="history-icon">
-                  +
+              <div>
+
+                <h2>
+                  Recent Outpasses
+                </h2>
+
+              </div>
+
+
+              <button
+                className="view-all-link"
+                onClick={handleRefresh}
+              >
+                Refresh
+
+                <Icon
+                  name="refresh"
+                  size={15}
+                />
+
+              </button>
+
+            </div>
+
+
+            {/* LOADING */}
+
+            {fetching ? (
+
+              <div className="empty-state">
+                Loading requests...
+              </div>
+
+            ) : recentOutpasses.length === 0 ? (
+
+              /* EMPTY */
+
+              <div className="empty-state">
+
+                <div className="empty-icon">
+
+                  <Icon
+                    name="request"
+                  />
+
                 </div>
 
                 <h3>
@@ -764,208 +1167,349 @@ function ParentDashboard() {
                 </h3>
 
                 <p>
-                  Your submitted outpass requests
-                  will appear here.
+                  Your submitted outpass
+                  requests will appear here.
                 </p>
 
               </div>
 
-            )}
+            ) : (
+
+              /* REQUEST TABLE */
+
+              <div className="recent-table-wrap">
+
+                <div className="recent-table-head">
+
+                  <span>
+                    Destination
+                  </span>
+
+                  <span>
+                    Purpose
+                  </span>
+
+                  <span>
+                    Out Date
+                  </span>
+
+                  <span>
+                    In Date
+                  </span>
+
+                  <span>
+                    Status
+                  </span>
+
+                  <span />
+
+                </div>
 
 
-          {/* RECENT REQUEST LIST */}
+                {recentOutpasses.map(
+                  (outpass) => (
 
-          {!fetching &&
-            recentOutpasses.length > 0 && (
+                    <div
+                      className="recent-row"
+                      key={outpass._id}
+                    >
 
-              <div className="parent-request-list">
+                      <div className="destination-cell">
 
-                {recentOutpasses.map((outpass) => (
+                        <span className="location-icon">
 
-                  <div
-                    className="parent-request-card"
-                    key={outpass._id}
-                  >
+                          <Icon
+                            name="location"
+                            size={16}
+                          />
 
-                    <div className="request-card-main">
+                        </span>
 
-                      <div className="request-location-icon">
-                        ↗
+                        <strong>
+                          {outpass.placeOfVisit}
+                        </strong>
+
                       </div>
 
-                      <div className="request-summary">
 
-                        <div className="request-title-row">
+                      <span className="purpose-cell">
+                        {outpass.reason}
+                      </span>
 
-                          <h3>
-                            {outpass.placeOfVisit}
-                          </h3>
 
-                          <span
-                            className={getStatusClass(
-                              outpass.status
-                            )}
-                          >
-                            {outpass.status}
-                          </span>
+                      <span>
 
-                        </div>
+                        {formatDate(
+                          outpass.dateRequestedFor
+                        )}
 
-                        <p>
-                          {outpass.reason}
-                        </p>
+                        <small>
+                          {outpass.timeOfLeaving ||
+                            "—"}
+                        </small>
 
-                        <div className="request-meta">
+                      </span>
 
-                          <span>
-                            {new Date(
+
+                      <span>
+
+                        {outpass.expectedInTime
+                          ? formatDate(
                               outpass.dateRequestedFor
-                            ).toLocaleDateString()}
-                          </span>
+                            )
+                          : "—"}
 
-                          <span className="meta-dot">
-                            •
-                          </span>
+                        <small>
+                          {outpass.expectedInTime ||
+                            "—"}
+                        </small>
 
-                          <span>
-                            {outpass.timeOfLeaving}
-                          </span>
+                      </span>
 
-                          <span className="meta-dot">
-                            •
-                          </span>
 
-                          <span>
-                            ID: {outpass.outpassId}
-                          </span>
+                      <span
+                        className={statusClass(
+                          outpass.status
+                        )}
+                      >
+                        {outpass.status}
+                      </span>
 
-                        </div>
 
-                      </div>
+                      <span className="row-arrow">
 
-                      <div className="request-card-arrow">
-                        →
-                      </div>
+                        <Icon
+                          name="arrow"
+                          size={16}
+                        />
+
+                      </span>
+
+
+                      {/* REJECTION */}
+
+                      {outpass.status ===
+                        "rejected" &&
+                        outpass.rejectionReason && (
+
+                          <div className="row-note rejected-note">
+
+                            <strong>
+                              Rejection reason
+                            </strong>
+
+                            <span>
+                              {
+                                outpass.rejectionReason
+                              }
+                            </span>
+
+                          </div>
+
+                        )}
+
+
+                      {/* APPROVED */}
+
+                      {outpass.status ===
+                        "approved" && (
+
+                          <div className="row-note approved-note">
+
+                            <span className="approved-dot">
+                              ✓
+                            </span>
+
+                            Your outpass has been
+                            approved.
+
+                          </div>
+
+                        )}
 
                     </div>
 
-
-                    {/* REJECTION */}
-
-                    {outpass.status === "rejected" &&
-                      outpass.rejectionReason && (
-
-                        <div className="rejection-box">
-
-                          <strong>
-                            Rejection reason
-                          </strong>
-
-                          <span>
-                            {outpass.rejectionReason}
-                          </span>
-
-                        </div>
-
-                      )}
-
-
-                    {/* APPROVED */}
-
-                    {outpass.status === "approved" && (
-
-                      <div className="approved-box">
-
-                        <span className="approved-check">
-                          ✓
-                        </span>
-
-                        <span>
-                          Your outpass has been approved.
-                        </span>
-
-                      </div>
-
-                    )}
-
-                  </div>
-
-                ))}
+                  )
+                )}
 
               </div>
 
             )}
 
 
-          {/* VIEW ALL */}
+            {/* VIEW ALL */}
 
-          {!fetching &&
-            outpasses.length > 3 && (
+            {!fetching &&
+              outpasses.length > 4 && (
 
-              <button
-                className="view-all-button"
-                onClick={() => {
-                  window.scrollTo({
-                    top: document.body.scrollHeight,
-                    behavior: "smooth",
-                  });
-                }}
-              >
-                View all requests →
-              </button>
+                <button
+                  className="view-all-button"
+                  onClick={() =>
+                    window.scrollTo({
+                      top:
+                        document.body
+                          .scrollHeight,
+                      behavior: "smooth",
+                    })
+                  }
+                >
+                  View all requests
+                </button>
 
+              )}
+
+          </section>
+
+
+          {/* ==================================
+              PROFILE
+          ================================== */}
+
+          <section
+            className="parent-info-section"
+            id="parent-profile-section"
+          >
+            <div className="section-title-row info-section-heading">
+              <div>
+                <span className="hero-eyebrow">ACCOUNT</span>
+                <h2>Parent Profile</h2>
+              </div>
+            </div>
+
+            <div className="profile-grid">
+              <div className="profile-summary">
+                <div className="profile-large-avatar">
+                  {parentInitial}
+                </div>
+
+                <div>
+                  <h3>{parentUser?.name || "Parent"}</h3>
+                  <p>Parent account</p>
+                </div>
+              </div>
+
+              <div className="profile-details">
+                <div className="profile-detail">
+                  <span className="profile-detail-icon">
+                    <Icon name="profile" size={16} />
+                  </span>
+                  <div>
+                    <small>Name</small>
+                    <strong>{parentUser?.name || "Not available"}</strong>
+                  </div>
+                </div>
+
+                <div className="profile-detail">
+                  <span className="profile-detail-icon">
+                    <Icon name="mail" size={16} />
+                  </span>
+                  <div>
+                    <small>Email</small>
+                    <strong>{parentUser?.email || "Not available"}</strong>
+                  </div>
+                </div>
+
+                <div className="profile-detail">
+                  <span className="profile-detail-icon">
+                    <Icon name="phone" size={16} />
+                  </span>
+                  <div>
+                    <small>Phone</small>
+                    <strong>
+                      {parentUser?.phone ||
+                        parentUser?.phoneNumber ||
+                        "Not available"}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="profile-detail">
+                  <span className="profile-detail-icon">
+                    <Icon name="child" size={16} />
+                  </span>
+                  <div>
+                    <small>Linked Student</small>
+                    <strong>{student?.name || "Not available"}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {student && (
+              <div className="linked-student-strip">
+                <div className="linked-student-icon">
+                  <Icon name="shield" size={18} />
+                </div>
+
+                <div>
+                  <strong>Linked student information</strong>
+                  <p>
+                    {student.studentId || "Student ID unavailable"}
+                    {student.course ? ` · ${student.course}` : ""}
+                    {student.hostel?.name
+                      ? ` · ${student.hostel.name}`
+                      : ""}
+                  </p>
+                </div>
+              </div>
             )}
+          </section>
 
-        </section>
+        </div>
 
       </main>
 
 
       {/* ======================================
-          MOBILE BOTTOM NAV
+          MOBILE NAV
       ====================================== */}
 
       <nav className="mobile-bottom-nav">
 
-        <button className="bottom-nav-item active">
+        <button
+          className="mobile-nav-item active"
+          onClick={goToDashboard}
+        >
+          <Icon
+            name="dashboard"
+            size={20}
+          />
 
           <span>
-            ⌂
-          </span>
-
-          <small>
             Home
-          </small>
-
+          </span>
         </button>
+
 
         <button
-          className="bottom-nav-item"
-          onClick={() => setShowForm(true)}
-          disabled={!student || studentLoading}
+          className="mobile-nav-item"
+          onClick={goToHistory}
         >
+          <Icon
+            name="history"
+            size={20}
+          />
 
           <span>
-            +
+            History
           </span>
-
-          <small>
-            Request
-          </small>
-
         </button>
 
-        <button className="bottom-nav-item">
+
+        <button
+          className="mobile-nav-item mobile-nav-logout"
+          onClick={handleLogout}
+        >
+          <Icon
+            name="logout"
+            size={19}
+          />
 
           <span>
-            ◷
+            Logout
           </span>
-
-          <small>
-            Activity
-          </small>
-
         </button>
+
 
       </nav>
 

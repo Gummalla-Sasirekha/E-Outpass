@@ -1,2999 +1,1700 @@
-/* ==========================================
-   E-OUTPASS - WARDEN DASHBOARD
-========================================== */
-
-* {
-    box-sizing: border-box;
+:root {
+  --w-green: #147b67;
+  --w-green-dark: #0b5f52;
+  --w-green-soft: #e4f4ef;
+  --w-mint: #f3faf7;
+  --w-navy: #102b3c;
+  --w-text: #405965;
+  --w-muted: #75868e;
+  --w-border: #dce8e4;
+  --w-white: #fff;
 }
 
-body {
-    margin: 0;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background: #f4f7fb;
-
-    color: #111827;
-}
-
+* { box-sizing: border-box; }
 
 .warden-dashboard {
-    min-height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  color: var(--w-text);
+  background: #f5faf8;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
 
-    background: #f4f7fb;
+.warden-dashboard button,
+.warden-dashboard textarea { font: inherit; }
 
-    color: #111827;
+.warden-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 214px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 12px 18px;
+  background: rgba(255,255,255,.96);
+  border-right: 1px solid var(--w-border);
+  z-index: 30;
+}
 
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
+.warden-sidebar-brand { padding: 0 15px 22px; }
+.warden-sidebar-brand strong {
+  display: block;
+  color: var(--w-green-dark);
+  font-size: 23px;
+  letter-spacing: -.8px;
+}
+.warden-sidebar-brand span {
+  display: block;
+  margin-top: 5px;
+  color: var(--w-muted);
+  font-size: 11px;
+}
+
+.warden-nav { display: flex; flex-direction: column; gap: 4px; }
+.warden-nav-link {
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 13px;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #58707c;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+}
+.warden-nav-link:hover,
+.warden-nav-link.active {
+  background: #edf8f4;
+  color: var(--w-green-dark);
+}
+.warden-nav-link.active { border-left-color: var(--w-green); font-weight: 700; }
+
+.warden-sidebar-bottom { display: flex; flex-direction: column; gap: 18px; }
+
+
+.warden-main { width: calc(100% - 214px); margin-left: 214px; min-width: 0; }
+.warden-topbar {
+  height: 62px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 27px;
+  background: rgba(255,255,255,.68);
+  border-bottom: 1px solid rgba(220,232,228,.72);
+  backdrop-filter: blur(12px);
+}
+.warden-mobile-brand { display: none; }
+.warden-topbar-actions { display: flex; align-items: center; gap: 14px; }
+.warden-icon-button {
+  position: relative;
+  width: 38px; height: 38px;
+  display: grid; place-items: center;
+  border: 1px solid var(--w-border);
+  border-radius: 11px;
+  background: white; color: #4e6975;
+}
+.notification-dot {
+  position: absolute; top: 7px; right: 7px;
+  width: 6px; height: 6px; border-radius: 50%; background: #e84d4d;
+}
+.warden-profile-chip {
+  display: flex; align-items: center; gap: 9px;
+  padding: 5px 9px 5px 6px;
+  border: 1px solid var(--w-border);
+  border-radius: 22px; background: white;
+}
+.warden-avatar {
+  width: 32px; height: 32px; display: grid; place-items: center;
+  border-radius: 50%; background: #dff2eb; color: var(--w-green-dark);
+  font-size: 12px; font-weight: 800;
+}
+.warden-role { color: var(--w-navy); font-size: 13px; font-weight: 700; }
+.warden-chevron { color: #84949a; }
+
+.warden-content {
+  width: min(100%, 1160px);
+  margin: 0 auto;
+  padding: 24px 28px 45px;
+}
+
+.warden-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 16px;
+}
+.warden-eyebrow {
+  display: inline-block;
+  color: #b0812d;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+.warden-hero h1 {
+  margin: 7px 0 0;
+  color: var(--w-navy);
+  font-size: 31px;
+  line-height: 1.08;
+  letter-spacing: -.9px;
+}
+.warden-hero p { margin: 6px 0 0; font-size: 14px; }
+.warden-hero-note { display: none; align-items: center; gap: 12px; padding-bottom: 4px; }
+.warden-hero-note span { width: 31px; height: 2px; background: #4c9b8b; }
+.warden-hero-note p { width: 145px; color: #4f7770; font-size: 10px; line-height: 1.4; }
+
+.warden-alert {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 14px; padding: 10px 13px;
+  border-radius: 10px; background: #fff1f1; color: #b42318; font-size: 11px;
+}
+.warden-alert span {
+  width: 19px; height: 19px; display: grid; place-items: center;
+  border-radius: 50%; background: #d94841; color: #fff; font-weight: 800;
+}
+
+.hostel-card,
+.activity-card,
+.pending-section,
+.decisions-card,
+.quick-actions-card,
+.history-section {
+  border: 1px solid var(--w-border);
+  border-radius: 13px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 4px 16px rgba(24,68,59,.035);
+}
+
+.hostel-card { padding: 14px 17px 15px; }
+.section-heading { color: var(--w-navy); font-size: 17px; font-weight: 750; }
+.hostel-main { display: flex; align-items: center; gap: 13px; margin-top: 10px; }
+.hostel-icon {
+  width: 48px; height: 48px; display: grid; place-items: center;
+  border-radius: 50%; background: #dff2eb; color: var(--w-green-dark); flex: 0 0 auto;
+}
+.hostel-info { flex: 1; min-width: 0; }
+.hostel-info h2 { margin: 0; color: var(--w-navy); font-size: 16px; }
+.hostel-info p { margin: 4px 0 0; color: #607681; font-size: 11px; }
+.hostel-info p span { margin: 0 5px; color: #9aa8ae; }
+.soft-action {
+  display: flex; align-items: center; gap: 8px; padding: 9px 13px;
+  border: 0; border-radius: 9px; background: var(--w-green-soft);
+  color: var(--w-green-dark); font-size: 11px; font-weight: 700;
+}
+
+.activity-card { margin-top: 12px; padding: 11px 9px 9px; }
+.section-heading-row { padding: 0 1px 8px; }
+.section-heading-row h2 { margin: 0; color: var(--w-navy); font-size: 17px; }
+.section-heading-row h2 span { color: #809099; font-size: 12px; font-weight: 500; }
+.warden-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.warden-stat {
+  min-height: 66px; display: flex; align-items: center; gap: 11px;
+  padding: 9px; border-radius: 11px;
+}
+.warden-stat.blue { background: #eef7ff; }
+.warden-stat.yellow { background: #fff8e9; }
+.warden-stat.green { background: #e9f8f0; }
+.warden-stat.red { background: #fff0f0; }
+.warden-stat .stat-icon {
+  width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 50%;
+}
+.blue .stat-icon { background: #d9edff; color: #257db7; }
+.yellow .stat-icon { background: #ffedbb; color: #d18b12; }
+.green .stat-icon { background: #ccefe0; color: #138363; }
+.red .stat-icon { background: #ffd7d7; color: #dc4d4d; }
+.warden-stat strong { display: block; color: var(--w-navy); font-size: 21px; line-height: 1; }
+.warden-stat span { display: block; margin-top: 4px; color: #617680; font-size: 11px; }
+
+.pending-section { margin-top: 12px; padding: 15px 17px; }
+.section-header {
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 9px;
+}
+.section-header h2 { margin: 4px 0 0; color: var(--w-navy); font-size: 19px; letter-spacing: -.3px; }
+.section-header p { margin: 3px 0 0; color: #70838c; font-size: 12px; }
+.section-header.compact { align-items: flex-start; }
+.view-all {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 0; background: transparent; color: var(--w-green-dark);
+  font-size: 12px; font-weight: 750; cursor: pointer; white-space: nowrap;
+}
+.pending-list { overflow: hidden; border: 1px solid var(--w-border); border-radius: 11px; }
+.pending-row {
+  display: grid; grid-template-columns: 1.35fr 1fr .9fr auto; align-items: center;
+  gap: 14px; min-height: 58px; padding: 7px 12px; border-top: 1px solid var(--w-border);
+}
+.pending-row:first-child { border-top: 0; }
+.student-mini { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.mini-avatar {
+  width: 32px; height: 32px; display: grid; place-items: center; flex: 0 0 auto;
+  border-radius: 50%; background: #dff2eb; color: var(--w-green-dark);
+  font-size: 10px; font-weight: 800;
+}
+.student-mini strong, .pending-purpose strong { display: block; color: var(--w-navy); font-size: 13px; }
+.student-mini span, .pending-purpose span, .pending-date span {
+  display: block; margin-top: 3px; color: #7a8b92; font-size: 11px;
+}
+.pending-purpose { min-width: 0; }
+.pending-purpose strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pending-date strong { color: #526a75; font-size: 12px; }
+.review-button {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 10px; border: 0; border-radius: 8px;
+  background: var(--w-green-soft); color: var(--w-green-dark);
+  font-size: 12px; font-weight: 750; cursor: pointer;
+}
+
+.lower-grid { display: grid; grid-template-columns: 1.35fr .85fr; gap: 12px; margin-top: 12px; }
+.decisions-card, .quick-actions-card { padding: 15px 17px; }
+.decision-list { margin-top: 8px; }
+.decision-row {
+  display: flex; align-items: center; gap: 9px; padding: 8px 0; border-top: 1px solid var(--w-border);
+}
+.decision-row:first-child { border-top: 0; }
+.decision-info { flex: 1; min-width: 0; }
+.decision-info strong { display: block; color: var(--w-navy); font-size: 13px; }
+.decision-info span { display: block; margin-top: 3px; color: #7a8b92; font-size: 8px; }
+.decision-info i { font-style: normal; margin: 0 3px; }
+.decision-badge, .gate-status {
+  padding: 5px 8px; border-radius: 20px; font-size: 10px; font-weight: 800; white-space: nowrap;
+}
+.decision-badge.approved, .gate-status.returned { background: #e9f8f0; color: #16805f; }
+.decision-badge.rejected { background: #fff0f0; color: #d34d4d; }
+.decision-badge.completed { background: #eef7ff; color: #257db7; }
+.small-empty { padding: 25px 0; color: var(--w-muted); text-align: center; font-size: 12px; }
+
+.quick-actions-card { display: flex; flex-direction: column; gap: 7px; }
+.quick-actions-card > button {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 8px 0; border: 0; border-top: 1px solid var(--w-border);
+  background: transparent; color: var(--w-text); text-align: left; cursor: pointer;
+}
+.quick-actions-card > button:first-of-type { border-top: 0; }
+.quick-actions-card > button > span {
+  width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto;
+  border-radius: 10px; background: #e8f7f1; color: var(--w-green);
+}
+.quick-actions-card > button > div { flex: 1; }
+.quick-actions-card strong { display: block; color: var(--w-navy); font-size: 10px; }
+.quick-actions-card small { display: block; margin-top: 3px; color: #7b8c94; font-size: 10px; }
+.quick-actions-card > button > .ui-icon { color: #7d9198; }
+
+.history-section { margin-top: 12px; padding: 15px 17px 17px; }
+
+
+.record-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 13px; background: #fbfdfc; border-bottom: 1px solid var(--w-border);
+}
+.record-top span:first-child, .record-student > div > span {
+  display: block; color: #89989e; font-size: 10px; letter-spacing: .6px;
+}
+.record-top strong { display: block; margin-top: 3px; color: var(--w-navy); font-size: 13px; }
+.record-status { padding: 5px 9px; border-radius: 20px; font-size: 10px; font-weight: 800; }
+.record-status.pending { background: #fff8e9; color: #a56c08; }
+.record-status.approved { background: #e9f8f0; color: #16805f; }
+.record-status.rejected { background: #fff0f0; color: #d34d4d; }
+.record-status.completed { background: #eef7ff; color: #257db7; }
+
+.record-student { display: flex; align-items: center; gap: 10px; padding: 11px 13px; }
+.record-student strong { display: block; margin-top: 3px; color: var(--w-navy); font-size: 14px; }
+.record-student small { display: block; margin-top: 3px; color: #7c8e95; font-size: 11px; }
+.record-student i { font-style: normal; margin: 0 3px; }
+.record-details { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--w-border); }
+.record-details > div { padding: 10px 12px; border-right: 1px solid var(--w-border); }
+.record-details > div:last-child { border-right: 0; }
+.record-details span, .record-extra span {
+  display: block; color: #89989e; font-size: 10px; text-transform: uppercase; letter-spacing: .4px;
+}
+.record-details strong, .record-extra strong { display: block; margin-top: 4px; color: #304a57; font-size: 12px; line-height: 1.35; }
+.record-extra {
+  display: grid; grid-template-columns: repeat(2,1fr);
+  border-top: 1px solid var(--w-border); background: #f9fcfb;
+}
+.record-extra > div { padding: 9px 12px; border-right: 1px solid var(--w-border); }
+.record-extra > div:last-child { border-right: 0; }
+.rejection-info { padding: 10px 12px; border-top: 1px solid #f4d6d6; background: #fff8f8; }
+.rejection-info span { display: block; color: #b42318; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.rejection-info p { margin: 4px 0 0; color: #7f3030; font-size: 12px; line-height: 1.5; }
+.record-actions { display: flex; gap: 8px; padding: 12px 15px; border-top: 1px solid var(--w-border); background: #fbfdfc; }
+.approve-button, .reject-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: 38px; padding: 0 14px; border: 0; border-radius: 8px; color: white;
+  font-size: 12px; font-weight: 750; cursor: pointer;
+}
+.approve-button { background: var(--w-green); }
+.reject-button { background: #d95757; }
+.approve-button:disabled, .reject-button:disabled { opacity: .55; cursor: not-allowed; }
+
+.history-count {
+  min-width: 30px; height: 30px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--w-green-soft); color: var(--w-green-dark); font-size: 10px; font-weight: 800;
+}
+.gate-list { overflow: hidden; border: 1px solid var(--w-border); border-radius: 11px; }
+.gate-row {
+  display: grid; grid-template-columns: auto 1.4fr 1fr 1fr auto; align-items: center; gap: 12px;
+  min-height: 56px; padding: 7px 12px; border-top: 1px solid var(--w-border);
+}
+.gate-row:first-child { border-top: 0; }
+.gate-student strong { display: block; color: var(--w-navy); font-size: 10px; }
+.gate-student span, .gate-row > div > span { display: block; margin-top: 3px; color: #819097; font-size: 8px; }
+.gate-row > div:not(.gate-student) strong { display: block; color: #506a75; font-size: 9px; }
+.gate-status.outside { background: #fff8e9; color: #a56c08; }
+
+.empty-card {
+  min-height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 1px dashed var(--w-border); border-radius: 11px; text-align: center;
+}
+.empty-icon {
+  width: 39px; height: 39px; display: grid; place-items: center;
+  margin-bottom: 5px; border-radius: 11px; background: var(--w-green-soft); color: var(--w-green);
+}
+.empty-card h3 { margin: 0 0 3px; color: var(--w-navy); font-size: 13px; }
+.empty-card p { margin: 0; color: var(--w-muted); font-size: 11px; }
+
+.warden-mobile-nav { display: none; }
+
+.warden-loading {
+  min-height: 100vh; display: grid; place-items: center; align-content: center; gap: 10px;
+  background: #f4faf8; color: var(--w-muted); font-family: Inter, sans-serif;
+}
+.warden-spinner {
+  width: 30px; height: 30px; border: 3px solid #d9eee8; border-top-color: var(--w-green);
+  border-radius: 50%; animation: warden-spin .8s linear infinite;
+}
+@keyframes warden-spin { to { transform: rotate(360deg); } }
+
+.reject-modal-overlay {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center;
+  padding: 20px; background: rgba(15,35,45,.42); backdrop-filter: blur(4px);
+}
+.reject-modal {
+  width: min(100%, 440px); padding: 22px; border: 1px solid var(--w-border);
+  border-radius: 16px; background: white; box-shadow: 0 22px 60px rgba(15,35,45,.2);
+}
+.modal-header { display: flex; justify-content: space-between; gap: 15px; }
+.modal-header span { color: #b0812d; font-size: 10px; font-weight: 800; letter-spacing: 1.3px; }
+.modal-header h2 { margin: 5px 0 0; color: var(--w-navy); font-size: 19px; }
+.close-modal {
+  width: 31px; height: 31px; display: grid; place-items: center;
+  border: 1px solid var(--w-border); border-radius: 9px; background: #f8fbfa; color: var(--w-text);
+}
+.modal-description { margin: 14px 0; color: #6d7e86; font-size: 12px; line-height: 1.5; }
+.modal-label { display: block; margin-bottom: 6px; color: var(--w-navy); font-size: 12px; font-weight: 750; }
+.reject-modal textarea {
+  width: 100%; min-height: 110px; resize: vertical; padding: 10px 12px;
+  border: 1px solid #d6e1dd; border-radius: 9px; outline: none; font-size: 11px;
+}
+.reject-modal textarea:focus { border-color: var(--w-green); box-shadow: 0 0 0 3px rgba(20,123,103,.08); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.cancel-reject, .confirm-reject { min-height: 39px; padding: 0 14px; border-radius: 8px; font-size: 12px; font-weight: 750; }
+.cancel-reject { border: 1px solid var(--w-border); background: white; color: var(--w-text); }
+.confirm-reject { border: 0; background: #d95757; color: white; }
+
+@media (max-width: 950px) {
+  .warden-sidebar { width: 200px; }
+  .warden-main { width: calc(100% - 200px); margin-left: 200px; }
+  .warden-content { padding-left: 20px; padding-right: 20px; }
+  .lower-grid { grid-template-columns: 1fr; }
+  .pending-row { grid-template-columns: 1.3fr 1fr auto; }
+  .pending-date { display: none; }
+}
+
+@media (max-width: 700px) {
+  .warden-dashboard { display: block; padding-bottom: 68px; }
+  .warden-sidebar { display: none; }
+  .warden-main { width: 100%; margin-left: 0; }
+  .warden-topbar {
+    height: 64px; justify-content: space-between; padding: 0 13px;
+  }
+  .warden-mobile-brand { display: flex; flex-direction: column; }
+  .warden-mobile-brand strong { color: var(--w-green-dark); font-size: 18px; letter-spacing: -.4px; }
+  .warden-mobile-brand span { margin-top: 2px; color: var(--w-muted); font-size: 8px; }
+  .warden-role, .warden-chevron { display: none; }
+  .warden-profile-chip { padding: 3px; border: 0; background: transparent; }
+  .warden-avatar { width: 34px; height: 34px; }
+  .warden-content { padding: 22px 14px 25px; }
+  .warden-hero { align-items: flex-start; margin-bottom: 17px; }
+  .warden-hero h1 { font-size: 26px; max-width: 290px; }
+  .warden-hero > div:first-child p { max-width: 300px; font-size: 11px; line-height: 1.45; }
+  .warden-hero-note { display: none; }
+
+  .hostel-card { padding: 15px; }
+  .hostel-main { gap: 10px; }
+  .hostel-icon { width: 47px; height: 47px; }
+  .hostel-info h2 { font-size: 14px; }
+  .hostel-info p { font-size: 9px; line-height: 1.4; }
+  .soft-action { padding: 8px; font-size: 0; }
+  .soft-action .ui-icon { width: 17px; }
+
+  .activity-card { padding: 12px 9px 10px; }
+  .warden-stats { grid-template-columns: repeat(4,1fr); gap: 7px; }
+  .warden-stat {
+    min-height: 72px; flex-direction: column; justify-content: center; gap: 4px;
+    padding: 7px 3px; text-align: center;
+  }
+  .warden-stat .stat-icon { width: 31px; height: 31px; }
+  .warden-stat strong { font-size: 16px; }
+  .warden-stat span { font-size: 7px; }
+
+  .pending-section, .decisions-card, .quick-actions-card, .history-section { padding: 15px; }
+  .section-header { align-items: flex-start; }
+  .section-header h2 { font-size: 16px; }
+  .section-header p { font-size: 9px; }
+  .pending-row { grid-template-columns: 1fr auto; gap: 8px; padding: 11px 10px; }
+  .pending-purpose { display: none; }
+  .pending-date { display: block; grid-column: 1; }
+  .pending-date strong { font-size: 8px; }
+  .pending-date span { font-size: 8px; }
+  .review-button { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+
+  .lower-grid { gap: 15px; }
+  .quick-actions-card { gap: 3px; }
+  
+
+@media (max-width: 380px) {
+  .warden-content { padding-left: 10px; padding-right: 10px; }
+  .warden-hero h1 { font-size: 23px; }
+  .warden-stats { gap: 4px; }
+  .warden-stat { min-height: 68px; }
+  .warden-stat strong { font-size: 16px; }
 }
 
 
-/* ==========================================
-   HEADER
-========================================== */
+/* Phase 3.2 — Typography & Readability
+   Keeps the compact layout while giving the interface a more comfortable reading scale. */
+.warden-sidebar-brand strong { font-size: 24px; }
+.warden-sidebar-brand span { font-size: 11px; line-height: 1.35; }
 
-.warden-header {
-    min-height: 78px;
+.warden-nav-link { font-size: 15px; }
+.warden-role { font-size: 13px; }
 
-    background: white;
+.warden-eyebrow { font-size: 10px; }
+.warden-hero h1 { font-size: 31px; }
+.warden-hero p { font-size: 14px; }
 
-    border-bottom: 1px solid #e5e7eb;
+.section-heading { font-size: 17px; }
+.hostel-info h2 { font-size: 17px; }
+.hostel-info p { font-size: 12px; }
+.soft-action { font-size: 13px; }
 
+.section-heading-row h2 { font-size: 17px; }
+.section-heading-row h2 span { font-size: 12px; }
+
+.warden-stat strong { font-size: 21px; }
+.warden-stat span { font-size: 11px; }
+
+.section-header h2 { font-size: 19px; }
+.section-header p { font-size: 11px; }
+.view-all { font-size: 13px; }
+
+.student-mini strong,
+.pending-purpose strong { font-size: 13px; }
+.student-mini span,
+.pending-purpose span,
+.pending-date span { font-size: 11px; }
+.pending-date strong { font-size: 12px; }
+.review-button { font-size: 12px; }
+
+.decision-info strong { font-size: 13px; }
+.decision-info span { font-size: 10px; }
+.decision-badge,
+.gate-status { font-size: 10px; }
+
+.quick-actions-card strong { font-size: 13px; }
+.quick-actions-card small { font-size: 10px; }
+
+
+
+@media (max-width: 380px) {
+  .warden-hero h1 { font-size: 24px; }
+}
+
+
+/* Phase 3.3 — Dashboard composition
+   Brings the three primary work areas onto one compact row. */
+.action-grid {
+  display: grid;
+  grid-template-columns: 1.35fr .95fr .85fr;
+  gap: 12px;
+  margin-top: 12px;
+  align-items: stretch;
+}
+
+.action-grid > .pending-section,
+.action-grid > .decisions-card,
+.action-grid > .quick-actions-card {
+  margin-top: 0;
+  min-width: 0;
+}
+
+.action-grid > .pending-section,
+.action-grid > .decisions-card,
+.action-grid > .quick-actions-card {
+  min-height: 205px;
+}
+
+.action-grid .section-header {
+  margin-bottom: 8px;
+}
+
+.action-grid .empty-card {
+  min-height: 112px;
+}
+
+.action-grid .decision-list {
+  margin-top: 4px;
+}
+
+.action-grid .decision-row {
+  padding: 7px 0;
+}
+
+.action-grid .quick-actions-card {
+  gap: 3px;
+}
+
+.action-grid .quick-actions-card > button {
+  padding: 6px 0;
+}
+
+@media (max-width: 1100px) {
+  .action-grid {
+    grid-template-columns: 1.2fr 1fr;
+  }
+
+  .action-grid > .pending-section {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 950px) {
+  .action-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-grid > .pending-section {
+    grid-column: auto;
+  }
+
+  .action-grid > .pending-section,
+  .action-grid > .decisions-card,
+  .action-grid > .quick-actions-card {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .action-grid {
+    gap: 10px;
+  }
+
+  .action-grid .empty-card {
+    min-height: 100px;
+  }
+}
+
+
+/* Phase 3.4 — Final density polish
+   Keep the three-column composition, but remove excess vertical space
+   from empty states and secondary cards. */
+.action-grid > .pending-section,
+.action-grid > .decisions-card,
+.action-grid > .quick-actions-card {
+  min-height: 188px;
+}
+
+.action-grid .empty-card {
+  min-height: 92px;
+  padding: 12px 16px;
+}
+
+.action-grid .empty-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 7px;
+}
+
+.action-grid .empty-card h3 {
+  margin: 0 0 2px;
+}
+
+.action-grid .empty-card p {
+  margin: 0;
+}
+
+.action-grid .decisions-card,
+.action-grid .quick-actions-card {
+  padding-bottom: 12px;
+}
+
+.history-section .empty-card {
+  min-height: 104px;
+  padding: 12px 16px;
+}
+
+.history-section .empty-icon {
+  width: 50px;
+  height: 50px;
+}
+
+.history-section .empty-card h3 {
+  margin-bottom: 2px;
+}
+
+.gate-history-section {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+@media (max-width: 950px) {
+  .action-grid > .pending-section,
+  .action-grid > .decisions-card,
+  .action-grid > .quick-actions-card {
+    min-height: 170px;
+  }
+}
+
+@media (max-width: 700px) {
+  .action-grid > .pending-section,
+  .action-grid > .decisions-card,
+  .action-grid > .quick-actions-card {
+    min-height: auto;
+  }
+
+  .action-grid .empty-card,
+  .history-section .empty-card {
+    min-height: 90px;
+  }
+}
+
+
+/* Final mobile navigation — Home | Requests | Students | Profile | Logout */
+@media (max-width: 700px) {
+  .warden-mobile-nav {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    height: 67px;
+    padding: 0;
+  }
+
+  .warden-mobile-nav button {
+    min-width: 0;
+    width: 100%;
+    height: 67px;
+    padding: 0;
     display: flex;
-
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 10px;
+    line-height: 1;
+  }
 
+  .warden-mobile-nav button .ui-icon {
+    width: 19px;
+    height: 19px;
+    flex: 0 0 auto;
+    stroke-width: 1.8;
+  }
+
+  .warden-mobile-nav .warden-mobile-logout .ui-icon {
+    transform: scale(.78);
+    transform-origin: center;
+  }
+
+  .warden-mobile-nav button span {
+    font-size: 9px;
+    font-weight: 650;
+  }
+}
+
+
+/* Hostel student directory */
+.students-directory-section {
+  margin-top: 12px;
+  padding: 15px 17px;
+  border: 1px solid var(--w-border);
+  border-radius: 13px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 4px 16px rgba(24,68,59,.035);
+}
+
+.students-toolbar {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.student-search-wrap {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 11px;
+  border: 1px solid var(--w-border);
+  border-radius: 9px;
+  background: #fbfdfc;
+  color: var(--w-muted);
+}
+
+.student-search-wrap input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--w-navy);
+  font-size: 12px;
+}
+
+.student-search-wrap input::placeholder {
+  color: #91a0a6;
+}
+
+.student-refresh {
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid var(--w-border);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--w-green-dark);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.student-refresh:disabled {
+  opacity: .55;
+  cursor: default;
+}
+
+.student-directory-list {
+  overflow: hidden;
+  border: 1px solid var(--w-border);
+  border-radius: 11px;
+}
+
+.student-directory-row {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1.5fr) minmax(130px, 1fr) minmax(90px, .6fr);
+  align-items: center;
+  gap: 13px;
+  min-height: 62px;
+  padding: 9px 12px;
+  border-top: 1px solid var(--w-border);
+}
+
+.student-directory-row:first-child {
+  border-top: 0;
+}
+
+.directory-student strong,
+.directory-detail strong {
+  display: block;
+  color: var(--w-navy);
+  font-size: 12px;
+}
+
+.directory-student span,
+.directory-detail span {
+  display: block;
+  margin-top: 3px;
+  color: #7a8b92;
+  font-size: 10px;
+}
+
+.directory-detail {
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  .students-directory-section {
+    padding: 14px;
+  }
+
+  .students-toolbar {
+    align-items: stretch;
+  }
+
+  .student-refresh {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .student-refresh {
+    font-size: 0;
+  }
+
+  .student-directory-row {
+    grid-template-columns: auto 1fr 1fr;
+    gap: 9px;
+  }
+
+  .student-directory-row .directory-detail:last-child {
+    grid-column: 2 / -1;
+  }
+}
+
+
+/* Pending Requests — compact approval queue */
+.pending-header {
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.pending-title-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pending-title-line h2 {
+  margin: 0;
+}
+
+.pending-count {
+  min-width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #fff6df;
+  color: #a56c08;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.pending-list {
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.pending-row {
+  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1.15fr) auto;
+  gap: 12px;
+  min-height: 0;
+  padding: 11px 0;
+  border: 0;
+  border-top: 1px solid var(--w-border);
+}
+
+.pending-row:first-child {
+  border-top: 1px solid var(--w-border);
+}
+
+.pending-details {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.pending-purpose strong {
+  font-size: 12px;
+}
+
+.pending-purpose span {
+  font-size: 10px;
+}
+
+.pending-date {
+  text-align: right;
+}
+
+.pending-date strong {
+  font-size: 11px;
+}
+
+.pending-date span {
+  font-size: 10px;
+}
+
+.review-button {
+  min-height: 32px;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .pending-row {
+    grid-template-columns: minmax(170px, 1fr) minmax(190px, 1.2fr) auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .pending-row {
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    padding: 12px 0;
+  }
+
+  .pending-details {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: 1fr auto;
+  }
+
+  .pending-purpose strong {
+    font-size: 12px;
+  }
+
+  .pending-date {
+    display: block;
+  }
+}
+
+
+/* Cleaner Pending Requests */
+.pending-section {
+  min-height: 0;
+}
+
+.pending-title-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pending-count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #fff3d6;
+  color: #a66b08;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pending-details {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(100px, .8fr);
+  gap: 14px;
+}
+
+.pending-date {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .pending-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .pending-details {
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr 1fr;
+    padding-left: 41px;
+  }
+
+  .review-button {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .pending-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .pending-details {
+    grid-column: auto;
+    padding-left: 41px;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .review-button {
+    grid-column: auto;
+    grid-row: auto;
+    justify-content: center;
+  }
+}
+
+
+/* =========================================================
+   FINAL AGREED WARDEN LAYOUT
+   ========================================================= */
+
+.warden-two-column {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.pending-request-section {
+    margin-top: 20px;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #dce8e4;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(20, 61, 52, 0.05);
+}
+
+.pending-request-list {
+    margin-top: 18px;
+    border-top: 1px solid #e1ebe8;
+}
+
+.pending-request-row {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid #e1ebe8;
+    background: transparent;
+    padding: 15px 4px;
+    display: grid;
+    grid-template-columns: 40px minmax(150px, 1.25fr) minmax(130px, 1fr) minmax(110px, 0.8fr) auto;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+    font-family: inherit;
+    cursor: pointer;
+    color: inherit;
+}
+
+.pending-request-row:last-child {
+    border-bottom: 0;
+}
+
+.pending-request-row:hover,
+.pending-request-row.selected {
+    background: #f7fbfa;
+}
+
+.pending-request-student,
+.pending-request-purpose,
+.pending-request-date {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.pending-request-student strong,
+.pending-request-purpose strong,
+.pending-request-date strong {
+    color: #102c43;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.pending-request-student span,
+.pending-request-purpose span,
+.pending-request-date span {
+    color: #71838d;
+    font-size: 12px;
+}
+
+.review-button {
+    min-width: 86px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    background: #e1f3ed;
+    color: #087461;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.pending-review-panel {
+    margin-top: 18px;
+    padding: 20px;
+    border: 1px solid #d6e8e2;
+    border-radius: 14px;
+    background: #f8fcfa;
+    display: flex;
+    align-items: flex-end;
     justify-content: space-between;
-
-    padding: 14px 40px;
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 100;
-
-    box-shadow:
-        0 2px 10px rgba(
-            15,
-            23,
-            42,
-            0.04
-        );
+    gap: 24px;
 }
 
+.pending-review-main {
+    min-width: 0;
+    flex: 1;
+}
 
-.warden-brand {
+.review-profile {
     display: flex;
-
     align-items: center;
-
     gap: 12px;
 }
 
-
-.warden-logo {
+.review-avatar {
     width: 46px;
-
     height: 46px;
-
-    border-radius: 13px;
-
-    background: #eff6ff;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 23px;
-}
-
-
-.warden-brand h1 {
-    margin: 0;
-
-    font-size: 21px;
-
-    font-weight: 700;
-
-    color: #111827;
-}
-
-
-.warden-brand p {
-    margin: 3px 0 0;
-
-    font-size: 12px;
-
-    color: #6b7280;
-}
-
-
-.warden-logout {
-    border: 1px solid #d1d5db;
-
-    padding: 10px 17px;
-
-    border-radius: 9px;
-
-    background: white;
-
-    color: #374151;
-
-    font-size: 12px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition:
-        all 0.2s ease;
-}
-
-
-.warden-logout:hover {
-    background: #f8fafc;
-
-    border-color: #9ca3af;
-
-    transform: translateY(-1px);
-}
-
-
-/* ==========================================
-   MAIN
-========================================== */
-
-.warden-main {
-    max-width: 1200px;
-
-    margin: 0 auto;
-
-    padding: 38px 30px 60px;
-}
-
-
-/* ==========================================
-   TITLE
-========================================== */
-
-.warden-title {
-    display: flex;
-
-    align-items: flex-end;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    margin-bottom: 25px;
-}
-
-
-.warden-label {
-    margin: 0 0 7px;
-
-    color: #2563eb;
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-    letter-spacing: 1px;
-}
-
-
-.warden-title h2 {
-    margin: 0;
-
-    font-size: 30px;
-
-    line-height: 1.2;
-
-    color: #111827;
-}
-
-
-.warden-title p:last-child {
-    margin: 7px 0 0;
-
-    font-size: 13px;
-
-    color: #6b7280;
-}
-
-
-/* ==========================================
-   REFRESH
-========================================== */
-
-.warden-refresh {
-    border: 1px solid #dbeafe;
-
-    padding: 10px 16px;
-
-    border-radius: 9px;
-
-    background: #eff6ff;
-
-    color: #2563eb;
-
-    font-size: 12px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    white-space: nowrap;
-
-    transition:
-        all 0.2s ease;
-}
-
-
-.warden-refresh:hover {
-    background: #dbeafe;
-
-    border-color: #bfdbfe;
-
-    transform: translateY(-1px);
-}
-
-
-/* ==========================================
-   ERROR
-========================================== */
-
-.warden-error {
-    padding: 13px 16px;
-
-    margin-bottom: 20px;
-
-    border-radius: 10px;
-
-    background: #fef2f2;
-
-    border: 1px solid #fecaca;
-
-    color: #b91c1c;
-
-    font-size: 13px;
-}
-
-
-/* ==========================================
-   STAT CARD
-========================================== */
-
-.warden-stat {
-    width: 280px;
-
-    padding: 20px;
-
-    margin-bottom: 35px;
-
-    background: white;
-
-    border: 1px solid #dbeafe;
-
-    border-radius: 16px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    box-shadow:
-        0 6px 20px rgba(
-            37,
-            99,
-            235,
-            0.07
-        );
-
-    position: relative;
-
-    overflow: hidden;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-
-.warden-stat::after {
-    content: "";
-
-    position: absolute;
-
-    width: 120px;
-
-    height: 120px;
-
     border-radius: 50%;
-
-    background:
-        rgba(
-            37,
-            99,
-            235,
-            0.045
-        );
-
-    right: -45px;
-
-    top: -55px;
-}
-
-
-.warden-stat:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 10px 25px rgba(
-            37,
-            99,
-            235,
-            0.10
-        );
-}
-
-
-.warden-stat-icon {
-    width: 50px;
-
-    height: 50px;
-
-    flex-shrink: 0;
-
-    border-radius: 13px;
-
-    background: #eff6ff;
-
-    border: 1px solid #dbeafe;
-
+    background: #dff1eb;
+    color: #087461;
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
-    font-size: 22px;
-
-    position: relative;
-
-    z-index: 1;
-}
-
-
-.warden-stat > div:last-child {
-    position: relative;
-
-    z-index: 1;
-}
-
-
-.warden-stat span {
-    display: block;
-
-    margin-bottom: 4px;
-
-    color: #6b7280;
-
-    font-size: 11px;
-}
-
-
-.warden-stat strong {
-    font-size: 28px;
-
-    color: #1f3c88;
-}
-
-
-/* ==========================================
-   SECTION HEADER
-========================================== */
-
-.warden-section-header {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    margin-bottom: 18px;
-
-    gap: 15px;
-}
-
-
-.warden-section-header h2 {
-    margin: 0;
-
-    font-size: 22px;
-
-    color: #111827;
-}
-
-
-.warden-section-header p {
-    margin: 5px 0 0;
-
-    color: #6b7280;
-
-    font-size: 13px;
-}
-
-
-.request-count {
-    width: 34px;
-
-    height: 34px;
-
-    flex-shrink: 0;
-
-    border-radius: 50%;
-
-    background: #eff6ff;
-
-    color: #2563eb;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 12px;
-
-    font-weight: 700;
-}
-
-
-/* ==========================================
-   REQUEST LIST
-========================================== */
-
-.warden-request-list {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 18px;
-}
-
-
-/* ==========================================
-   REQUEST CARD
-========================================== */
-
-.warden-request-card {
-    background: white;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 17px;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 4px 16px rgba(
-            15,
-            23,
-            42,
-            0.04
-        );
-
-    transition:
-        all 0.2s ease;
-}
-
-
-.warden-request-card:hover {
-    border-color: #cbd5e1;
-
-    box-shadow:
-        0 7px 24px rgba(
-            15,
-            23,
-            42,
-            0.06
-        );
-
-    transform: translateY(-1px);
-}
-
-
-/* ==========================================
-   CARD HEADER
-========================================== */
-
-.request-card-header {
-    padding: 20px 24px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 15px;
-
-    border-bottom:
-        1px solid #eef2f7;
-}
-
-
-.request-card-header span:first-child {
-    display: block;
-
-    color: #9ca3af;
-
-    font-size: 10px;
-
-    font-weight: 700;
-
-    letter-spacing: 1px;
-}
-
-
-.request-card-header h3 {
-    margin: 5px 0 0;
-
-    color: #111827;
-
     font-size: 16px;
-
-    word-break: break-word;
+    font-weight: 800;
 }
 
-
-.pending-badge {
-    padding: 7px 12px;
-
-    border-radius: 20px;
-
-    background: #fff7ed;
-
-    color: #c2410c;
-
+.review-profile span,
+.review-details-grid span {
+    display: block;
+    color: #819198;
     font-size: 10px;
-
     font-weight: 700;
-
-    white-space: nowrap;
+    letter-spacing: 0.08em;
 }
 
-
-/* ==========================================
-   STUDENT
-========================================== */
-
-.request-student {
-    padding: 20px 24px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 13px;
-
-    border-bottom:
-        1px solid #eef2f7;
-}
-
-
-.student-avatar {
-    width: 50px;
-
-    height: 50px;
-
-    flex-shrink: 0;
-
-    border-radius: 50%;
-
-    background: #eff6ff;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 22px;
-}
-
-
-.request-student span {
-    display: block;
-
-    margin-bottom: 4px;
-
-    color: #9ca3af;
-
-    font-size: 9px;
-
-    font-weight: 700;
-
-    letter-spacing: 0.6px;
-}
-
-
-.request-student h3 {
-    margin: 0;
-
-    color: #111827;
-
-    font-size: 16px;
-}
-
-
-.request-student p {
-    margin: 5px 0 0;
-
-    color: #6b7280;
-
-    font-size: 12px;
-}
-
-
-/* ==========================================
-   DETAILS
-========================================== */
-
-.request-details {
-    display: grid;
-
-    grid-template-columns:
-        repeat(5, 1fr);
-
-    border-bottom:
-        1px solid #eef2f7;
-}
-
-
-.request-details > div {
-    padding: 20px;
-
-    border-right:
-        1px solid #eef2f7;
-
-    min-width: 0;
-}
-
-
-.request-details > div:last-child {
-    border-right: none;
-}
-
-
-.request-details span {
-    display: block;
-
-    margin-bottom: 6px;
-
-    color: #6b7280;
-
-    font-size: 10px;
-
-    font-weight: 600;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.3px;
-}
-
-
-.request-details strong {
-    display: block;
-
-    color: #111827;
-
-    font-size: 13px;
-
-    line-height: 1.4;
-
-    word-break: break-word;
-}
-
-
-/* ==========================================
-   ACTIONS
-========================================== */
-
-.request-actions {
-    padding: 17px 24px;
-
-    display: flex;
-
-    gap: 10px;
-
-    background: #ffffff;
-}
-
-
-.approve-button,
-.reject-button {
-    flex: 1;
-
-    padding: 12px 18px;
-
-    border-radius: 9px;
-
-    font-size: 12px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        all 0.2s ease;
-}
-
-
-.approve-button {
-    border: none;
-
-    background: #16a34a;
-
-    color: white;
-}
-
-
-.approve-button:hover:not(:disabled) {
-    background: #15803d;
-
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 4px 10px rgba(
-            22,
-            163,
-            74,
-            0.2
-        );
-}
-
-
-.reject-button {
-    background: #fef2f2;
-
-    border: 1px solid #fecaca;
-
-    color: #dc2626;
-}
-
-
-.reject-button:hover:not(:disabled) {
-    background: #fee2e2;
-
-    transform: translateY(-1px);
-}
-
-
-.approve-button:disabled,
-.reject-button:disabled {
-    opacity: 0.6;
-
-    cursor: not-allowed;
-}
-
-
-/* ==========================================
-   EMPTY STATE
-========================================== */
-
-.warden-empty {
-    min-height: 290px;
-
-    padding: 40px 20px;
-
-    background: white;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 17px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-
-    box-shadow:
-        0 4px 16px rgba(
-            15,
-            23,
-            42,
-            0.03
-        );
-}
-
-
-.warden-empty > div {
-    width: 62px;
-
-    height: 62px;
-
-    margin-bottom: 14px;
-
-    border-radius: 50%;
-
-    background: #ecfdf5;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 28px;
-}
-
-
-.warden-empty h3 {
-    margin: 0;
-
-    color: #111827;
-
+.review-profile h3 {
+    margin: 2px 0 2px;
+    color: #102c43;
     font-size: 18px;
 }
 
-
-.warden-empty p {
-    margin: 7px 0 0;
-
-    color: #6b7280;
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-
-/* ==========================================
-   GATE HISTORY
-========================================== */
-
-.warden-requests[style] {
-    margin-top: 40px !important;
-}
-
-
-/*
-   Gate history uses the same request-card
-   structure as pending requests, so the
-   existing card styling applies automatically.
-*/
-
-
-.warden-requests[style]
-    .pending-badge {
-    background: #eff6ff;
-
-    color: #2563eb;
-}
-
-
-/* Returned status */
-
-.warden-requests[style]
-    .request-card-header
-    .pending-badge {
-    letter-spacing: 0.2px;
-}
-
-
-/* ==========================================
-   GATE HISTORY SECURITY ROW
-========================================== */
-
-.request-card-header
-    + .request-student
-    + .request-details
-    + div {
-    color: #6b7280;
-}
-
-
-/* ==========================================
-   REJECT MODAL
-========================================== */
-
-.reject-modal-overlay {
-    position: fixed;
-
-    inset: 0;
-
-    background:
-        rgba(
-            15,
-            23,
-            42,
-            0.55
-        );
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 20px;
-
-    z-index: 1000;
-}
-
-
-.reject-modal {
-    width: 100%;
-
-    max-width: 500px;
-
-    padding: 26px;
-
-    background: white;
-
-    border-radius: 17px;
-
-    box-shadow:
-        0 20px 50px rgba(
-            15,
-            23,
-            42,
-            0.2
-        );
-}
-
-
-.reject-modal-header {
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: flex-start;
-
-    gap: 15px;
-}
-
-
-.reject-modal-header span {
-    display: block;
-
-    color: #dc2626;
-
-    font-size: 10px;
-
-    font-weight: 700;
-
-    letter-spacing: 1px;
-}
-
-
-.reject-modal-header h2 {
-    margin: 5px 0 0;
-
-    color: #111827;
-
-    font-size: 21px;
-}
-
-
-.close-modal {
-    width: 35px;
-
-    height: 35px;
-
-    flex-shrink: 0;
-
-    border: none;
-
-    border-radius: 50%;
-
-    background: #f3f4f6;
-
-    color: #374151;
-
-    font-size: 20px;
-
-    cursor: pointer;
-
-    transition:
-        all 0.2s ease;
-}
-
-
-.close-modal:hover {
-    background: #e5e7eb;
-}
-
-
-.reject-modal-description {
-    margin: 17px 0;
-
-    color: #6b7280;
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-
-.reject-input-group {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 7px;
-}
-
-
-.reject-input-group label {
-    color: #374151;
-
+.review-profile p {
+    margin: 0;
+    color: #71838d;
     font-size: 12px;
-
-    font-weight: 700;
 }
 
-
-.reject-input-group textarea {
-    width: 100%;
-
-    min-height: 120px;
-
-    padding: 12px;
-
-    border: 1px solid #d1d5db;
-
-    border-radius: 10px;
-
-    font-family: inherit;
-
-    font-size: 13px;
-
-    resize: vertical;
-
-    outline: none;
-
-    color: #111827;
+.review-profile p i {
+    margin: 0 6px;
+    font-style: normal;
 }
 
-
-.reject-input-group textarea:focus {
-    border-color: #2563eb;
-
-    box-shadow:
-        0 0 0 3px
-        rgba(
-            37,
-            99,
-            235,
-            0.1
-        );
-}
-
-
-.reject-modal-actions {
-    display: flex;
-
-    gap: 10px;
-
+.review-details-grid {
     margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+    gap: 14px 24px;
 }
 
+.review-details-grid strong {
+    display: block;
+    margin-top: 4px;
+    color: #102c43;
+    font-size: 13px;
+}
 
-.cancel-reject,
-.confirm-reject {
-    flex: 1;
+.review-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    flex: 0 0 125px;
+}
 
-    padding: 11px;
-
-    border: none;
-
+.review-actions button {
+    min-height: 40px;
+    border: 0;
     border-radius: 9px;
-
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-family: inherit;
     font-size: 12px;
-
     font-weight: 700;
-
     cursor: pointer;
 }
 
-
-.cancel-reject {
-    background: #f3f4f6;
-
-    color: #374151;
-}
-
-
-.cancel-reject:hover {
-    background: #e5e7eb;
-}
-
-
-.confirm-reject {
-    background: #dc2626;
-
-    color: white;
-}
-
-
-.confirm-reject:hover:not(:disabled) {
-    background: #b91c1c;
-}
-
-
-.confirm-reject:disabled {
+.review-actions button:disabled {
     opacity: 0.6;
-
     cursor: not-allowed;
 }
 
-
-/* ==========================================
-   LOADING
-========================================== */
-
-.warden-loading {
-    min-height: 100vh;
-
-    background: #f4f7fb;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
+.approve-action {
+    background: #087461;
+    color: #ffffff;
 }
 
-
-.warden-spinner {
-    width: 40px;
-
-    height: 40px;
-
-    border: 4px solid #dbeafe;
-
-    border-top-color: #2563eb;
-
-    border-radius: 50%;
-
-    animation:
-        warden-spin
-        0.8s linear infinite;
+.approve-action:hover:not(:disabled) {
+    background: #075f51;
 }
 
-
-.warden-loading p {
-    margin-top: 14px;
-
-    color: #6b7280;
-
-    font-size: 13px;
-}
-
-
-@keyframes warden-spin {
-
-    to {
-        transform:
-            rotate(360deg);
-    }
-
-}
-
-
-/* ==========================================
-   TABLET
-========================================== */
-
-@media (max-width: 950px) {
-
-    .request-details {
-        grid-template-columns:
-            repeat(3, 1fr);
-    }
-
-
-    .request-details > div:nth-child(3) {
-        border-right: none;
-    }
-
-}
-
-
-/* ==========================================
-   MOBILE
-========================================== */
-
-@media (max-width: 700px) {
-
-    .warden-header {
-        padding: 12px 18px;
-    }
-
-
-    .warden-logo {
-        width: 42px;
-
-        height: 42px;
-
-        font-size: 20px;
-    }
-
-
-    .warden-brand h1 {
-        font-size: 18px;
-    }
-
-
-    .warden-brand p {
-        display: none;
-    }
-
-
-    .warden-logout {
-        padding: 8px 13px;
-
-        font-size: 11px;
-    }
-
-
-    .warden-main {
-        padding:
-            25px 15px 45px;
-    }
-
-
-    /* TITLE */
-
-    .warden-title {
-        flex-direction: row;
-
-        align-items: flex-start;
-
-        gap: 10px;
-
-        margin-bottom: 22px;
-    }
-
-
-    .warden-title h2 {
-        font-size: 25px;
-    }
-
-
-    .warden-title p:last-child {
-        font-size: 12px;
-    }
-
-
-    .warden-refresh {
-        width: auto;
-
-        padding: 9px 12px;
-
-        flex-shrink: 0;
-    }
-
-
-    /* STAT */
-
-    .warden-stat {
-        width: 100%;
-
-        margin-bottom: 30px;
-    }
-
-
-    /* SECTION */
-
-    .warden-section-header {
-        flex-direction: row;
-
-        align-items: center;
-
-        margin-bottom: 15px;
-    }
-
-
-    .warden-section-header h2 {
-        font-size: 20px;
-    }
-
-
-    .warden-section-header p {
-        font-size: 12px;
-    }
-
-
-    /* CARD HEADER */
-
-    .request-card-header {
-        padding: 18px;
-
-        align-items: flex-start;
-
-        flex-direction: row;
-    }
-
-
-    .request-card-header h3 {
-        font-size: 14px;
-    }
-
-
-    /* STUDENT */
-
-    .request-student {
-        padding: 18px;
-    }
-
-
-    .request-student h3 {
-        font-size: 15px;
-    }
-
-
-    /* DETAILS */
-
-    .request-details {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-
-    .request-details > div {
-        padding: 15px;
-
-        border-right:
-            1px solid #eef2f7;
-    }
-
-
-    .request-details > div:nth-child(2n) {
-        border-right: none;
-    }
-
-
-    .request-details > div:last-child {
-        border-right: none;
-    }
-
-
-    /* ACTIONS */
-
-    .request-actions {
-        padding: 15px 18px;
-
-        gap: 9px;
-    }
-
-
-    .approve-button,
-    .reject-button {
-        padding: 11px 10px;
-
-        font-size: 11px;
-    }
-
-
-    /* MODAL */
-
-    .reject-modal {
-        padding: 22px;
-
-        border-radius: 15px;
-    }
-
-}
-
-
-/* ==========================================
-   SMALL MOBILE
-========================================== */
-
-@media (max-width: 450px) {
-
-    .warden-header {
-        padding: 11px 14px;
-    }
-
-
-    .warden-brand {
-        gap: 8px;
-    }
-
-
-    .warden-logo {
-        width: 38px;
-
-        height: 38px;
-
-        font-size: 18px;
-    }
-
-
-    .warden-brand h1 {
-        font-size: 17px;
-    }
-
-
-    .warden-logout {
-        padding: 7px 11px;
-    }
-
-
-    .warden-main {
-        padding:
-            22px 12px 40px;
-    }
-
-
-    /* TITLE */
-
-    .warden-title {
-        align-items: flex-start;
-    }
-
-
-    .warden-title h2 {
-        font-size: 23px;
-    }
-
-
-    .warden-title p:last-child {
-        font-size: 11px;
-    }
-
-
-    .warden-refresh {
-        padding: 8px 10px;
-
-        font-size: 11px;
-    }
-
-
-    /* SECTION */
-
-    .warden-section-header h2 {
-        font-size: 19px;
-    }
-
-
-    .warden-section-header p {
-        font-size: 11px;
-    }
-
-
-    /* CARD */
-
-    .warden-request-card {
-        border-radius: 14px;
-    }
-
-
-    .request-card-header {
-        padding: 16px;
-    }
-
-
-    .request-card-header h3 {
-        font-size: 13px;
-    }
-
-
-    .pending-badge {
-        padding: 6px 9px;
-
-        font-size: 9px;
-    }
-
-
-    /* STUDENT */
-
-    .request-student {
-        padding: 16px;
-    }
-
-
-    .student-avatar {
-        width: 44px;
-
-        height: 44px;
-
-        font-size: 19px;
-    }
-
-
-    .request-student h3 {
-        font-size: 14px;
-    }
-
-
-    .request-student p {
-        font-size: 11px;
-    }
-
-
-    /* DETAILS */
-
-    .request-details {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-
-    .request-details > div {
-        padding: 13px 11px;
-    }
-
-
-    .request-details span {
-        font-size: 9px;
-    }
-
-
-    .request-details strong {
-        font-size: 12px;
-    }
-
-
-    /* ACTIONS */
-
-    .request-actions {
-        padding: 13px;
-
-        flex-direction: row;
-    }
-
-
-    .approve-button,
-    .reject-button {
-        width: auto;
-
-        padding: 11px 8px;
-
-        font-size: 11px;
-    }
-
-
-    /* MODAL */
-
-    .reject-modal-overlay {
-        padding: 12px;
-    }
-
-
-    .reject-modal {
-        padding: 20px;
-    }
-
-
-    .reject-modal-header h2 {
-        font-size: 19px;
-    }
-
-
-    .reject-modal-description {
-        font-size: 12px;
-    }
-
-
-    .reject-input-group textarea {
-        min-height: 105px;
-    }
-
-
-    .reject-modal-actions {
-        flex-direction: row;
-    }
-
-}
-
-
-/* ==========================================
-   VERY SMALL PHONES
-========================================== */
-
-@media (max-width: 360px) {
-
-    .warden-main {
-        padding-left: 10px;
-
-        padding-right: 10px;
-    }
-
-
-    .warden-title h2 {
-        font-size: 21px;
-    }
-
-
-    .warden-refresh {
-        padding: 7px 8px;
-
-        font-size: 10px;
-    }
-
-
-    .request-details > div {
-        padding: 11px 8px;
-    }
-
-
-    .request-details span {
-        font-size: 8px;
-    }
-
-
-    .request-details strong {
-        font-size: 11px;
-    }
-
-
-    .approve-button,
-    .reject-button {
-        font-size: 10px;
-
-        padding: 10px 6px;
-    }
-
-}
-
-
-/* ==========================================
-   PREMIUM PENDING STAT
-========================================== */
-
-.warden-stat {
-    position: relative;
-
-    overflow: hidden;
-
-    border-color: #dbeafe;
-
-    box-shadow:
-        0 6px 20px rgba(
-            37,
-            99,
-            235,
-            0.07
-        );
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-
-.warden-stat::after {
-    content: "";
-
-    position: absolute;
-
-    width: 120px;
-
-    height: 120px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(
-            37,
-            99,
-            235,
-            0.045
-        );
-
-    right: -45px;
-
-    top: -55px;
-}
-
-
-.warden-stat:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 10px 25px rgba(
-            37,
-            99,
-            235,
-            0.10
-        );
-}
-
-
-.warden-stat-icon {
-    position: relative;
-
-    z-index: 1;
-
-    background: #eff6ff;
-
-    border: 1px solid #dbeafe;
-}
-
-
-.warden-stat > div:last-child {
-    position: relative;
-
-    z-index: 1;
-}
-
-
-.warden-stat strong {
-    color: #1f3c88;
-
-    font-size: 28px;
-}
-
-
-/* ==========================================
-   GATE HISTORY EXTRA STYLING
-========================================== */
-
-.warden-requests[style] .warden-request-card {
-    border-color: #dbe3ef;
-}
-
-
-.warden-requests[style]
-    .warden-request-card:hover {
-    border-color: #bfdbfe;
-
-    box-shadow:
-        0 8px 25px
-        rgba(
-            37,
-            99,
-            235,
-            0.07
-        );
-}
-
-
-/* Security verification row */
-
-.warden-requests[style]
-    .warden-request-card
-    > div:last-child {
-    background: #fafcff;
-
-    color: #64748b;
-
-    font-size: 13px;
-}
-
-
-.warden-requests[style]
-    .warden-request-card
-    > div:last-child
-    strong {
-    color: #2563eb;
-
-    font-weight: 700;
-}
-
-
-/* ==========================================
-   GATE HISTORY STATUS
-========================================== */
-
-.warden-requests[style]
-    .pending-badge {
-    min-width: 90px;
-
-    text-align: center;
-}
-
-
-/* ==========================================
-   MOBILE GATE HISTORY
-========================================== */
-
-@media (max-width: 700px) {
-
-    .warden-requests[style] {
-        margin-top: 30px !important;
-    }
-
-
-    .warden-requests[style]
-        .warden-request-card
-        > div:last-child {
-        padding: 13px 18px !important;
-
-        flex-wrap: wrap;
-    }
-
-}
-
-
-@media (max-width: 450px) {
-
-    .warden-requests[style]
-        .warden-request-card
-        > div:last-child {
-        font-size: 11px !important;
-
-        padding: 12px 16px !important;
-    }
-
-}
-/* =========================================================
-   WARDEN DASHBOARD — FINAL VISUAL POLISH
-========================================================= */
-
-.warden-dashboard {
-    background: #f5f7fb;
-}
-
-
-/* ---------- HEADER ---------- */
-
-.warden-header {
-    background: rgba(255, 255, 255, 0.97);
-
-    border-bottom: 1px solid #e5eaf1;
-
-    box-shadow:
-        0 3px 14px rgba(15, 23, 42, 0.045);
-}
-
-.warden-brand h1 {
-    letter-spacing: -0.3px;
-}
-
-.warden-brand p {
-    color: #718096;
-}
-
-
-/* ---------- MAIN TITLE ---------- */
-
-.warden-main {
-    max-width: 1120px;
-
-    padding-top: 40px;
-}
-
-.warden-label {
-    color: #2563eb;
-
-    font-size: 10px;
-
-    letter-spacing: 1.2px;
-}
-
-.warden-title h2 {
-    color: #172033;
-
-    font-weight: 750;
-
-    letter-spacing: -0.5px;
-}
-
-
-/* ---------- REFRESH ---------- */
-
-.warden-refresh {
-    background: #eff6ff;
-
-    border-color: #dbeafe;
-
-    color: #2563eb;
-
-    border-radius: 10px;
-
-    transition:
-        transform 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.warden-refresh:hover {
-    background: #e5efff;
-
-    box-shadow:
-        0 5px 14px rgba(37, 99, 235, 0.10);
-
-    transform: translateY(-1px);
-}
-
-
-/* ---------- STAT ---------- */
-
-.warden-stat {
-    border-color: #dce7f8;
-
-    border-radius: 17px;
-
-    box-shadow:
-        0 6px 20px rgba(37, 99, 235, 0.055);
-}
-
-.warden-stat strong {
-    color: #1f4fa3;
-}
-
-
-/* ---------- SECTION ---------- */
-
-.warden-section-header h2 {
-    color: #172033;
-
-    font-weight: 750;
-
-    letter-spacing: -0.3px;
-}
-
-.warden-section-header p {
-    color: #718096;
-}
-
-.request-count {
-    border: 1px solid #dbeafe;
-
-    background: #eff6ff;
-
-    color: #2563eb;
-}
-
-
-/* ---------- REQUEST CARDS ---------- */
-
-.warden-request-card {
-    border-color: #e1e7ef;
-
-    border-radius: 17px;
-
-    box-shadow:
-        0 4px 17px rgba(15, 23, 42, 0.035);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
-}
-
-.warden-request-card:hover {
-    border-color: #cfd9e7;
-
-    box-shadow:
-        0 9px 25px rgba(15, 23, 42, 0.06);
-
-    transform: translateY(-2px);
-}
-
-
-/* ---------- CARD HEADER ---------- */
-
-.request-card-header {
-    background:
-        linear-gradient(
-            180deg,
-            #ffffff,
-            #fcfdff
-        );
-
-    padding: 21px 24px;
-}
-
-.request-card-header h3 {
-    color: #172033;
-
-    font-weight: 720;
-}
-
-.pending-badge {
-    background: #fff7e6;
-
-    color: #a16207;
-
-    border: 1px solid #fde7b0;
-}
-
-
-/* ---------- STUDENT SECTION ---------- */
-
-.request-student {
+.reject-action {
     background: #ffffff;
-
-    padding: 21px 24px;
+    color: #b84b4b;
+    border: 1px solid #efcaca !important;
 }
 
-.student-avatar {
-    background: #edf4ff;
-
-    border: 1px solid #dbeafe;
-}
-
-.request-student h3 {
-    color: #172033;
-
-    font-weight: 700;
-}
-
-.request-student p {
-    color: #718096;
-}
-
-
-/* ---------- DETAILS ---------- */
-
-.request-details {
-    background: #ffffff;
-}
-
-.request-details > div {
-    padding: 19px 20px;
-}
-
-.request-details span {
-    color: #8995a7;
-
-    font-size: 9px;
-
-    letter-spacing: 0.5px;
-}
-
-.request-details strong {
-    color: #273449;
-
-    font-weight: 650;
-
-    line-height: 1.45;
-}
-
-
-/* ---------- ACTION AREA ---------- */
-
-.warden-actions {
-    padding: 18px 24px;
-
-    background: #fbfcfe;
-
-    border-top: 1px solid #eef2f7;
-}
-
-
-/* Approve */
-
-.approve-button {
-    border-radius: 9px;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        filter 0.2s ease;
-}
-
-.approve-button:hover:not(:disabled) {
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 6px 14px rgba(22, 163, 74, 0.15);
-}
-
-
-/* Reject */
-
-.reject-button {
-    border-radius: 9px;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.reject-button:hover:not(:disabled) {
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 6px 14px rgba(220, 38, 38, 0.12);
-}
-
-
-/* ---------- GATE HISTORY ---------- */
-
-.gate-history-section {
-    margin-top: 48px;
-}
-
-.gate-history-card {
-    border-radius: 16px;
-
-    border: 1px solid #e1e7ef;
-
-    background: #ffffff;
-
-    box-shadow:
-        0 4px 16px rgba(15, 23, 42, 0.035);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.gate-history-card:hover {
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 7px 21px rgba(15, 23, 42, 0.055);
-}
-
-
-/* ---------- MODAL ---------- */
-
-.reject-modal-overlay {
-    backdrop-filter: blur(3px);
-
-    background: rgba(15, 23, 42, 0.42);
-}
-
-.reject-modal {
-    border-radius: 17px;
-
-    border: 1px solid #e1e7ef;
-
-    box-shadow:
-        0 20px 55px rgba(15, 23, 42, 0.18);
-}
-
-
-/* =========================================================
-   MOBILE POLISH
-========================================================= */
-
-@media (max-width: 700px) {
-
-    .warden-header {
-        padding: 12px 17px;
-    }
-
-    .warden-main {
-        padding: 28px 15px 45px;
-    }
-
-    .warden-title {
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        gap: 15px;
-    }
-
-    .warden-title h2 {
-        font-size: 25px;
-    }
-
-    .warden-refresh {
-        width: 100%;
-    }
-
-    .warden-stat {
-        width: 100%;
-
-        margin-bottom: 28px;
-
-        box-sizing: border-box;
-    }
-
-    .warden-section-header {
-        align-items: flex-start;
-    }
-
-    .warden-section-header h2 {
-        font-size: 19px;
-    }
-
-    .request-card-header {
-        padding: 18px;
-    }
-
-    .request-student {
-        padding: 18px;
-    }
-
-    .request-details {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
-
-    .request-details > div {
-        padding: 16px;
-    }
-
-    .request-details > div:nth-child(odd) {
-        border-right: 1px solid #eef2f7;
-    }
-
-    .request-details > div:nth-child(even) {
-        border-right: none;
-    }
-
-    .warden-actions {
-        padding: 16px 18px;
-    }
-}
-
-
-/* =========================================================
-   SMALL PHONES
-========================================================= */
-
-@media (max-width: 430px) {
-
-    .warden-header {
-        padding: 11px 13px;
-    }
-
-    .warden-brand {
-        gap: 8px;
-    }
-
-    .warden-logo {
-        width: 40px;
-        height: 40px;
-
-        font-size: 19px;
-    }
-
-    .warden-brand h1 {
-        font-size: 18px;
-    }
-
-    .warden-brand p {
-        font-size: 10px;
-    }
-
-    .warden-logout {
-        padding: 8px 11px;
-
-        font-size: 10px;
-    }
-
-    .warden-main {
-        padding-left: 12px;
-        padding-right: 12px;
-    }
-
-    .warden-title h2 {
-        font-size: 23px;
-    }
-
-    .request-details {
-        grid-template-columns: 1fr;
-    }
-
-    .request-details > div,
-    .request-details > div:nth-child(odd),
-    .request-details > div:nth-child(even) {
-        border-right: none;
-
-        border-bottom: 1px solid #eef2f7;
-    }
-
-    .request-details > div:last-child {
-        border-bottom: none;
-    }
-}
-
-/* =========================================================
-   WARDEN STATUS FILTER CARDS
-   ========================================================= */
-
-.warden-status-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-    margin: 0 0 32px;
-}
-
-
-/* =========================================================
-   STATUS CARD
-   ========================================================= */
-
-.warden-status-card {
-    position: relative;
-    width: 100%;
-    min-height: 190px;
-
-    padding: 22px;
-
-    border: 1px solid #e5eaf2;
-    border-radius: 18px;
-
-    background: #ffffff;
-
-    text-align: left;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease,
-        background 0.2s ease;
-
-    font-family: inherit;
-
-    overflow: hidden;
-}
-
-
-.warden-status-card::before {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 0;
-
-    width: 100%;
-    height: 4px;
-
-    background: #dbe4f3;
-
-    transition:
-        background 0.2s ease;
-}
-
-
-.warden-status-card:hover {
-    transform: translateY(-3px);
-
-    box-shadow:
-        0 12px 28px rgba(15, 23, 42, 0.08);
-
-    border-color: #cdd8e8;
-}
-
-
-.warden-status-card.active {
-    border-color: #2563eb;
-
-    background:
-        linear-gradient(
-            180deg,
-            #f8fbff 0%,
-            #ffffff 100%
-        );
-
-    box-shadow:
-        0 12px 30px rgba(37, 99, 235, 0.12);
-}
-
-
-.warden-status-card.active::before {
-    background: #2563eb;
-}
-
-
-/* =========================================================
-   STATUS CARD TOP
-   ========================================================= */
-
-.status-card-top {
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    margin-bottom: 14px;
-}
-
-
-.status-card-icon {
-    width: 46px;
-    height: 46px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 13px;
-
-    background: #f1f5f9;
-
-    font-size: 21px;
-    font-weight: 700;
-
-    transition:
-        transform 0.2s ease,
-        background 0.2s ease;
-}
-
-
-.warden-status-card:hover
-.status-card-icon {
-    transform: scale(1.05);
-}
-
-
-.status-card-arrow {
-    font-size: 20px;
-
-    color: #94a3b8;
-
-    transition:
-        transform 0.2s ease,
-        color 0.2s ease;
-}
-
-
-.warden-status-card:hover
-.status-card-arrow {
-    transform: translateX(4px);
-
-    color: #2563eb;
-}
-
-
-/* =========================================================
-   STATUS CARD COUNT
-   ========================================================= */
-
-.status-card-count {
-    margin-top: 2px;
-
-    font-size: 32px;
-    line-height: 1;
-
-    font-weight: 800;
-
-    color: #0f172a;
-}
-
-
-.status-card-title {
-    margin-top: 8px;
-
-    font-size: 16px;
-
-    font-weight: 750;
-
-    color: #1e293b;
-}
-
-
-.status-card-description {
-    margin-top: 4px;
-
-    font-size: 12px;
-
-    color: #64748b;
-}
-
-
-.status-card-view {
-    margin-top: 14px;
-
-    font-size: 12px;
-
-    font-weight: 700;
-
-    color: #2563eb;
-}
-
-
-/* =========================================================
-   STATUS CARD VARIANTS
-   ========================================================= */
-
-
-/* PENDING */
-
-.status-pending .status-card-icon {
-    background: #fff7ed;
-    color: #ea580c;
-}
-
-.status-pending.active {
-    border-color: #f97316;
-}
-
-.status-pending.active::before {
-    background: #f97316;
-}
-
-
-/* APPROVED */
-
-.status-approved .status-card-icon {
-    background: #ecfdf5;
-    color: #059669;
-}
-
-.status-approved.active {
-    border-color: #10b981;
-}
-
-.status-approved.active::before {
-    background: #10b981;
-}
-
-
-/* REJECTED */
-
-.status-rejected .status-card-icon {
-    background: #fef2f2;
-    color: #dc2626;
-}
-
-.status-rejected.active {
-    border-color: #ef4444;
-}
-
-.status-rejected.active::before {
-    background: #ef4444;
-}
-
-
-/* COMPLETED */
-
-.status-completed .status-card-icon {
-    background: #eff6ff;
-    color: #2563eb;
-}
-
-.status-completed.active {
-    border-color: #2563eb;
-}
-
-.status-completed.active::before {
-    background: #2563eb;
-}
-
-
-/* =========================================================
-   STATUS RECORD BADGE
-   ========================================================= */
-
-.status-record-badge {
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    min-height: 30px;
-
-    padding: 6px 11px;
-
-    border-radius: 999px;
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    letter-spacing: 0.3px;
-
-    white-space: nowrap;
-}
-
-
-.status-badge-pending {
-    background: #fff7ed;
-    color: #c2410c;
-}
-
-
-.status-badge-approved {
-    background: #ecfdf5;
-    color: #047857;
-}
-
-
-.status-badge-rejected {
-    background: #fef2f2;
-    color: #b91c1c;
-}
-
-
-.status-badge-completed {
-    background: #eff6ff;
-    color: #1d4ed8;
-}
-
-
-/* =========================================================
-   STATUS EXTRA INFORMATION
-   ========================================================= */
-
-.status-extra-info {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 12px;
-
-    margin-top: 18px;
-
-    padding: 16px 20px;
-
-    border-top: 1px solid #eef2f7;
-
-    background: #fafcff;
-}
-
-
-.status-extra-info > div {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 5px;
-}
-
-
-.status-extra-info span {
-    font-size: 11px;
-
-    font-weight: 700;
-
-    color: #64748b;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.3px;
-}
-
-
-.status-extra-info strong {
-    font-size: 13px;
-
-    color: #1e293b;
-
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   REJECTION INFORMATION
-   ========================================================= */
-
-.rejection-info {
-    margin-top: 18px;
-
-    padding: 15px 18px;
-
-    border-top: 1px solid #fee2e2;
-
+.reject-action:hover:not(:disabled) {
     background: #fff7f7;
 }
 
-
-.rejection-info > span {
-    display: block;
-
-    margin-bottom: 6px;
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    color: #b91c1c;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.3px;
+.warden-refresh-button {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid #dce8e4;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #60757e;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
-
-.rejection-info p {
-    margin: 0;
-
-    font-size: 13px;
-
-    line-height: 1.6;
-
-    color: #7f1d1d;
+.warden-refresh-button:hover {
+    color: #087461;
+    border-color: #bcdad2;
 }
-
-
-/* =========================================================
-   STATUS RECORD VISUAL DIFFERENCES
-   ========================================================= */
-
-.status-record-approved {
-    border-left: 4px solid #10b981;
-}
-
-
-.status-record-rejected {
-    border-left: 4px solid #ef4444;
-}
-
-
-.status-record-completed {
-    border-left: 4px solid #2563eb;
-}
-
-
-.status-record-pending {
-    border-left: 4px solid #f97316;
-}
-
-
-/* =========================================================
-   STATUS SECTION HEADER
-   ========================================================= */
-
-.warden-requests
-.warden-section-header
-.warden-label {
-    margin-bottom: 5px;
-}
-
-
-/* =========================================================
-   MOBILE — TABLET
-   ========================================================= */
 
 @media (max-width: 1000px) {
-
-    .warden-status-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-
-        gap: 16px;
+    .warden-two-column {
+        grid-template-columns: 1fr;
     }
 
+    .pending-request-row {
+        grid-template-columns: 40px minmax(130px, 1fr) minmax(120px, 1fr) auto;
+    }
+
+    .pending-request-purpose {
+        display: none;
+    }
 }
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
 
 @media (max-width: 700px) {
-
-    .warden-status-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-
-        gap: 12px;
-
-        margin-bottom: 25px;
+    .pending-request-section {
+        padding: 18px;
+        border-radius: 14px;
     }
 
-
-    .warden-status-card {
-        min-height: 165px;
-
-        padding: 17px;
-
-        border-radius: 15px;
-    }
-
-
-    .status-card-icon {
-        width: 40px;
-        height: 40px;
-
-        border-radius: 11px;
-
-        font-size: 18px;
-    }
-
-
-    .status-card-arrow {
-        font-size: 17px;
-    }
-
-
-    .status-card-count {
-        font-size: 27px;
-    }
-
-
-    .status-card-title {
-        margin-top: 6px;
-
-        font-size: 14px;
-    }
-
-
-    .status-card-description {
-        font-size: 11px;
-    }
-
-
-    .status-card-view {
-        margin-top: 10px;
-
-        font-size: 11px;
-    }
-
-
-    .status-record-badge {
-        padding: 5px 8px;
-
-        font-size: 10px;
-    }
-
-
-    .status-extra-info {
-        grid-template-columns:
-            1fr;
-
-        gap: 12px;
-
-        padding: 14px 16px;
-    }
-
-
-    .rejection-info {
-        padding: 14px 16px;
-    }
-
-}
-
-
-/* =========================================================
-   SMALL PHONES
-   ========================================================= */
-
-@media (max-width: 430px) {
-
-    .warden-status-grid {
-        grid-template-columns:
-            1fr 1fr;
-
+    .pending-request-row {
+        grid-template-columns: 38px minmax(0, 1fr) auto;
         gap: 10px;
     }
 
-
-    .warden-status-card {
-        min-height: 150px;
-
-        padding: 14px;
+    .pending-request-date {
+        display: none;
     }
 
-
-    .status-card-icon {
-        width: 36px;
-        height: 36px;
-
-        font-size: 16px;
+    .review-button {
+        min-width: 72px;
+        padding: 8px 9px;
     }
 
-
-    .status-card-count {
-        font-size: 24px;
+    .pending-review-panel {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
     }
 
-
-    .status-card-title {
-        font-size: 13px;
+    .review-details-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
     }
 
-
-    .status-card-description {
-        font-size: 10px;
+    .review-actions {
+        flex-direction: row;
+        flex: none;
     }
 
-
-    .status-card-view {
-        font-size: 10px;
+    .review-actions button {
+        flex: 1;
     }
 
+    .warden-two-column {
+        gap: 14px;
+    }
 }
 
+
 /* =========================================================
-   MOBILE STATUS CARDS — COMPACT SINGLE ROW
+   WARDEN MOBILE POLISH
    ========================================================= */
 
 @media (max-width: 700px) {
-
-    .warden-status-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 6px;
-
-        margin-bottom: 24px;
+    /* Keep the Warden approval details comfortable on phones. */
+    .pending-review-panel {
+        padding: 16px;
+        border-radius: 14px;
     }
 
-    .warden-status-card {
-        min-height: 82px;
+    .review-profile {
+        align-items: flex-start;
+    }
 
-        padding: 12px 5px;
+    .review-profile h3 {
+        font-size: 17px;
+    }
 
+    .review-details-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 18px;
+    }
+
+    .review-details-grid span {
+        font-size: 9px;
+    }
+
+    .review-details-grid strong {
+        font-size: 12px;
+    }
+
+    .review-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .review-actions button {
+        width: 100%;
+        min-height: 44px;
+        border-radius: 10px;
+        font-size: 12px;
+    }
+
+    /* Students search: stack the controls instead of squeezing
+       the Refresh button beside a narrow input. */
+    .students-directory-section {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .students-toolbar {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .student-search-wrap {
+        width: 100%;
+        height: 42px;
+        min-height: 42px;
+        border-radius: 10px;
+    }
+
+    .student-search-wrap input {
+        font-size: 12px;
+    }
+
+    .student-refresh {
+        width: 100%;
+        height: 40px;
+        min-height: 40px;
+        justify-content: center;
+        padding: 0 14px;
+        font-size: 11px;
+    }
+
+    .student-refresh svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Student rows become a simple mobile card layout. */
+    .student-directory-list {
         border-radius: 12px;
+    }
 
+    .student-directory-row {
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 8px 11px;
+        min-height: 0;
+        padding: 14px 12px;
+    }
+
+    .student-directory-row .mini-avatar {
+        grid-column: 1;
+        grid-row: 1 / span 3;
+        align-self: start;
+    }
+
+    .student-directory-row .directory-student {
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+    }
+
+    .student-directory-row .directory-detail,
+    .student-directory-row .directory-detail:last-child {
+        grid-column: 2;
+        grid-row: auto;
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .directory-student strong,
+    .directory-detail strong {
+        font-size: 12px;
+    }
+
+    .directory-student span,
+    .directory-detail span {
+        margin-top: 2px;
+        font-size: 10px;
+    }
+
+    /* Clean mobile bottom navigation:
+       one thin top border, no boxed cells. */
+    .warden-mobile-nav {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 67px;
+        padding: 0;
+        background: #ffffff;
+        border-top: 1px solid #dce8e4;
+        box-shadow: 0 -4px 16px rgba(20, 61, 52, 0.06);
+        z-index: 50;
+    }
+
+    .warden-mobile-nav button {
+        width: 100%;
+        height: 67px;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        outline: 0;
+        background: transparent;
+        color: #75868e;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-
-        text-align: center;
-    }
-
-    .warden-status-card::before {
-        height: 3px;
-    }
-
-    .status-card-count {
-        margin: 0;
-
-        font-size: 22px;
-        line-height: 1;
-
-        font-weight: 800;
-    }
-
-    .status-card-title {
-        margin-top: 7px;
-
+        gap: 4px;
+        font-family: inherit;
         font-size: 10px;
-        line-height: 1.15;
-
-        font-weight: 750;
-
-        white-space: nowrap;
+        line-height: 1;
+        cursor: pointer;
     }
 
-    .status-card-description {
-        display: none;
+    .warden-mobile-nav button:hover {
+        background: #f7fbfa;
     }
 
-    .status-card-icon,
-    .status-card-arrow,
-    .status-card-view {
-        display: none;
+    .warden-mobile-nav button.active {
+        color: #087461;
+        font-weight: 700;
     }
 
+    .warden-mobile-nav button .ui-icon {
+        width: 19px;
+        height: 19px;
+        flex: 0 0 auto;
+        stroke-width: 1.8;
+    }
+
+    .warden-mobile-nav button span {
+        font-size: 9px;
+        font-weight: 650;
+    }
+
+    .warden-mobile-nav .warden-mobile-logout .ui-icon {
+        width: 19px;
+        height: 19px;
+        transform: scale(0.72);
+        transform-origin: center;
+        stroke-width: 1.8;
+    }
+}
 }
 
-
 /* =========================================================
-   VERY SMALL PHONES
+   FINAL MOBILE OVERRIDE — PENDING REQUEST
    ========================================================= */
-
-@media (max-width: 380px) {
-
-    .warden-status-grid {
-        gap: 5px;
+@media (max-width: 700px) {
+    .pending-request-section .pending-request-list {
+        margin-top: 14px !important;
+        border-top: 1px solid #e1ebe8 !important;
     }
 
-    .warden-status-card {
-        min-height: 76px;
-
-        padding: 10px 3px;
-
-        border-radius: 10px;
+    .pending-request-section .pending-request-row {
+        width: 100% !important;
+        min-height: 72px !important;
+        margin: 0 !important;
+        padding: 12px 0 !important;
+        border: 0 !important;
+        border-bottom: 1px solid #e1ebe8 !important;
+        border-radius: 0 !important;
+        outline: 0 !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        background: transparent !important;
+        color: inherit !important;
+        display: grid !important;
+        grid-template-columns: 38px minmax(0, 1fr) auto !important;
+        align-items: center !important;
+        gap: 10px !important;
+        text-align: left !important;
+        font-family: inherit !important;
+        cursor: pointer !important;
+        box-sizing: border-box !important;
     }
 
-    .status-card-count {
-        font-size: 20px;
+    .pending-request-section .pending-request-row:hover,
+    .pending-request-section .pending-request-row.selected {
+        background: #f7fbfa !important;
     }
 
-    .status-card-title {
-        margin-top: 6px;
-
-        font-size: 9px;
+    .pending-request-section .pending-request-student,
+    .pending-request-section .pending-request-purpose,
+    .pending-request-section .pending-request-date {
+        min-width: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 3px !important;
     }
 
+    .pending-request-section .pending-request-student strong,
+    .pending-request-section .pending-request-purpose strong,
+    .pending-request-section .pending-request-date strong {
+        color: #102c43 !important;
+        font-size: 12px !important;
+        line-height: 1.25 !important;
+        font-weight: 700 !important;
+        white-space: normal !important;
+    }
+
+    .pending-request-section .pending-request-student span,
+    .pending-request-section .pending-request-purpose span,
+    .pending-request-section .pending-request-date span {
+        color: #71838d !important;
+        font-size: 10px !important;
+        line-height: 1.3 !important;
+    }
+
+    .pending-request-section .pending-request-purpose {
+        display: none !important;
+    }
+
+    .pending-request-section .pending-request-date {
+        display: flex !important;
+        min-width: 78px !important;
+        text-align: right !important;
+    }
+
+    .pending-request-section .pending-request-date strong,
+    .pending-request-section .pending-request-date span {
+        white-space: nowrap !important;
+    }
+
+    .pending-request-section .review-button {
+        min-width: 68px !important;
+        height: 34px !important;
+        padding: 7px 9px !important;
+        border: 0 !important;
+        border-radius: 9px !important;
+        background: #e1f3ed !important;
+        color: #087461 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+    }
+
+    .pending-request-section .pending-review-panel {
+        width: 100% !important;
+        margin-top: 14px !important;
+        padding: 16px !important;
+        border: 1px solid #d6e8e2 !important;
+        border-radius: 14px !important;
+        background: #f8fcfa !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        gap: 16px !important;
+        box-sizing: border-box !important;
+    }
+
+    .pending-request-section .review-profile {
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+
+    .pending-request-section .review-avatar {
+        width: 42px !important;
+        height: 42px !important;
+        flex: 0 0 42px !important;
+        font-size: 14px !important;
+    }
+
+    .pending-request-section .review-profile h3 {
+        margin: 2px 0 3px !important;
+        font-size: 16px !important;
+        line-height: 1.25 !important;
+    }
+
+    .pending-request-section .review-profile p {
+        font-size: 10px !important;
+        line-height: 1.35 !important;
+    }
+
+    .pending-request-section .review-details-grid {
+        margin-top: 0 !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 13px 14px !important;
+    }
+
+    .pending-request-section .review-details-grid span {
+        font-size: 9px !important;
+        line-height: 1.2 !important;
+    }
+
+    .pending-request-section .review-details-grid strong {
+        margin-top: 4px !important;
+        font-size: 11px !important;
+        line-height: 1.3 !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    .pending-request-section .review-actions {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 9px !important;
+        flex: none !important;
+    }
+
+    .pending-request-section .review-actions button {
+        width: 100% !important;
+        min-height: 42px !important;
+        padding: 9px 10px !important;
+        border-radius: 10px !important;
+        font-size: 11px !important;
+        box-sizing: border-box !important;
+    }
 }
