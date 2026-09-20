@@ -37,19 +37,6 @@ const Icon = ({ name, size = 20 }) => {
       </>
     ),
 
-    bell: (
-      <>
-        <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 8h18c0-1-3-1-3-8" />
-        <path d="M10 21h4" />
-      </>
-    ),
-
-    profile: (
-      <>
-        <circle cx="12" cy="8" r="3.5" />
-        <path d="M5 20a7 7 0 0 1 14 0" />
-      </>
-    ),
 
     logout: (
       <>
@@ -109,32 +96,8 @@ const Icon = ({ name, size = 20 }) => {
         <path d="M20 20v-5h-5" />
       </>
     ),
-    mail: (
-      <>
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="m3 7 9 6 9-6" />
-      </>
-    ),
 
-    phone: (
-      <>
-        <path d="M7 4h3l1.5 4-2 1.5a14 14 0 0 0 5 5l1.5-2 4 1.5v3c0 1-1 2-2 1.9C10.5 18.1 5.9 13.5 4.1 6.9 3.8 5.4 5.1 4 7 4Z" />
-      </>
-    ),
 
-    shield: (
-      <>
-        <path d="M12 3 19 6v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" />
-        <path d="m9 12 2 2 4-4" />
-      </>
-    ),
-
-    calendar: (
-      <>
-        <rect x="3" y="5" width="18" height="16" rx="2" />
-        <path d="M16 3v4M8 3v4M3 10h18" />
-      </>
-    ),
   };
 
   return (
@@ -477,10 +440,6 @@ function ParentDashboard() {
     scrollToSection("outpass-history-section");
   };
 
-  const goToProfile = () => {
-    scrollToSection("parent-profile-section");
-  };
-
   // ==========================================
   // UI
   // ==========================================
@@ -534,14 +493,6 @@ function ParentDashboard() {
             </button>
 
 
-            <button
-              className="sidebar-link"
-              onClick={goToProfile}
-            >
-              <Icon name="profile" />
-              Profile
-            </button>
-
           </nav>
 
         </div>
@@ -556,12 +507,6 @@ function ParentDashboard() {
             <Icon name="logout" />
             Logout
           </button>
-
-          <div className="sidebar-note">
-            Same People.
-            <br />
-            Safer Paths.
-          </div>
 
         </div>
 
@@ -641,16 +586,6 @@ function ParentDashboard() {
             </div>
 
 
-            <div className="hero-message">
-
-              <span />
-
-              <p>
-                A smarter campus for a safer
-                tomorrow.
-              </p>
-
-            </div>
 
           </section>
 
@@ -782,20 +717,6 @@ function ParentDashboard() {
 
               </div>
 
-
-              <button
-                className="outline-action"
-                type="button"
-                onClick={goToProfile}
-              >
-                View Details
-
-                <Icon
-                  name="arrow"
-                  size={17}
-                />
-
-              </button>
 
             </div>
 
@@ -1360,100 +1281,6 @@ function ParentDashboard() {
 
           </section>
 
-
-          {/* ==================================
-              PROFILE
-          ================================== */}
-
-          <section
-            className="parent-info-section"
-            id="parent-profile-section"
-          >
-            <div className="section-title-row info-section-heading">
-              <div>
-                <span className="hero-eyebrow">ACCOUNT</span>
-                <h2>Parent Profile</h2>
-              </div>
-            </div>
-
-            <div className="profile-grid">
-              <div className="profile-summary">
-                <div className="profile-large-avatar">
-                  {parentInitial}
-                </div>
-
-                <div>
-                  <h3>{parentUser?.name || "Parent"}</h3>
-                  <p>Parent account</p>
-                </div>
-              </div>
-
-              <div className="profile-details">
-                <div className="profile-detail">
-                  <span className="profile-detail-icon">
-                    <Icon name="profile" size={16} />
-                  </span>
-                  <div>
-                    <small>Name</small>
-                    <strong>{parentUser?.name || "Not available"}</strong>
-                  </div>
-                </div>
-
-                <div className="profile-detail">
-                  <span className="profile-detail-icon">
-                    <Icon name="mail" size={16} />
-                  </span>
-                  <div>
-                    <small>Email</small>
-                    <strong>{parentUser?.email || "Not available"}</strong>
-                  </div>
-                </div>
-
-                <div className="profile-detail">
-                  <span className="profile-detail-icon">
-                    <Icon name="phone" size={16} />
-                  </span>
-                  <div>
-                    <small>Phone</small>
-                    <strong>
-                      {parentUser?.phone ||
-                        parentUser?.phoneNumber ||
-                        "Not available"}
-                    </strong>
-                  </div>
-                </div>
-
-                <div className="profile-detail">
-                  <span className="profile-detail-icon">
-                    <Icon name="child" size={16} />
-                  </span>
-                  <div>
-                    <small>Linked Student</small>
-                    <strong>{student?.name || "Not available"}</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {student && (
-              <div className="linked-student-strip">
-                <div className="linked-student-icon">
-                  <Icon name="shield" size={18} />
-                </div>
-
-                <div>
-                  <strong>Linked student information</strong>
-                  <p>
-                    {student.studentId || "Student ID unavailable"}
-                    {student.course ? ` · ${student.course}` : ""}
-                    {student.hostel?.name
-                      ? ` · ${student.hostel.name}`
-                      : ""}
-                  </p>
-                </div>
-              </div>
-            )}
-          </section>
 
         </div>
 

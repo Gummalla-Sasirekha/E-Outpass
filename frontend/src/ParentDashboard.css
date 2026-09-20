@@ -157,22 +157,6 @@
   gap: 18px;
 }
 
-.sidebar-note {
-  padding: 0 17px;
-
-  color: #4c8b80;
-
-  font-family:
-    "Segoe Script",
-    "Brush Script MT",
-    cursive;
-
-  font-size: 16px;
-  line-height: 1.2;
-
-  transform: rotate(-4deg);
-}
-
 
 /* =========================================================
    MAIN
@@ -192,9 +176,8 @@
 ========================================================= */
 
 .parent-topbar {
-  height: 73px;
-
-  display: flex;
+  display: none;
+  height: 0;
   align-items: center;
   justify-content: flex-end;
 
@@ -338,35 +321,6 @@
   color: var(--text);
 
   font-size: 13px;
-}
-
-.hero-message {
-  display: flex;
-  align-items: center;
-
-  gap: 12px;
-
-  padding-bottom: 4px;
-}
-
-.hero-message span {
-  width: 31px;
-  height: 2px;
-
-  background: #4c9b8b;
-
-  border-radius: 2px;
-}
-
-.hero-message p {
-  width: 145px;
-
-  margin: 0;
-
-  color: #4f7770;
-
-  font-size: 10px;
-  line-height: 1.4;
 }
 
 
@@ -1304,6 +1258,7 @@
   /* TOPBAR */
 
   .parent-topbar {
+    display: flex;
     height: 64px;
 
     justify-content: space-between;
@@ -1888,229 +1843,17 @@
 
 
 /* =========================================================
-   PARENT INFORMATION SECTIONS
-   ========================================================= */
-
-.parent-info-section {
-  margin-top: 15px;
-  padding: 18px 20px 20px;
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  box-shadow: 0 7px 24px rgba(24, 68, 59, 0.045);
-}
-
-.info-section-heading {
-  align-items: flex-start;
-  margin-bottom: 13px;
-}
-
-.info-section-heading > div {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.info-section-heading .hero-eyebrow {
-  margin-bottom: 0;
-}
-
-.info-empty {
-  min-height: 130px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border: 1px dashed var(--border);
-  border-radius: 11px;
-  background: #fbfdfc;
-}
-
-.info-empty .empty-icon {
-  margin-bottom: 7px;
-}
-
-.info-empty h3 {
-  margin: 0 0 3px;
-  color: var(--navy);
-  font-size: 13px;
-}
-
-.info-empty p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-
-.profile-grid {
-  display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: 13px;
-}
-
-.profile-summary {
-  min-height: 150px;
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 18px;
-  border-radius: 12px;
-  background: #f1faf7;
-  border: 1px solid #dceee8;
-}
-
-.profile-large-avatar {
-  width: 54px;
-  height: 54px;
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: #d8f0e8;
-  color: var(--green-dark);
-  font-size: 20px;
-  font-weight: 800;
-}
-
-.profile-summary h3 {
-  margin: 0;
-  color: var(--navy);
-  font-size: 16px;
-}
-
-.profile-summary p {
-  margin: 4px 0 0;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.profile-details {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 9px;
-}
-
-.profile-detail {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  min-width: 0;
-  padding: 11px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: #fff;
-}
-
-.profile-detail-icon {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  border-radius: 8px;
-  background: var(--green-soft);
-  color: var(--green-dark);
-}
-
-.profile-detail > div {
-  min-width: 0;
-}
-
-.profile-detail small {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--muted);
-  font-size: 8px;
-}
-
-.profile-detail strong {
-  display: block;
-  overflow: hidden;
-  color: var(--navy);
-  font-size: 10px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.linked-student-strip {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-radius: 9px;
-  background: #f7fbf9;
-  border: 1px solid var(--border);
-}
-
-.linked-student-icon {
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  border-radius: 9px;
-  background: #e7f7f1;
-  color: var(--green);
-}
-
-.linked-student-strip strong {
-  display: block;
-  color: var(--navy);
-  font-size: 10px;
-}
-
-.linked-student-strip p {
-  margin: 3px 0 0;
-  color: var(--muted);
-  font-size: 9px;
-}
-
-/* =========================================================
    NAVIGATION / SCROLL POLISH
    ========================================================= */
 
 #parent-dashboard-top,
 #my-child-section,
 #request-outpass-form,
-#outpass-history-section,
-#parent-profile-section {
+#outpass-history-section {
   scroll-margin-top: 82px;
 }
 
-@media (max-width: 900px) {
-  .profile-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-summary {
-    min-height: 100px;
-  }
-}
-
 @media (max-width: 700px) {
-  .parent-info-section {
-    padding: 15px;
-  }
-
-  .profile-details {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-summary {
-    min-height: 92px;
-  }
-
-  .info-section-heading {
-    align-items: center;
-  }
-
-  .info-section-heading h2 {
-    font-size: 15px;
-  }
-
   .mobile-bottom-nav {
     display: grid;
     grid-template-columns: repeat(3, 1fr) !important;
@@ -2170,89 +1913,449 @@
   font-size: 9px;
 }
 
-/* Parent profile */
-.profile-summary {
-  padding: 20px;
+/* =========================================================
+   PARENT DASHBOARD — FINAL RESPONSIVE REFINEMENT
+   Desktop + Mobile
+   ========================================================= */
+
+/* ---------- SHARED VISUAL LANGUAGE ---------- */
+
+.parent-content {
+  width: min(100%, 1060px);
 }
 
-.profile-large-avatar {
-  width: 60px;
-  height: 60px;
-  font-size: 22px;
+.child-card,
+.activity-section,
+.request-banner,
+.form-card,
+.recent-section {
+  border-radius: 16px;
 }
 
-.profile-summary h3 {
-  font-size: 18px;
+/* Keep desktop hierarchy strong without oversized elements */
+.parent-hero h1 {
+  font-size: 31px;
 }
 
-.profile-summary p {
-  font-size: 11px;
+.card-heading-row h2,
+.section-title-row h2,
+.recent-heading h2 {
+  font-size: 17px;
 }
 
-.profile-detail {
-  padding: 13px;
-}
-
-.profile-detail-icon {
-  width: 34px;
-  height: 34px;
-}
-
-.profile-detail small {
-  font-size: 9px;
-}
-
-.profile-detail strong {
+.primary-button,
+.submit-button {
+  min-height: 46px;
   font-size: 12px;
 }
 
-.linked-student-strip {
-  padding: 12px 14px;
+.sidebar-brand strong {
+  font-size: 25px;
 }
 
-.linked-student-strip strong {
-  font-size: 11px;
-}
-
-.linked-student-strip p {
+.sidebar-brand span {
   font-size: 10px;
 }
 
-/* Keep the new sections readable on smaller screens */
+/* ---------- MOBILE HEADER ---------- */
+
 @media (max-width: 700px) {
-  .recent-heading h2,
-  .info-section-heading h2 {
-    font-size: 17px;
+
+  .parent-page {
+    min-height: 100svh;
+    padding-bottom: 76px;
   }
 
-  .recent-table-head {
-    font-size: 10px;
+  .parent-topbar {
+    height: 68px;
+    padding: 0 18px;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid var(--border);
   }
 
-  .recent-row {
-    font-size: 11px;
-    min-height: 78px;
+  .mobile-brand strong {
+    font-size: 20px;
+    letter-spacing: -0.5px;
   }
 
-  .destination-cell strong {
-    font-size: 12px;
-  }
-
-  .recent-row small {
-    font-size: 10px;
-  }
-
-  .status-badge {
+  .mobile-brand span {
+    margin-top: 3px;
     font-size: 9px;
   }
 
-  .profile-summary h3 {
+  .profile-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  /* ---------- MOBILE CONTENT ---------- */
+
+  .parent-content {
+    width: 100%;
+    padding: 24px 16px 28px;
+  }
+
+  .parent-hero {
+    margin-bottom: 19px;
+  }
+
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.7px;
+  }
+
+  .parent-hero h1 {
+    margin-top: 8px;
+    font-size: 28px;
+    line-height: 1.12;
+    letter-spacing: -0.8px;
+  }
+
+  .parent-hero > div:first-child p {
+    margin-top: 8px;
+    max-width: 330px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* ---------- MY CHILD ---------- */
+
+  .child-card {
+    padding: 17px;
+    border-radius: 16px;
+  }
+
+  .card-heading-row h2 {
+    font-size: 18px;
+  }
+
+  .child-main {
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .child-avatar {
+    width: 50px;
+    height: 50px;
     font-size: 17px;
   }
 
-  .profile-detail strong {
+  .child-info h3 {
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .child-info p {
+    margin-top: 5px;
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  /* Keep the same action on mobile instead of replacing it
+     with an icon-only control. */
+  .child-main .outline-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    flex: 0 0 auto;
+    padding: 9px 10px;
+    border-radius: 10px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .child-main .outline-action .ui-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ---------- OUTPASS ACTIVITY ---------- */
+
+  .activity-section {
+    margin-top: 16px;
+    padding: 15px 12px 12px;
+    border-radius: 16px;
+  }
+
+  .section-title-row {
+    padding: 0 2px 12px;
+  }
+
+  .section-title-row h2 {
+    font-size: 18px;
+  }
+
+  .stats-grid {
+    gap: 8px;
+  }
+
+  .stat-card {
+    min-height: 84px;
+    gap: 6px;
+    padding: 9px 5px;
+    border-radius: 12px;
+  }
+
+  .stat-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .stat-card strong {
+    font-size: 19px;
+  }
+
+  .stat-card span {
+    margin-top: 4px;
+    font-size: 8px;
+  }
+
+  /* ---------- REQUEST OUTPASS ---------- */
+
+  .request-banner {
+    min-height: 92px;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .request-banner-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+  }
+
+  .request-banner-copy h2 {
+    font-size: 17px;
+  }
+
+  .request-banner-copy p {
+    margin-top: 5px;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .primary-button {
+    min-width: 128px;
+    min-height: 46px;
+    padding: 0 12px;
+    border-radius: 11px;
     font-size: 11px;
+  }
+
+  .primary-button .ui-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* ---------- REQUEST FORM ---------- */
+
+  .form-card {
+    margin-top: 18px;
+    padding: 17px;
+    border-radius: 16px;
+  }
+
+  .form-card-header {
+    gap: 12px;
+    padding-bottom: 14px;
+  }
+
+  .form-card-header h2 {
+    font-size: 19px;
+  }
+
+  .form-card-header p {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  .form-group input {
+    height: 46px;
+  }
+
+  .form-group textarea {
+    min-height: 92px;
+  }
+
+  /* ---------- RECENT OUTPASSES ---------- */
+
+  .recent-section {
+    margin-top: 16px;
+    padding: 17px;
+    border-radius: 16px;
+  }
+
+  .recent-heading {
+    margin-bottom: 13px;
+  }
+
+  .recent-heading h2 {
+    font-size: 18px;
+  }
+
+  .view-all-link {
+    font-size: 11px;
+  }
+
+  .recent-row {
+    min-height: 82px;
+    padding: 12px 0;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    row-gap: 8px;
+  }
+
+  .destination-cell {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .destination-cell strong {
+    font-size: 13px;
+  }
+
+  .location-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Show the requested date on mobile so the card does not
+     become an overly empty destination/status row. */
+  .recent-row > span:nth-child(3) {
+    display: block;
+    grid-column: 1;
+    grid-row: 2;
+    color: #607681;
+    font-size: 10px;
+  }
+
+  .recent-row > span:nth-child(4) {
+    display: none;
+  }
+
+  .purpose-cell {
+    display: none;
+  }
+
+  .status-badge {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    justify-self: end;
+    padding: 6px 10px;
+    font-size: 9px;
+  }
+
+  .row-arrow {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    justify-self: end;
+    font-size: 18px;
+  }
+
+  .recent-row small {
+    margin-top: 2px;
+    font-size: 9px;
+  }
+
+  /* ---------- BOTTOM NAV ---------- */
+
+  .mobile-bottom-nav {
+    height: 70px;
+    padding: 4px 8px env(safe-area-inset-bottom);
+    background: rgba(255, 255, 255, 0.98);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(14px);
+  }
+
+  .mobile-nav-item {
+    height: 58px;
+    gap: 5px;
+    border-radius: 10px;
+  }
+
+  .mobile-nav-item .ui-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mobile-nav-item span {
+    font-size: 10px;
   }
 }
 
+/* ---------- SMALL PHONES ---------- */
 
+@media (max-width: 380px) {
+
+  .parent-content {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .parent-hero h1 {
+    font-size: 25px;
+  }
+
+  .child-main .outline-action {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 9px;
+  }
+
+  .stats-grid {
+    gap: 6px;
+  }
+
+  .stat-card {
+    min-height: 78px;
+  }
+
+  .stat-card strong {
+    font-size: 17px;
+  }
+
+  .stat-card span {
+    font-size: 7px;
+  }
+
+  .request-banner {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .request-banner-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .request-banner-copy h2 {
+    font-size: 15px;
+  }
+
+  .request-banner-copy p {
+    font-size: 9px;
+  }
+
+  .primary-button {
+    min-width: 112px;
+    min-height: 43px;
+    padding: 0 9px;
+    font-size: 10px;
+  }
+}

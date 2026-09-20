@@ -642,3 +642,198 @@
         font-size: 11px;
     }
 }
+
+
+/* =========================================================
+   LOGIN REFINEMENT
+   Desktop + Mobile
+   ========================================================= */
+
+.login-left {
+    padding-top: 24px;
+}
+
+.top-brand strong {
+    font-size: 25px;
+}
+
+.hero-copy {
+    margin-top: 76px;
+}
+
+.hero-copy h1 {
+    font-size: clamp(44px, 4vw, 56px);
+}
+
+.roles {
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.login-right {
+    padding: 36px 4vw;
+}
+
+.login-card {
+    width: min(100%, 560px);
+    padding: 32px 52px 28px;
+    border-radius: 20px;
+}
+
+.card-brand {
+    margin-bottom: 22px;
+}
+
+.welcome {
+    margin-bottom: 22px;
+}
+
+.field {
+    margin-bottom: 15px;
+}
+
+.input-box input {
+    height: 48px;
+}
+
+.sign-in {
+    height: 50px;
+}
+
+.college-login {
+    height: 48px;
+}
+
+.trust {
+    margin-top: 28px;
+}
+
+.handwritten,
+.top-message {
+    display: none !important;
+}
+
+@media (max-width: 1050px) {
+    .login-page {
+        min-height: 100svh;
+        background: #f5faf8;
+    }
+
+    .login-right {
+        min-height: 100svh;
+        padding: 24px 16px;
+        align-items: center;
+        background:
+            radial-gradient(
+                circle at 100% 0%,
+                rgba(201, 235, 225, 0.55),
+                transparent 30%
+            ),
+            #f5faf8;
+    }
+
+    .login-card {
+        width: min(100%, 520px);
+        padding: 30px 28px 26px;
+        border-radius: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-right {
+        min-height: 100svh;
+        padding: 18px 12px;
+        align-items: center;
+    }
+
+    .login-card {
+        width: 100%;
+        margin-top: 0;
+        padding: 25px 18px 22px;
+        border-radius: 18px;
+        box-shadow: 0 14px 34px rgba(32, 68, 61, 0.07);
+    }
+
+    .card-brand {
+        margin-bottom: 21px;
+    }
+
+    .card-brand strong {
+        font-size: 25px;
+    }
+
+    .card-brand small {
+        margin-top: 6px;
+        font-size: 11px;
+    }
+
+    .welcome {
+        margin-bottom: 22px;
+    }
+
+    .welcome h2 {
+        font-size: 27px;
+    }
+
+    .welcome p {
+        font-size: 13px;
+    }
+
+    .field {
+        margin-bottom: 16px;
+    }
+
+    .field label {
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .input-box input {
+        height: 50px;
+        padding-left: 48px;
+        padding-right: 48px;
+        font-size: 15px;
+        border-radius: 11px;
+    }
+
+    .input-box > svg {
+        left: 16px;
+        width: 22px;
+        height: 22px;
+    }
+
+    .eye-button {
+        right: 12px;
+    }
+
+    .form-options {
+        margin: -1px 0 21px;
+        font-size: 13px;
+    }
+
+    .form-options input {
+        width: 19px;
+        height: 19px;
+    }
+
+    .sign-in {
+        height: 52px;
+        border-radius: 12px;
+        font-size: 16px;
+    }
+
+    .college-login {
+        height: 49px;
+        border-radius: 11px;
+        font-size: 13px;
+    }
+
+    .or-divider {
+        margin: 21px 0 15px;
+    }
+
+    .trust {
+        margin-top: 25px;
+        font-size: 11px;
+    }
+}

@@ -1,1395 +1,1355 @@
-:root {
-  --w-green: #147b67;
-  --w-green-dark: #0b5f52;
-  --w-green-soft: #e4f4ef;
-  --w-mint: #f3faf7;
-  --w-navy: #102b3c;
-  --w-text: #405965;
-  --w-muted: #75868e;
-  --w-border: #dce8e4;
-  --w-white: #fff;
-}
-
-* { box-sizing: border-box; }
-
-.warden-dashboard {
-  min-height: 100vh;
-  display: flex;
-  color: var(--w-text);
-  background: #f5faf8;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-.warden-dashboard button,
-.warden-dashboard textarea { font: inherit; }
-
-.warden-sidebar {
-  position: fixed;
-  inset: 0 auto 0 0;
-  width: 214px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 24px 12px 18px;
-  background: rgba(255,255,255,.96);
-  border-right: 1px solid var(--w-border);
-  z-index: 30;
-}
-
-.warden-sidebar-brand { padding: 0 15px 22px; }
-.warden-sidebar-brand strong {
-  display: block;
-  color: var(--w-green-dark);
-  font-size: 23px;
-  letter-spacing: -.8px;
-}
-.warden-sidebar-brand span {
-  display: block;
-  margin-top: 5px;
-  color: var(--w-muted);
-  font-size: 11px;
-}
-
-.warden-nav { display: flex; flex-direction: column; gap: 4px; }
-.warden-nav-link {
-  width: 100%;
-  min-height: 42px;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 0 13px;
-  border: 0;
-  border-left: 3px solid transparent;
-  border-radius: 9px;
-  background: transparent;
-  color: #58707c;
-  font-size: 15px;
-  text-align: left;
-  cursor: pointer;
-}
-.warden-nav-link:hover,
-.warden-nav-link.active {
-  background: #edf8f4;
-  color: var(--w-green-dark);
-}
-.warden-nav-link.active { border-left-color: var(--w-green); font-weight: 700; }
-
-.warden-sidebar-bottom { display: flex; flex-direction: column; gap: 18px; }
-
-
-.warden-main { width: calc(100% - 214px); margin-left: 214px; min-width: 0; }
-.warden-topbar {
-  height: 62px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0 27px;
-  background: rgba(255,255,255,.68);
-  border-bottom: 1px solid rgba(220,232,228,.72);
-  backdrop-filter: blur(12px);
-}
-.warden-mobile-brand { display: none; }
-.warden-topbar-actions { display: flex; align-items: center; gap: 14px; }
-.warden-icon-button {
-  position: relative;
-  width: 38px; height: 38px;
-  display: grid; place-items: center;
-  border: 1px solid var(--w-border);
-  border-radius: 11px;
-  background: white; color: #4e6975;
-}
-.notification-dot {
-  position: absolute; top: 7px; right: 7px;
-  width: 6px; height: 6px; border-radius: 50%; background: #e84d4d;
-}
-.warden-profile-chip {
-  display: flex; align-items: center; gap: 9px;
-  padding: 5px 9px 5px 6px;
-  border: 1px solid var(--w-border);
-  border-radius: 22px; background: white;
-}
-.warden-avatar {
-  width: 32px; height: 32px; display: grid; place-items: center;
-  border-radius: 50%; background: #dff2eb; color: var(--w-green-dark);
-  font-size: 12px; font-weight: 800;
-}
-.warden-role { color: var(--w-navy); font-size: 13px; font-weight: 700; }
-.warden-chevron { color: #84949a; }
-
-.warden-content {
-  width: min(100%, 1160px);
-  margin: 0 auto;
-  padding: 24px 28px 45px;
-}
-
-.warden-hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 30px;
-  margin-bottom: 16px;
-}
-.warden-eyebrow {
-  display: inline-block;
-  color: #b0812d;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-}
-.warden-hero h1 {
-  margin: 7px 0 0;
-  color: var(--w-navy);
-  font-size: 31px;
-  line-height: 1.08;
-  letter-spacing: -.9px;
-}
-.warden-hero p { margin: 6px 0 0; font-size: 14px; }
-.warden-hero-note { display: none; align-items: center; gap: 12px; padding-bottom: 4px; }
-.warden-hero-note span { width: 31px; height: 2px; background: #4c9b8b; }
-.warden-hero-note p { width: 145px; color: #4f7770; font-size: 10px; line-height: 1.4; }
-
-.warden-alert {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 14px; padding: 10px 13px;
-  border-radius: 10px; background: #fff1f1; color: #b42318; font-size: 11px;
-}
-.warden-alert span {
-  width: 19px; height: 19px; display: grid; place-items: center;
-  border-radius: 50%; background: #d94841; color: #fff; font-weight: 800;
-}
-
-.hostel-card,
-.activity-card,
-.pending-section,
-.decisions-card,
-.quick-actions-card,
-.history-section {
-  border: 1px solid var(--w-border);
-  border-radius: 13px;
-  background: rgba(255,255,255,.96);
-  box-shadow: 0 4px 16px rgba(24,68,59,.035);
-}
-
-.hostel-card { padding: 14px 17px 15px; }
-.section-heading { color: var(--w-navy); font-size: 17px; font-weight: 750; }
-.hostel-main { display: flex; align-items: center; gap: 13px; margin-top: 10px; }
-.hostel-icon {
-  width: 48px; height: 48px; display: grid; place-items: center;
-  border-radius: 50%; background: #dff2eb; color: var(--w-green-dark); flex: 0 0 auto;
-}
-.hostel-info { flex: 1; min-width: 0; }
-.hostel-info h2 { margin: 0; color: var(--w-navy); font-size: 16px; }
-.hostel-info p { margin: 4px 0 0; color: #607681; font-size: 11px; }
-.hostel-info p span { margin: 0 5px; color: #9aa8ae; }
-.soft-action {
-  display: flex; align-items: center; gap: 8px; padding: 9px 13px;
-  border: 0; border-radius: 9px; background: var(--w-green-soft);
-  color: var(--w-green-dark); font-size: 11px; font-weight: 700;
-}
-
-.activity-card { margin-top: 12px; padding: 11px 9px 9px; }
-.section-heading-row { padding: 0 1px 8px; }
-.section-heading-row h2 { margin: 0; color: var(--w-navy); font-size: 17px; }
-.section-heading-row h2 span { color: #809099; font-size: 12px; font-weight: 500; }
-.warden-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-.warden-stat {
-  min-height: 66px; display: flex; align-items: center; gap: 11px;
-  padding: 9px; border-radius: 11px;
-}
-.warden-stat.blue { background: #eef7ff; }
-.warden-stat.yellow { background: #fff8e9; }
-.warden-stat.green { background: #e9f8f0; }
-.warden-stat.red { background: #fff0f0; }
-.warden-stat .stat-icon {
-  width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 50%;
-}
-.blue .stat-icon { background: #d9edff; color: #257db7; }
-.yellow .stat-icon { background: #ffedbb; color: #d18b12; }
-.green .stat-icon { background: #ccefe0; color: #138363; }
-.red .stat-icon { background: #ffd7d7; color: #dc4d4d; }
-.warden-stat strong { display: block; color: var(--w-navy); font-size: 21px; line-height: 1; }
-.warden-stat span { display: block; margin-top: 4px; color: #617680; font-size: 11px; }
-
-.pending-section { margin-top: 12px; padding: 15px 17px; }
-.section-header {
-  display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 9px;
-}
-.section-header h2 { margin: 4px 0 0; color: var(--w-navy); font-size: 19px; letter-spacing: -.3px; }
-.section-header p { margin: 3px 0 0; color: #70838c; font-size: 12px; }
-.section-header.compact { align-items: flex-start; }
-.view-all {
-  display: inline-flex; align-items: center; gap: 6px;
-  border: 0; background: transparent; color: var(--w-green-dark);
-  font-size: 12px; font-weight: 750; cursor: pointer; white-space: nowrap;
-}
-.pending-list { overflow: hidden; border: 1px solid var(--w-border); border-radius: 11px; }
-.pending-row {
-  display: grid; grid-template-columns: 1.35fr 1fr .9fr auto; align-items: center;
-  gap: 14px; min-height: 58px; padding: 7px 12px; border-top: 1px solid var(--w-border);
-}
-.pending-row:first-child { border-top: 0; }
-.student-mini { display: flex; align-items: center; gap: 9px; min-width: 0; }
-.mini-avatar {
-  width: 32px; height: 32px; display: grid; place-items: center; flex: 0 0 auto;
-  border-radius: 50%; background: #dff2eb; color: var(--w-green-dark);
-  font-size: 10px; font-weight: 800;
-}
-.student-mini strong, .pending-purpose strong { display: block; color: var(--w-navy); font-size: 13px; }
-.student-mini span, .pending-purpose span, .pending-date span {
-  display: block; margin-top: 3px; color: #7a8b92; font-size: 11px;
-}
-.pending-purpose { min-width: 0; }
-.pending-purpose strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pending-date strong { color: #526a75; font-size: 12px; }
-.review-button {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 7px 10px; border: 0; border-radius: 8px;
-  background: var(--w-green-soft); color: var(--w-green-dark);
-  font-size: 12px; font-weight: 750; cursor: pointer;
-}
-
-.lower-grid { display: grid; grid-template-columns: 1.35fr .85fr; gap: 12px; margin-top: 12px; }
-.decisions-card, .quick-actions-card { padding: 15px 17px; }
-.decision-list { margin-top: 8px; }
-.decision-row {
-  display: flex; align-items: center; gap: 9px; padding: 8px 0; border-top: 1px solid var(--w-border);
-}
-.decision-row:first-child { border-top: 0; }
-.decision-info { flex: 1; min-width: 0; }
-.decision-info strong { display: block; color: var(--w-navy); font-size: 13px; }
-.decision-info span { display: block; margin-top: 3px; color: #7a8b92; font-size: 8px; }
-.decision-info i { font-style: normal; margin: 0 3px; }
-.decision-badge, .gate-status {
-  padding: 5px 8px; border-radius: 20px; font-size: 10px; font-weight: 800; white-space: nowrap;
-}
-.decision-badge.approved, .gate-status.returned { background: #e9f8f0; color: #16805f; }
-.decision-badge.rejected { background: #fff0f0; color: #d34d4d; }
-.decision-badge.completed { background: #eef7ff; color: #257db7; }
-.small-empty { padding: 25px 0; color: var(--w-muted); text-align: center; font-size: 12px; }
-
-.quick-actions-card { display: flex; flex-direction: column; gap: 7px; }
-.quick-actions-card > button {
-  display: flex; align-items: center; gap: 10px; width: 100%;
-  padding: 8px 0; border: 0; border-top: 1px solid var(--w-border);
-  background: transparent; color: var(--w-text); text-align: left; cursor: pointer;
-}
-.quick-actions-card > button:first-of-type { border-top: 0; }
-.quick-actions-card > button > span {
-  width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto;
-  border-radius: 10px; background: #e8f7f1; color: var(--w-green);
-}
-.quick-actions-card > button > div { flex: 1; }
-.quick-actions-card strong { display: block; color: var(--w-navy); font-size: 10px; }
-.quick-actions-card small { display: block; margin-top: 3px; color: #7b8c94; font-size: 10px; }
-.quick-actions-card > button > .ui-icon { color: #7d9198; }
-
-.history-section { margin-top: 12px; padding: 15px 17px 17px; }
-
-
-.record-top {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 11px 13px; background: #fbfdfc; border-bottom: 1px solid var(--w-border);
-}
-.record-top span:first-child, .record-student > div > span {
-  display: block; color: #89989e; font-size: 10px; letter-spacing: .6px;
-}
-.record-top strong { display: block; margin-top: 3px; color: var(--w-navy); font-size: 13px; }
-.record-status { padding: 5px 9px; border-radius: 20px; font-size: 10px; font-weight: 800; }
-.record-status.pending { background: #fff8e9; color: #a56c08; }
-.record-status.approved { background: #e9f8f0; color: #16805f; }
-.record-status.rejected { background: #fff0f0; color: #d34d4d; }
-.record-status.completed { background: #eef7ff; color: #257db7; }
-
-.record-student { display: flex; align-items: center; gap: 10px; padding: 11px 13px; }
-.record-student strong { display: block; margin-top: 3px; color: var(--w-navy); font-size: 14px; }
-.record-student small { display: block; margin-top: 3px; color: #7c8e95; font-size: 11px; }
-.record-student i { font-style: normal; margin: 0 3px; }
-.record-details { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--w-border); }
-.record-details > div { padding: 10px 12px; border-right: 1px solid var(--w-border); }
-.record-details > div:last-child { border-right: 0; }
-.record-details span, .record-extra span {
-  display: block; color: #89989e; font-size: 10px; text-transform: uppercase; letter-spacing: .4px;
-}
-.record-details strong, .record-extra strong { display: block; margin-top: 4px; color: #304a57; font-size: 12px; line-height: 1.35; }
-.record-extra {
-  display: grid; grid-template-columns: repeat(2,1fr);
-  border-top: 1px solid var(--w-border); background: #f9fcfb;
-}
-.record-extra > div { padding: 9px 12px; border-right: 1px solid var(--w-border); }
-.record-extra > div:last-child { border-right: 0; }
-.rejection-info { padding: 10px 12px; border-top: 1px solid #f4d6d6; background: #fff8f8; }
-.rejection-info span { display: block; color: #b42318; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-.rejection-info p { margin: 4px 0 0; color: #7f3030; font-size: 12px; line-height: 1.5; }
-.record-actions { display: flex; gap: 8px; padding: 12px 15px; border-top: 1px solid var(--w-border); background: #fbfdfc; }
-.approve-button, .reject-button {
-  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-  min-height: 38px; padding: 0 14px; border: 0; border-radius: 8px; color: white;
-  font-size: 12px; font-weight: 750; cursor: pointer;
-}
-.approve-button { background: var(--w-green); }
-.reject-button { background: #d95757; }
-.approve-button:disabled, .reject-button:disabled { opacity: .55; cursor: not-allowed; }
-
-.history-count {
-  min-width: 30px; height: 30px; display: grid; place-items: center;
-  border-radius: 50%; background: var(--w-green-soft); color: var(--w-green-dark); font-size: 10px; font-weight: 800;
-}
-.gate-list { overflow: hidden; border: 1px solid var(--w-border); border-radius: 11px; }
-.gate-row {
-  display: grid; grid-template-columns: auto 1.4fr 1fr 1fr auto; align-items: center; gap: 12px;
-  min-height: 56px; padding: 7px 12px; border-top: 1px solid var(--w-border);
-}
-.gate-row:first-child { border-top: 0; }
-.gate-student strong { display: block; color: var(--w-navy); font-size: 10px; }
-.gate-student span, .gate-row > div > span { display: block; margin-top: 3px; color: #819097; font-size: 8px; }
-.gate-row > div:not(.gate-student) strong { display: block; color: #506a75; font-size: 9px; }
-.gate-status.outside { background: #fff8e9; color: #a56c08; }
-
-.empty-card {
-  min-height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  border: 1px dashed var(--w-border); border-radius: 11px; text-align: center;
-}
-.empty-icon {
-  width: 39px; height: 39px; display: grid; place-items: center;
-  margin-bottom: 5px; border-radius: 11px; background: var(--w-green-soft); color: var(--w-green);
-}
-.empty-card h3 { margin: 0 0 3px; color: var(--w-navy); font-size: 13px; }
-.empty-card p { margin: 0; color: var(--w-muted); font-size: 11px; }
-
-.warden-mobile-nav { display: none; }
-
-.warden-loading {
-  min-height: 100vh; display: grid; place-items: center; align-content: center; gap: 10px;
-  background: #f4faf8; color: var(--w-muted); font-family: Inter, sans-serif;
-}
-.warden-spinner {
-  width: 30px; height: 30px; border: 3px solid #d9eee8; border-top-color: var(--w-green);
-  border-radius: 50%; animation: warden-spin .8s linear infinite;
-}
-@keyframes warden-spin { to { transform: rotate(360deg); } }
-
-.reject-modal-overlay {
-  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center;
-  padding: 20px; background: rgba(15,35,45,.42); backdrop-filter: blur(4px);
-}
-.reject-modal {
-  width: min(100%, 440px); padding: 22px; border: 1px solid var(--w-border);
-  border-radius: 16px; background: white; box-shadow: 0 22px 60px rgba(15,35,45,.2);
-}
-.modal-header { display: flex; justify-content: space-between; gap: 15px; }
-.modal-header span { color: #b0812d; font-size: 10px; font-weight: 800; letter-spacing: 1.3px; }
-.modal-header h2 { margin: 5px 0 0; color: var(--w-navy); font-size: 19px; }
-.close-modal {
-  width: 31px; height: 31px; display: grid; place-items: center;
-  border: 1px solid var(--w-border); border-radius: 9px; background: #f8fbfa; color: var(--w-text);
-}
-.modal-description { margin: 14px 0; color: #6d7e86; font-size: 12px; line-height: 1.5; }
-.modal-label { display: block; margin-bottom: 6px; color: var(--w-navy); font-size: 12px; font-weight: 750; }
-.reject-modal textarea {
-  width: 100%; min-height: 110px; resize: vertical; padding: 10px 12px;
-  border: 1px solid #d6e1dd; border-radius: 9px; outline: none; font-size: 11px;
-}
-.reject-modal textarea:focus { border-color: var(--w-green); box-shadow: 0 0 0 3px rgba(20,123,103,.08); }
-.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
-.cancel-reject, .confirm-reject { min-height: 39px; padding: 0 14px; border-radius: 8px; font-size: 12px; font-weight: 750; }
-.cancel-reject { border: 1px solid var(--w-border); background: white; color: var(--w-text); }
-.confirm-reject { border: 0; background: #d95757; color: white; }
-
-@media (max-width: 950px) {
-  .warden-sidebar { width: 200px; }
-  .warden-main { width: calc(100% - 200px); margin-left: 200px; }
-  .warden-content { padding-left: 20px; padding-right: 20px; }
-  .lower-grid { grid-template-columns: 1fr; }
-  .pending-row { grid-template-columns: 1.3fr 1fr auto; }
-  .pending-date { display: none; }
-}
-
-@media (max-width: 700px) {
-  .warden-dashboard { display: block; padding-bottom: 68px; }
-  .warden-sidebar { display: none; }
-  .warden-main { width: 100%; margin-left: 0; }
-  .warden-topbar {
-    height: 64px; justify-content: space-between; padding: 0 13px;
-  }
-  .warden-mobile-brand { display: flex; flex-direction: column; }
-  .warden-mobile-brand strong { color: var(--w-green-dark); font-size: 18px; letter-spacing: -.4px; }
-  .warden-mobile-brand span { margin-top: 2px; color: var(--w-muted); font-size: 8px; }
-  .warden-role, .warden-chevron { display: none; }
-  .warden-profile-chip { padding: 3px; border: 0; background: transparent; }
-  .warden-avatar { width: 34px; height: 34px; }
-  .warden-content { padding: 22px 14px 25px; }
-  .warden-hero { align-items: flex-start; margin-bottom: 17px; }
-  .warden-hero h1 { font-size: 26px; max-width: 290px; }
-  .warden-hero > div:first-child p { max-width: 300px; font-size: 11px; line-height: 1.45; }
-  .warden-hero-note { display: none; }
-
-  .hostel-card { padding: 15px; }
-  .hostel-main { gap: 10px; }
-  .hostel-icon { width: 47px; height: 47px; }
-  .hostel-info h2 { font-size: 14px; }
-  .hostel-info p { font-size: 9px; line-height: 1.4; }
-  .soft-action { padding: 8px; font-size: 0; }
-  .soft-action .ui-icon { width: 17px; }
-
-  .activity-card { padding: 12px 9px 10px; }
-  .warden-stats { grid-template-columns: repeat(4,1fr); gap: 7px; }
-  .warden-stat {
-    min-height: 72px; flex-direction: column; justify-content: center; gap: 4px;
-    padding: 7px 3px; text-align: center;
-  }
-  .warden-stat .stat-icon { width: 31px; height: 31px; }
-  .warden-stat strong { font-size: 16px; }
-  .warden-stat span { font-size: 7px; }
-
-  .pending-section, .decisions-card, .quick-actions-card, .history-section { padding: 15px; }
-  .section-header { align-items: flex-start; }
-  .section-header h2 { font-size: 16px; }
-  .section-header p { font-size: 9px; }
-  .pending-row { grid-template-columns: 1fr auto; gap: 8px; padding: 11px 10px; }
-  .pending-purpose { display: none; }
-  .pending-date { display: block; grid-column: 1; }
-  .pending-date strong { font-size: 8px; }
-  .pending-date span { font-size: 8px; }
-  .review-button { grid-column: 2; grid-row: 1 / 3; align-self: center; }
-
-  .lower-grid { gap: 15px; }
-  .quick-actions-card { gap: 3px; }
-  
-
-@media (max-width: 380px) {
-  .warden-content { padding-left: 10px; padding-right: 10px; }
-  .warden-hero h1 { font-size: 23px; }
-  .warden-stats { gap: 4px; }
-  .warden-stat { min-height: 68px; }
-  .warden-stat strong { font-size: 16px; }
-}
-
-
-/* Phase 3.2 — Typography & Readability
-   Keeps the compact layout while giving the interface a more comfortable reading scale. */
-.warden-sidebar-brand strong { font-size: 24px; }
-.warden-sidebar-brand span { font-size: 11px; line-height: 1.35; }
-
-.warden-nav-link { font-size: 15px; }
-.warden-role { font-size: 13px; }
-
-.warden-eyebrow { font-size: 10px; }
-.warden-hero h1 { font-size: 31px; }
-.warden-hero p { font-size: 14px; }
-
-.section-heading { font-size: 17px; }
-.hostel-info h2 { font-size: 17px; }
-.hostel-info p { font-size: 12px; }
-.soft-action { font-size: 13px; }
-
-.section-heading-row h2 { font-size: 17px; }
-.section-heading-row h2 span { font-size: 12px; }
-
-.warden-stat strong { font-size: 21px; }
-.warden-stat span { font-size: 11px; }
-
-.section-header h2 { font-size: 19px; }
-.section-header p { font-size: 11px; }
-.view-all { font-size: 13px; }
-
-.student-mini strong,
-.pending-purpose strong { font-size: 13px; }
-.student-mini span,
-.pending-purpose span,
-.pending-date span { font-size: 11px; }
-.pending-date strong { font-size: 12px; }
-.review-button { font-size: 12px; }
-
-.decision-info strong { font-size: 13px; }
-.decision-info span { font-size: 10px; }
-.decision-badge,
-.gate-status { font-size: 10px; }
-
-.quick-actions-card strong { font-size: 13px; }
-.quick-actions-card small { font-size: 10px; }
-
-
-
-@media (max-width: 380px) {
-  .warden-hero h1 { font-size: 24px; }
-}
-
-
-/* Phase 3.3 — Dashboard composition
-   Brings the three primary work areas onto one compact row. */
-.action-grid {
-  display: grid;
-  grid-template-columns: 1.35fr .95fr .85fr;
-  gap: 12px;
-  margin-top: 12px;
-  align-items: stretch;
-}
-
-.action-grid > .pending-section,
-.action-grid > .decisions-card,
-.action-grid > .quick-actions-card {
-  margin-top: 0;
-  min-width: 0;
-}
-
-.action-grid > .pending-section,
-.action-grid > .decisions-card,
-.action-grid > .quick-actions-card {
-  min-height: 205px;
-}
-
-.action-grid .section-header {
-  margin-bottom: 8px;
-}
-
-.action-grid .empty-card {
-  min-height: 112px;
-}
-
-.action-grid .decision-list {
-  margin-top: 4px;
-}
-
-.action-grid .decision-row {
-  padding: 7px 0;
-}
-
-.action-grid .quick-actions-card {
-  gap: 3px;
-}
-
-.action-grid .quick-actions-card > button {
-  padding: 6px 0;
-}
-
-@media (max-width: 1100px) {
-  .action-grid {
-    grid-template-columns: 1.2fr 1fr;
-  }
-
-  .action-grid > .pending-section {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 950px) {
-  .action-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .action-grid > .pending-section {
-    grid-column: auto;
-  }
-
-  .action-grid > .pending-section,
-  .action-grid > .decisions-card,
-  .action-grid > .quick-actions-card {
-    min-height: auto;
-  }
-}
-
-@media (max-width: 700px) {
-  .action-grid {
-    gap: 10px;
-  }
-
-  .action-grid .empty-card {
-    min-height: 100px;
-  }
-}
-
-
-/* Phase 3.4 — Final density polish
-   Keep the three-column composition, but remove excess vertical space
-   from empty states and secondary cards. */
-.action-grid > .pending-section,
-.action-grid > .decisions-card,
-.action-grid > .quick-actions-card {
-  min-height: 188px;
-}
-
-.action-grid .empty-card {
-  min-height: 92px;
-  padding: 12px 16px;
-}
-
-.action-grid .empty-icon {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 7px;
-}
-
-.action-grid .empty-card h3 {
-  margin: 0 0 2px;
-}
-
-.action-grid .empty-card p {
-  margin: 0;
-}
-
-.action-grid .decisions-card,
-.action-grid .quick-actions-card {
-  padding-bottom: 12px;
-}
-
-.history-section .empty-card {
-  min-height: 104px;
-  padding: 12px 16px;
-}
-
-.history-section .empty-icon {
-  width: 50px;
-  height: 50px;
-}
-
-.history-section .empty-card h3 {
-  margin-bottom: 2px;
-}
-
-.gate-history-section {
-  padding-top: 18px;
-  padding-bottom: 18px;
-}
-
-@media (max-width: 950px) {
-  .action-grid > .pending-section,
-  .action-grid > .decisions-card,
-  .action-grid > .quick-actions-card {
-    min-height: 170px;
-  }
-}
-
-@media (max-width: 700px) {
-  .action-grid > .pending-section,
-  .action-grid > .decisions-card,
-  .action-grid > .quick-actions-card {
-    min-height: auto;
-  }
-
-  .action-grid .empty-card,
-  .history-section .empty-card {
-    min-height: 90px;
-  }
-}
-
-
-/* Final mobile navigation — Home | Requests | Students | Profile | Logout */
-@media (max-width: 700px) {
-  .warden-mobile-nav {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    height: 67px;
-    padding: 0;
-  }
-
-  .warden-mobile-nav button {
-    min-width: 0;
-    width: 100%;
-    height: 67px;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    font-size: 10px;
-    line-height: 1;
-  }
-
-  .warden-mobile-nav button .ui-icon {
-    width: 19px;
-    height: 19px;
-    flex: 0 0 auto;
-    stroke-width: 1.8;
-  }
-
-  .warden-mobile-nav .warden-mobile-logout .ui-icon {
-    transform: scale(.78);
-    transform-origin: center;
-  }
-
-  .warden-mobile-nav button span {
-    font-size: 9px;
-    font-weight: 650;
-  }
-}
-
-
-/* Hostel student directory */
-.students-directory-section {
-  margin-top: 12px;
-  padding: 15px 17px;
-  border: 1px solid var(--w-border);
-  border-radius: 13px;
-  background: rgba(255,255,255,.96);
-  box-shadow: 0 4px 16px rgba(24,68,59,.035);
-}
-
-.students-toolbar {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.student-search-wrap {
-  flex: 1;
-  min-width: 0;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 0 11px;
-  border: 1px solid var(--w-border);
-  border-radius: 9px;
-  background: #fbfdfc;
-  color: var(--w-muted);
-}
-
-.student-search-wrap input {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--w-navy);
-  font-size: 12px;
-}
-
-.student-search-wrap input::placeholder {
-  color: #91a0a6;
-}
-
-.student-refresh {
-  height: 38px;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 0 12px;
-  border: 1px solid var(--w-border);
-  border-radius: 9px;
-  background: #fff;
-  color: var(--w-green-dark);
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.student-refresh:disabled {
-  opacity: .55;
-  cursor: default;
-}
-
-.student-directory-list {
-  overflow: hidden;
-  border: 1px solid var(--w-border);
-  border-radius: 11px;
-}
-
-.student-directory-row {
-  display: grid;
-  grid-template-columns: auto minmax(180px, 1.5fr) minmax(130px, 1fr) minmax(90px, .6fr);
-  align-items: center;
-  gap: 13px;
-  min-height: 62px;
-  padding: 9px 12px;
-  border-top: 1px solid var(--w-border);
-}
-
-.student-directory-row:first-child {
-  border-top: 0;
-}
-
-.directory-student strong,
-.directory-detail strong {
-  display: block;
-  color: var(--w-navy);
-  font-size: 12px;
-}
-
-.directory-student span,
-.directory-detail span {
-  display: block;
-  margin-top: 3px;
-  color: #7a8b92;
-  font-size: 10px;
-}
-
-.directory-detail {
-  min-width: 0;
-}
-
-@media (max-width: 700px) {
-  .students-directory-section {
-    padding: 14px;
-  }
-
-  .students-toolbar {
-    align-items: stretch;
-  }
-
-  .student-refresh {
-    width: 40px;
-    padding: 0;
-    justify-content: center;
-  }
-
-  .student-refresh {
-    font-size: 0;
-  }
-
-  .student-directory-row {
-    grid-template-columns: auto 1fr 1fr;
-    gap: 9px;
-  }
-
-  .student-directory-row .directory-detail:last-child {
-    grid-column: 2 / -1;
-  }
-}
-
-
-/* Pending Requests — compact approval queue */
-.pending-header {
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.pending-title-line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pending-title-line h2 {
-  margin: 0;
-}
-
-.pending-count {
-  min-width: 22px;
-  height: 22px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 7px;
-  border-radius: 999px;
-  background: #fff6df;
-  color: #a56c08;
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.pending-list {
-  border: 0;
-  border-radius: 0;
-  overflow: visible;
-}
-
-.pending-row {
-  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1.15fr) auto;
-  gap: 12px;
-  min-height: 0;
-  padding: 11px 0;
-  border: 0;
-  border-top: 1px solid var(--w-border);
-}
-
-.pending-row:first-child {
-  border-top: 1px solid var(--w-border);
-}
-
-.pending-details {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 12px;
-}
-
-.pending-purpose strong {
-  font-size: 12px;
-}
-
-.pending-purpose span {
-  font-size: 10px;
-}
-
-.pending-date {
-  text-align: right;
-}
-
-.pending-date strong {
-  font-size: 11px;
-}
-
-.pending-date span {
-  font-size: 10px;
-}
-
-.review-button {
-  min-height: 32px;
-  padding: 7px 10px;
-  white-space: nowrap;
-}
-
-@media (max-width: 1100px) {
-  .pending-row {
-    grid-template-columns: minmax(170px, 1fr) minmax(190px, 1.2fr) auto;
-  }
-}
-
-@media (max-width: 700px) {
-  .pending-row {
-    grid-template-columns: 1fr auto;
-    gap: 8px;
-    padding: 12px 0;
-  }
-
-  .pending-details {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    grid-template-columns: 1fr auto;
-  }
-
-  .pending-purpose strong {
-    font-size: 12px;
-  }
-
-  .pending-date {
-    display: block;
-  }
-}
-
-
-/* Cleaner Pending Requests */
-.pending-section {
-  min-height: 0;
-}
-
-.pending-title-line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pending-count {
-  min-width: 24px;
-  height: 24px;
-  padding: 0 7px;
-  border-radius: 999px;
-  background: #fff3d6;
-  color: #a66b08;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.pending-details {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: minmax(120px, 1fr) minmax(100px, .8fr);
-  gap: 14px;
-}
-
-.pending-date {
-  min-width: 0;
-}
-
-@media (max-width: 900px) {
-  .pending-row {
-    grid-template-columns: 1fr auto;
-  }
-
-  .pending-details {
-    grid-column: 1 / -1;
-    grid-template-columns: 1fr 1fr;
-    padding-left: 41px;
-  }
-
-  .review-button {
-    grid-column: 2;
-    grid-row: 1;
-  }
-}
-
-@media (max-width: 600px) {
-  .pending-row {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .pending-details {
-    grid-column: auto;
-    padding-left: 41px;
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .review-button {
-    grid-column: auto;
-    grid-row: auto;
-    justify-content: center;
-  }
-}
-
-
 /* =========================================================
-   FINAL AGREED WARDEN LAYOUT
+   E OUTPASS — WARDEN DASHBOARD
+   Reference-based refinement
+   Visual source: Parent + Student dashboards / Warden mockup
    ========================================================= */
 
-.warden-two-column {
+:root {
+    --green: #008f73;
+    --green-dark: #006f5d;
+    --green-soft: #e7f7f1;
+    --navy: #092d49;
+    --text: #163d57;
+    --muted: #6c818d;
+    --border: #dbe9e5;
+    --blue-bg: #e8f4ff;
+    --yellow-bg: #fff7e5;
+    --green-bg: #e9f8f1;
+    --red-bg: #fff0f1;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+.warden-loading {
+    min-height: 100vh;
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
-    gap: 20px;
-    margin-top: 20px;
+    place-items: center;
+    gap: 10px;
+    background: #f5faf8;
+    color: var(--text);
 }
 
-.pending-request-section {
-    margin-top: 20px;
-    padding: 24px;
-    background: #ffffff;
-    border: 1px solid #dce8e4;
-    border-radius: 18px;
-    box-shadow: 0 8px 24px rgba(20, 61, 52, 0.05);
+.warden-spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid #dcece7;
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: warden-spin .8s linear infinite;
 }
 
-.pending-request-list {
-    margin-top: 18px;
-    border-top: 1px solid #e1ebe8;
+@keyframes warden-spin {
+    to { transform: rotate(360deg); }
 }
 
-.pending-request-row {
-    width: 100%;
-    border: 0;
-    border-bottom: 1px solid #e1ebe8;
-    background: transparent;
-    padding: 15px 4px;
-    display: grid;
-    grid-template-columns: 40px minmax(150px, 1.25fr) minmax(130px, 1fr) minmax(110px, 0.8fr) auto;
-    align-items: center;
-    gap: 16px;
-    text-align: left;
-    font-family: inherit;
-    cursor: pointer;
-    color: inherit;
+.parent-page {
+    min-height: 100vh;
+    display: flex;
+    background:
+        radial-gradient(circle at 72% 0%, rgba(211, 239, 230, .65) 0 15%, transparent 15.2%),
+        #f5faf8;
+    color: var(--text);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.pending-request-row:last-child {
-    border-bottom: 0;
-}
+/* =========================================================
+   SIDEBAR — same measurements as Parent / Student
+   ========================================================= */
 
-.pending-request-row:hover,
-.pending-request-row.selected {
-    background: #f7fbfa;
-}
-
-.pending-request-student,
-.pending-request-purpose,
-.pending-request-date {
-    min-width: 0;
+.parent-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 228px;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    justify-content: space-between;
+    padding: 28px 15px 20px;
+    background: rgba(255, 255, 255, .93);
+    border-right: 1px solid var(--border);
+    z-index: 20;
 }
 
-.pending-request-student strong,
-.pending-request-purpose strong,
-.pending-request-date strong {
-    color: #102c43;
-    font-size: 13px;
+.sidebar-brand {
+    padding: 0 17px 28px;
+}
+
+.sidebar-brand strong {
+    display: block;
+    color: var(--green-dark);
+    font-size: 25px;
+    line-height: 1.05;
+    letter-spacing: -.8px;
+}
+
+.sidebar-brand span {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.35;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sidebar-link {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 0 15px;
+    border: 0;
+    border-left: 3px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: #516875;
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sidebar-link:hover {
+    background: #f1f8f5;
+    color: var(--green-dark);
+}
+
+.sidebar-link.active {
+    border-left-color: var(--green);
+    background: #edf8f4;
+    color: var(--green-dark);
     font-weight: 700;
 }
 
-.pending-request-student span,
-.pending-request-purpose span,
-.pending-request-date span {
-    color: #71838d;
-    font-size: 12px;
+.sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
-.review-button {
-    min-width: 86px;
+/* =========================================================
+   MAIN / HERO
+   ========================================================= */
+
+.parent-main {
+    width: calc(100% - 228px);
+    margin-left: 228px;
+    min-width: 0;
+}
+
+.parent-topbar {
+    display: none;
+}
+
+.mobile-brand,
+.topbar-actions {
+    display: none;
+}
+
+.parent-content {
+    width: min(100%, 1060px);
+    margin: 0 auto;
+    padding: 35px 38px 55px;
+}
+
+.parent-hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+    min-height: 66px;
+    margin-bottom: 23px;
+}
+
+.hero-eyebrow {
+    display: inline-block;
+    color: #b0812d;
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: 1.7px;
+}
+
+.parent-hero h1 {
+    margin: 7px 0 0;
+    color: var(--navy);
+    font-size: 31px;
+    line-height: 1.08;
+    letter-spacing: -.9px;
+}
+
+.parent-hero > div:first-child > p {
+    margin: 7px 0 0;
+    color: var(--text);
+    font-size: 13px;
+}
+
+/* =========================================================
+   SHARED CARD SYSTEM
+   ========================================================= */
+
+.child-card,
+.activity-section,
+.pending-request-section,
+.history-section,
+.students-directory-section {
+    background: rgba(255, 255, 255, .96);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 7px 24px rgba(24, 68, 59, .045);
+}
+
+.child-card {
+    padding: 17px 20px 18px;
+}
+
+.card-heading-row h2,
+.section-title-row h2,
+.warden-section-header h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 17px;
+    line-height: 1.2;
+    letter-spacing: -.2px;
+}
+
+.child-main {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 13px;
+}
+
+.child-avatar {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #dff4ec;
+    color: var(--green-dark);
+}
+
+.child-info h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 17px;
+    line-height: 1.2;
+}
+
+.child-info p {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+/* =========================================================
+   ACTIVITY — exact 4-column compact pattern
+   ========================================================= */
+
+.activity-section {
+    margin-top: 15px;
+    padding: 13px 10px 11px;
+}
+
+.section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2px 10px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.stat-card {
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 11px;
+    border-radius: 12px;
+}
+
+.stat-blue { background: var(--blue-bg); }
+.stat-yellow { background: var(--yellow-bg); }
+.stat-green { background: var(--green-bg); }
+.stat-red { background: var(--red-bg); }
+
+.stat-icon {
+    width: 37px;
+    height: 37px;
+    flex: 0 0 37px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+}
+
+.stat-blue .stat-icon { background: #d5ebff; color: #1688db; }
+.stat-yellow .stat-icon { background: #ffebba; color: #e79b00; }
+.stat-green .stat-icon { background: #cef0e2; color: #009b72; }
+.stat-red .stat-icon { background: #ffd8db; color: #ed3340; }
+
+.stat-card > div:last-child {
+    min-width: 0;
+}
+
+.stat-card strong {
+    display: block;
+    color: var(--navy);
+    font-size: 20px;
+    line-height: 1;
+}
+
+.stat-card span {
+    display: block;
+    margin-top: 5px;
+    color: #58707e;
+    font-size: 9px;
+    line-height: 1.15;
+}
+
+/* =========================================================
+   WARDEN SECTIONS
+   ========================================================= */
+
+.pending-request-section,
+.history-section,
+.students-directory-section {
+    margin-top: 15px;
+    padding: 18px 20px 20px;
+}
+
+.warden-section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.warden-section-header p {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+.pending-request-list,
+.gate-list,
+.student-directory-list {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+}
+
+/* Pending request rows follow the reference table-like layout. */
+.pending-request-row {
+    min-height: 70px;
+    display: grid;
+    grid-template-columns: 42px minmax(180px, 1.35fr) 145px 170px auto;
+    align-items: center;
+    gap: 10px;
     padding: 9px 12px;
-    border-radius: 9px;
-    background: #e1f3ed;
-    color: #087461;
+    border-bottom: 1px solid #e7efec;
+}
+
+.pending-request-row:last-child,
+.gate-row:last-child,
+.student-directory-row:last-child {
+    border-bottom: 0;
+}
+
+.mini-avatar {
+    width: 37px;
+    height: 37px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #dff4ec;
+    color: var(--green-dark);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.pending-request-student strong,
+.pending-request-date strong,
+.pending-request-purpose strong {
+    display: block;
+    color: var(--navy);
+    font-size: 12px;
+    line-height: 1.25;
+}
+
+.pending-request-student span,
+.pending-request-date span,
+.pending-request-purpose span {
+    display: block;
+    margin-top: 4px;
+    color: #6f838d;
+    font-size: 9px;
+    line-height: 1.25;
+}
+
+.pending-request-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.row-approve-button,
+.row-reject-button {
+    height: 36px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    font-size: 12px;
+    gap: 5px;
+    padding: 0 12px;
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.row-approve-button {
+    border: 1px solid var(--green);
+    background: var(--green);
+    color: #fff;
+}
+
+.row-reject-button {
+    border: 1px solid #ef525b;
+    background: #fff;
+    color: #df303a;
+}
+
+/* Gate history */
+.gate-row {
+    min-height: 70px;
+    display: grid;
+    grid-template-columns: 42px minmax(180px, 1.4fr) 1fr 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-bottom: 1px solid #e7efec;
+}
+
+.gate-student strong,
+.gate-row > div > strong {
+    display: block;
+    color: var(--navy);
+    font-size: 11px;
+}
+
+.gate-student span,
+.gate-row > div > span {
+    display: block;
+    margin-top: 4px;
+    color: #70838d;
+    font-size: 9px;
+}
+
+.gate-student i {
+    margin: 0 5px;
+    color: #aab6ba;
+    font-style: normal;
+}
+
+.gate-status {
+    justify-self: end;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 9px;
     font-weight: 700;
     white-space: nowrap;
 }
 
-.pending-review-panel {
-    margin-top: 18px;
-    padding: 20px;
-    border: 1px solid #d6e8e2;
-    border-radius: 14px;
-    background: #f8fcfa;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
+.gate-status.returned {
+    background: #e8f8f1;
+    color: #087d5f;
 }
 
-.pending-review-main {
-    min-width: 0;
-    flex: 1;
+.gate-status.outside {
+    background: #fff4dd;
+    color: #9a6700;
 }
 
-.review-profile {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.review-avatar {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: #dff1eb;
-    color: #087461;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: 800;
-}
-
-.review-profile span,
-.review-details-grid span {
-    display: block;
-    color: #819198;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-}
-
-.review-profile h3 {
-    margin: 2px 0 2px;
-    color: #102c43;
-    font-size: 18px;
-}
-
-.review-profile p {
-    margin: 0;
-    color: #71838d;
-    font-size: 12px;
-}
-
-.review-profile p i {
-    margin: 0 6px;
-    font-style: normal;
-}
-
-.review-details-grid {
-    margin-top: 18px;
+/* Students */
+.students-toolbar {
     display: grid;
-    grid-template-columns: repeat(3, minmax(120px, 1fr));
-    gap: 14px 24px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
-.review-details-grid strong {
-    display: block;
-    margin-top: 4px;
-    color: #102c43;
-    font-size: 13px;
-}
-
-.review-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    flex: 0 0 125px;
-}
-
-.review-actions button {
-    min-height: 40px;
-    border: 0;
-    border-radius: 9px;
-    padding: 9px 14px;
+.student-search-wrap {
+    min-height: 42px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 7px;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
+    gap: 9px;
+    padding: 0 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    color: #71858e;
 }
 
-.review-actions button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+.student-search-wrap input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    font-size: 11px;
 }
 
-.approve-action {
-    background: #087461;
-    color: #ffffff;
-}
-
-.approve-action:hover:not(:disabled) {
-    background: #075f51;
-}
-
-.reject-action {
-    background: #ffffff;
-    color: #b84b4b;
-    border: 1px solid #efcaca !important;
-}
-
-.reject-action:hover:not(:disabled) {
-    background: #fff7f7;
-}
-
-.warden-refresh-button {
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    border: 1px solid #dce8e4;
-    border-radius: 9px;
-    background: #ffffff;
-    color: #60757e;
+.student-refresh {
+    min-height: 42px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 7px;
+    padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--green-dark);
+    font-size: 11px;
+    font-weight: 650;
     cursor: pointer;
 }
 
-.warden-refresh-button:hover {
-    color: #087461;
-    border-color: #bcdad2;
+.student-directory-row {
+    min-height: 70px;
+    display: grid;
+    grid-template-columns: 42px minmax(220px, 1.5fr) 1fr 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-bottom: 1px solid #e7efec;
 }
 
-@media (max-width: 1000px) {
-    .warden-two-column {
-        grid-template-columns: 1fr;
-    }
-
-    .pending-request-row {
-        grid-template-columns: 40px minmax(130px, 1fr) minmax(120px, 1fr) auto;
-    }
-
-    .pending-request-purpose {
-        display: none;
-    }
+.directory-student strong,
+.directory-detail strong {
+    display: block;
+    color: var(--navy);
+    font-size: 12px;
 }
+
+.directory-student span,
+.directory-detail span {
+    display: block;
+    margin-top: 4px;
+    color: #71848e;
+    font-size: 9px;
+}
+
+.empty-card {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.empty-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--green-soft);
+    color: var(--green);
+}
+
+.empty-card h3 {
+    margin: 9px 0 0;
+    color: var(--navy);
+    font-size: 12px;
+}
+
+.empty-card p {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.alert {
+    margin-bottom: 14px;
+}
+
+/* Mobile navigation hidden on desktop. */
+.mobile-bottom-nav {
+    display: none;
+}
+
+/* =========================================================
+   MOBILE — compact reference proportions
+   ========================================================= */
 
 @media (max-width: 700px) {
-    .pending-request-section {
-        padding: 18px;
-        border-radius: 14px;
+    .parent-page {
+        min-height: 100svh;
+        padding-bottom: 72px;
+        background: #f5faf8;
     }
 
-    .pending-request-row {
-        grid-template-columns: 38px minmax(0, 1fr) auto;
+    .parent-sidebar {
+        display: none;
+    }
+
+    .parent-main {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .parent-topbar {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        background: rgba(255, 255, 255, .97);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .mobile-brand {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mobile-brand strong {
+        color: var(--green-dark);
+        font-size: 19px;
+        line-height: 1;
+        letter-spacing: -.5px;
+    }
+
+    .mobile-brand span {
+        margin-top: 4px;
+        color: #72848d;
+        font-size: 8px;
+        line-height: 1.25;
+    }
+
+    .topbar-actions {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-chip {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-role,
+    .profile-chevron {
+        display: none;
+    }
+
+    .profile-avatar {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #dff2eb;
+        color: var(--green-dark);
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .parent-content {
+        width: 100%;
+        padding: 20px 16px 24px;
+    }
+
+    .parent-hero {
+        min-height: 0;
+        margin-bottom: 17px;
+        padding-right: 0;
+    }
+
+    .hero-eyebrow {
+        font-size: 9px;
+        letter-spacing: 1.6px;
+    }
+
+    .parent-hero h1 {
+        margin-top: 7px;
+        font-size: 23px;
+        line-height: 1.15;
+        letter-spacing: -.6px;
+        white-space: nowrap;
+    }
+
+    .parent-hero > div:first-child > p {
+        max-width: 340px;
+        margin-top: 7px;
+        font-size: 10px;
+        line-height: 1.45;
+    }
+
+    .child-card {
+        padding: 15px 16px 16px;
+        border-radius: 16px;
+    }
+
+    .card-heading-row h2 {
+        font-size: 16px;
+    }
+
+    .child-main {
+        gap: 12px;
+        margin-top: 12px;
+    }
+
+    .child-avatar {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
+    }
+
+    .child-avatar .ui-icon {
+        width: 22px;
+        height: 22px;
+    }
+
+    .child-info h2 {
+        font-size: 17px;
+    }
+
+    .child-info p {
+        margin-top: 5px;
+        font-size: 9px;
+    }
+
+    .activity-section {
+        margin-top: 14px;
+        padding: 13px 10px 10px;
+        border-radius: 16px;
+    }
+
+    .section-title-row {
+        padding: 0 2px 9px;
+    }
+
+    .section-title-row h2 {
+        font-size: 16px;
+    }
+
+    .stats-grid {
+        gap: 6px;
+    }
+
+    .stat-card {
+        min-height: 78px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        padding: 7px 3px;
+        border-radius: 11px;
+        text-align: center;
+    }
+
+    .stat-icon {
+        width: 28px;
+        height: 28px;
+        flex-basis: 28px;
+    }
+
+    .stat-icon .ui-icon {
+        width: 15px;
+        height: 15px;
+    }
+
+    .stat-card strong {
+        font-size: 16px;
+    }
+
+    .stat-card span {
+        margin-top: 2px;
+        font-size: 7px;
+        line-height: 1.1;
+        white-space: nowrap;
+    }
+
+    .pending-request-section,
+    .history-section,
+    .students-directory-section {
+        margin-top: 14px;
+        padding: 15px 16px 16px;
+        border-radius: 16px;
+    }
+
+    .warden-section-header {
+        margin-bottom: 10px;
         gap: 10px;
     }
 
+    .warden-section-header h2 {
+        font-size: 17px;
+    }
+
+    .warden-section-header p {
+        margin-top: 5px;
+        font-size: 9px;
+    }
+
+    /* Pending card: compact but readable. */
+    .pending-request-list,
+    .gate-list,
+    .student-directory-list {
+        border-radius: 12px;
+    }
+
+    .pending-request-row {
+        min-height: 96px;
+        grid-template-columns: 36px minmax(0, 1fr) 72px;
+        grid-template-rows: auto auto auto;
+        column-gap: 8px;
+        row-gap: 4px;
+        padding: 10px;
+    }
+
+    .pending-request-row .mini-avatar {
+        width: 34px;
+        height: 34px;
+        grid-column: 1;
+        grid-row: 1 / span 3;
+    }
+
+    .pending-request-student {
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+    }
+
+    .pending-request-student strong {
+        font-size: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .pending-request-student span {
+        margin-top: 3px;
+        font-size: 7px;
+    }
+
     .pending-request-date {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .pending-request-purpose {
+        grid-column: 2;
+        grid-row: 3;
+    }
+
+    .pending-request-date strong,
+    .pending-request-purpose strong,
+    .pending-request-date span,
+    .pending-request-purpose span {
+        display: inline;
+        font-size: 7px;
+    }
+
+    .pending-request-date span,
+    .pending-request-purpose span {
+        margin-left: 4px;
+    }
+
+    .pending-request-actions {
+        grid-column: 3;
+        grid-row: 1 / span 3;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        width: 72px;
+        height: 30px;
+        padding: 0 5px;
+        border-radius: 8px;
+        font-size: 8px;
+    }
+
+    .row-approve-button .ui-icon,
+    .row-reject-button .ui-icon {
+        width: 10px;
+        height: 10px;
+    }
+
+    /* Gate history mobile row. */
+    .gate-row {
+        min-height: 70px;
+        grid-template-columns: 34px minmax(0, 1fr) auto;
+        grid-template-rows: 1fr;
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .gate-row > .mini-avatar {
+        grid-column: 1;
+        grid-row: 1;
+        width: 34px;
+        height: 34px;
+    }
+
+    .gate-student {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: center;
+    }
+
+    .gate-status {
+        grid-column: 3;
+        grid-row: 1;
+        align-self: center;
+        padding: 5px 7px;
+        font-size: 7px;
+    }
+
+    /* Students. */
+    .students-toolbar {
+        grid-template-columns: minmax(0, 1fr) 40px;
+        gap: 7px;
+        margin-bottom: 10px;
+    }
+
+    .student-search-wrap {
+        min-height: 42px;
+        gap: 7px;
+        padding: 0 10px;
+    }
+
+    .student-search-wrap .ui-icon {
+        width: 15px;
+        height: 15px;
+    }
+
+    .student-search-wrap input {
+        font-size: 9px;
+    }
+
+    .student-refresh {
+        width: 40px;
+        min-height: 42px;
+        padding: 0;
+        font-size: 0;
+    }
+
+    .student-refresh .ui-icon {
+        width: 15px;
+        height: 15px;
+    }
+
+    .student-directory-row {
+        min-height: 64px;
+        grid-template-columns: 34px minmax(0, 1fr) auto;
+        gap: 8px;
+        padding: 9px 10px;
+    }
+
+    .student-directory-row .mini-avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    .directory-student strong {
+        font-size: 10px;
+    }
+
+    .directory-student span {
+        margin-top: 3px;
+        font-size: 7px;
+    }
+
+    .directory-detail strong {
+        font-size: 9px;
+    }
+
+    .directory-detail span {
+        margin-top: 3px;
+        font-size: 7px;
+    }
+
+    .directory-detail:last-child {
         display: none;
     }
 
-    .review-button {
-        min-width: 72px;
-        padding: 8px 9px;
+ 
     }
 
-    .pending-review-panel {
+/* =========================================================
+   MOBILE BOTTOM NAV — 5 ITEMS
+   ========================================================= */
+
+.mobile-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 700px) {
+
+    .mobile-bottom-nav {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 50;
+
+        height: 66px;
+
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+
+        align-items: center;
+
+        padding: 5px 10px env(safe-area-inset-bottom);
+
+        background: rgba(255, 255, 255, .97);
+        border-top: 1px solid var(--border);
+
+        backdrop-filter: blur(14px);
+    }
+
+    .mobile-bottom-nav .mobile-nav-item {
+        min-width: 0;
+        width: 100%;
+        height: 54px;
+
+        display: flex !important;
         flex-direction: column;
-        align-items: stretch;
-        padding: 16px;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 4px;
+        padding: 4px 2px;
+
+        border: 0;
+        border-radius: 10px;
+
+        background: transparent;
+        color: #71838d;
+
+        font: inherit;
+        cursor: pointer;
     }
 
-    .review-details-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+    .mobile-bottom-nav .mobile-nav-item .ui-icon {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
     }
 
-    .review-actions {
-        flex-direction: row;
-        flex: none;
+    .mobile-bottom-nav .mobile-nav-item span {
+        display: block !important;
+        font-size: 10px;
+        line-height: 1.1;
+        white-space: nowrap;
     }
 
-    .review-actions button {
-        flex: 1;
+    .mobile-bottom-nav .mobile-nav-item.active {
+        background: #edf8f4;
+        color: var(--green-dark);
+        font-weight: 700;
+    }
+}
+
+@media (max-width: 380px) {
+
+    .mobile-bottom-nav {
+        padding-left: 5px;
+        padding-right: 5px;
     }
 
-    .warden-two-column {
-        gap: 14px;
+    .mobile-bottom-nav .mobile-nav-item span {
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 380px) {
+    .parent-content {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .parent-hero h1 {
+        font-size: 22px;
+    }
+
+    .stats-grid {
+        gap: 5px;
+    }
+
+    .stat-card {
+        min-height: 74px;
+    }
+
+    .stat-card strong {
+        font-size: 15px;
+    }
+
+    .stat-card span {
+        font-size: 6.5px;
+    }
+
+    .mobile-bottom-nav {
+        padding-left: 5px;
+        padding-right: 5px;
     }
 }
 
 
 /* =========================================================
-   WARDEN MOBILE POLISH
+   WARDEN TEXT REFINEMENT — PASS 1
+   Readability first. Structure and functionality unchanged.
    ========================================================= */
 
-@media (max-width: 700px) {
-    /* Keep the Warden approval details comfortable on phones. */
-    .pending-review-panel {
-        padding: 16px;
-        border-radius: 14px;
+/* ---------- Desktop: Pending Requests ---------- */
+@media (min-width: 701px) {
+    .warden-section-header h2 {
+        font-size: 20px;
+        line-height: 1.2;
     }
 
-    .review-profile {
-        align-items: flex-start;
+    .warden-section-header p {
+        font-size: 11px;
+        line-height: 1.45;
     }
 
-    .review-profile h3 {
-        font-size: 17px;
+    .pending-request-row {
+        min-height: 78px;
+        padding: 10px 13px;
     }
 
-    .review-details-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 14px 18px;
-    }
-
-    .review-details-grid span {
-        font-size: 9px;
-    }
-
-    .review-details-grid strong {
+    .pending-request-row .mini-avatar {
+        width: 39px;
+        height: 39px;
         font-size: 12px;
     }
 
-    .review-actions {
-        width: 100%;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
+    .pending-request-student strong,
+    .pending-request-date strong,
+    .pending-request-purpose strong {
+        font-size: 13px;
+        line-height: 1.3;
     }
 
-    .review-actions button {
-        width: 100%;
-        min-height: 44px;
+    .pending-request-student span,
+    .pending-request-date span,
+    .pending-request-purpose span {
+        margin-top: 4px;
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        height: 40px;
+        padding: 0 14px;
         border-radius: 10px;
         font-size: 12px;
     }
 
-    /* Students search: stack the controls instead of squeezing
-       the Refresh button beside a narrow input. */
-    .students-directory-section {
-        padding: 16px;
-        border-radius: 14px;
+    /* ---------- Desktop: Gate History ---------- */
+    .gate-row {
+        min-height: 78px;
+        padding: 10px 13px;
     }
 
+    .gate-row > .mini-avatar {
+        width: 39px;
+        height: 39px;
+        font-size: 12px;
+    }
+
+    .gate-student strong,
+    .gate-row > div > strong {
+        font-size: 12px;
+    }
+
+    .gate-student span,
+    .gate-row > div > span {
+        margin-top: 4px;
+        font-size: 10px;
+    }
+
+    .gate-status {
+        padding: 8px 11px;
+        font-size: 10px;
+    }
+
+    /* ---------- Desktop: Students ---------- */
+    .student-search-wrap {
+        min-height: 46px;
+        padding: 0 14px;
+    }
+
+    .student-search-wrap input {
+        font-size: 13px;
+    }
+
+    .student-refresh {
+        min-height: 46px;
+        padding: 0 17px;
+        font-size: 13px;
+    }
+
+    .student-directory-row {
+        min-height: 78px;
+        padding: 10px 13px;
+    }
+
+    .student-directory-row .mini-avatar {
+        width: 39px;
+        height: 39px;
+        font-size: 12px;
+    }
+
+    .directory-student strong,
+    .directory-detail strong {
+        font-size: 13px;
+    }
+
+    .directory-student span,
+    .directory-detail span {
+        margin-top: 4px;
+        font-size: 10px;
+    }
+}
+
+/* ---------- Mobile: Pending Requests ---------- */
+@media (max-width: 700px) {
+    .pending-request-section,
+    .history-section,
+    .students-directory-section {
+        padding: 17px;
+    }
+
+    .warden-section-header h2 {
+        font-size: 20px;
+        line-height: 1.2;
+    }
+
+    .warden-section-header p {
+        margin-top: 6px;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .pending-request-row {
+        min-height: 108px;
+        grid-template-columns: 40px minmax(0, 1fr) 82px;
+        column-gap: 10px;
+        row-gap: 5px;
+        padding: 12px;
+    }
+
+    .pending-request-row .mini-avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+    .pending-request-student strong {
+        font-size: 13px;
+        line-height: 1.25;
+    }
+
+    .pending-request-student span {
+        margin-top: 4px;
+        font-size: 9px;
+    }
+
+    .pending-request-date strong,
+    .pending-request-purpose strong,
+    .pending-request-date span,
+    .pending-request-purpose span {
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    .pending-request-date span,
+    .pending-request-purpose span {
+        margin-left: 5px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        width: 82px;
+        height: 36px;
+        padding: 0 7px;
+        border-radius: 9px;
+        font-size: 10px;
+    }
+
+    .row-approve-button .ui-icon,
+    .row-reject-button .ui-icon {
+        width: 12px;
+        height: 12px;
+    }
+
+    /* ---------- Mobile: Gate History ---------- */
+    .gate-row {
+        min-height: 78px;
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .gate-row > .mini-avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+    .gate-status {
+        padding: 7px 9px;
+        font-size: 9px;
+    }
+
+    /* ---------- Mobile: Students ---------- */
     .students-toolbar {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
+        grid-template-columns: minmax(0, 1fr) 46px;
         gap: 8px;
     }
 
     .student-search-wrap {
-        width: 100%;
-        height: 42px;
-        min-height: 42px;
-        border-radius: 10px;
+        min-height: 46px;
+        padding: 0 12px;
+        gap: 8px;
+    }
+
+    .student-search-wrap .ui-icon {
+        width: 17px;
+        height: 17px;
     }
 
     .student-search-wrap input {
@@ -1397,304 +1357,1679 @@
     }
 
     .student-refresh {
-        width: 100%;
-        height: 40px;
-        min-height: 40px;
-        justify-content: center;
-        padding: 0 14px;
-        font-size: 11px;
+        width: 46px;
+        min-height: 46px;
     }
 
-    .student-refresh svg {
-        width: 16px;
-        height: 16px;
-    }
-
-    /* Student rows become a simple mobile card layout. */
-    .student-directory-list {
-        border-radius: 12px;
+    .student-refresh .ui-icon {
+        width: 17px;
+        height: 17px;
     }
 
     .student-directory-row {
-        grid-template-columns: 42px minmax(0, 1fr);
-        gap: 8px 11px;
-        min-height: 0;
-        padding: 14px 12px;
+        min-height: 76px;
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        gap: 10px;
+        padding: 11px 12px;
     }
 
     .student-directory-row .mini-avatar {
-        grid-column: 1;
-        grid-row: 1 / span 3;
-        align-self: start;
+        width: 38px;
+        height: 38px;
     }
 
-    .student-directory-row .directory-student {
-        grid-column: 2;
-        grid-row: 1;
-        min-width: 0;
+    .directory-student strong {
+        font-size: 13px;
+        line-height: 1.25;
     }
 
-    .student-directory-row .directory-detail,
-    .student-directory-row .directory-detail:last-child {
-        grid-column: 2;
-        grid-row: auto;
-        display: flex;
-        align-items: baseline;
-        gap: 8px;
-        min-width: 0;
+    .directory-student span {
+        margin-top: 4px;
+        font-size: 9px;
+    }
+
+    .directory-detail strong {
+        font-size: 11px;
+    }
+
+    .directory-detail span {
+        margin-top: 3px;
+        font-size: 9px;
+    }
+}
+
+/* Keep the smallest phones readable without allowing overflow. */
+@media (max-width: 380px) {
+    .pending-request-row {
+        grid-template-columns: 36px minmax(0, 1fr) 76px;
+        column-gap: 8px;
+        padding: 10px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        width: 76px;
+        font-size: 9px;
+    }
+
+    .student-search-wrap input {
+        font-size: 11px;
+    }
+
+    .directory-student strong {
+        font-size: 12px;
+    }
+}
+
+
+
+/* =========================================================
+   WARDEN TEXT REFINEMENT — PASS 2
+   Increase readability another step while preserving the
+   compact reference layout.
+   ========================================================= */
+
+@media (min-width: 701px) {
+    .warden-section-header h2 {
+        font-size: 22px;
+    }
+
+    .warden-section-header p {
+        font-size: 12px;
+    }
+
+    .pending-request-student strong,
+    .pending-request-date strong,
+    .pending-request-purpose strong {
+        font-size: 14px;
+    }
+
+    .pending-request-student span,
+    .pending-request-date span,
+    .pending-request-purpose span {
+        font-size: 11px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        height: 42px;
+        padding: 0 15px;
+        font-size: 13px;
+    }
+
+    .gate-student strong,
+    .gate-row > div > strong {
+        font-size: 14px;
+    }
+
+    .gate-student span,
+    .gate-row > div > span {
+        font-size: 11px;
+    }
+
+    .gate-status {
+        padding: 9px 12px;
+        font-size: 11px;
+    }
+
+    .student-search-wrap input {
+        font-size: 14px;
+    }
+
+    .student-refresh {
+        min-height: 48px;
+        font-size: 14px;
     }
 
     .directory-student strong,
     .directory-detail strong {
-        font-size: 12px;
+        font-size: 14px;
     }
 
     .directory-student span,
     .directory-detail span {
-        margin-top: 2px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 700px) {
+    .warden-section-header h2 {
+        font-size: 22px;
+    }
+
+    .warden-section-header p {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .pending-request-student strong {
+        font-size: 14px;
+    }
+
+    .pending-request-student span {
         font-size: 10px;
     }
 
-    /* Clean mobile bottom navigation:
-       one thin top border, no boxed cells. */
-    .warden-mobile-nav {
-        display: grid;
+    .pending-request-date strong,
+    .pending-request-purpose strong {
+        font-size: 11px;
+    }
+
+    .pending-request-date span,
+    .pending-request-purpose span {
+        font-size: 10px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        width: 82px;
+        height: 38px;
+        font-size: 11px;
+    }
+
+    .gate-status {
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+
+    .student-search-wrap input {
+        font-size: 13px;
+    }
+
+    .student-refresh {
+        min-height: 48px;
+        font-size: 13px;
+    }
+
+    .directory-student strong {
+        font-size: 14px;
+    }
+
+    .directory-student span {
+        font-size: 10px;
+    }
+
+    .directory-detail strong {
+        font-size: 12px;
+    }
+
+    .directory-detail span {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 380px) {
+    .pending-request-student strong {
+        font-size: 13px;
+    }
+
+    .pending-request-date strong,
+    .pending-request-purpose strong {
+        font-size: 10px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        width: 76px;
+        font-size: 10px;
+    }
+
+    .student-search-wrap input {
+        font-size: 12px;
+    }
+
+    .directory-student strong {
+        font-size: 13px;
+    }
+}
+
+
+/* =========================================================
+   FINAL REFERENCE PASS — LARGER TYPE + NO TOP-RIGHT COUNTS
+   ========================================================= */
+
+@media (min-width: 701px) {
+    /* Pending Requests */
+    .warden-section-header h2 {
+        font-size: 22px;
+        line-height: 1.2;
+    }
+
+    .warden-section-header p {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .pending-request-row {
+        min-height: 84px;
+        padding: 11px 14px;
+    }
+
+    .pending-request-student strong,
+    .pending-request-date strong,
+    .pending-request-purpose strong {
+        font-size: 15px;
+        line-height: 1.3;
+    }
+
+    .pending-request-student span,
+    .pending-request-date span,
+    .pending-request-purpose span {
+        margin-top: 4px;
+        font-size: 11px;
+        line-height: 1.35;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        height: 42px;
+        padding: 0 16px;
+        border-radius: 10px;
+        font-size: 13px;
+    }
+
+    /* Gate History */
+    .history-section .warden-section-header h2 {
+        font-size: 23px;
+    }
+
+    .history-section .warden-section-header p {
+        font-size: 13px;
+    }
+
+    .gate-row {
+        min-height: 82px;
+        padding: 11px 14px;
+    }
+
+    .gate-student strong,
+    .gate-row > div > strong {
+        font-size: 14px;
+        line-height: 1.3;
+    }
+
+    .gate-student span,
+    .gate-row > div > span {
+        margin-top: 4px;
+        font-size: 11px;
+        line-height: 1.35;
+    }
+
+    .gate-status {
+        padding: 9px 12px;
+        font-size: 11px;
+    }
+
+    /* Students */
+    .students-directory-section .warden-section-header h2 {
+        font-size: 23px;
+    }
+
+    .students-directory-section .warden-section-header p {
+        font-size: 13px;
+    }
+
+    .student-search-wrap {
+        min-height: 50px;
+        padding: 0 15px;
+    }
+
+    .student-search-wrap input {
+        font-size: 15px;
+    }
+
+    .student-refresh {
+        min-height: 50px;
+        padding: 0 18px;
+        font-size: 14px;
+    }
+
+    .student-directory-row {
+        min-height: 82px;
+        padding: 11px 14px;
+    }
+
+    .directory-student strong,
+    .directory-detail strong {
+        font-size: 15px;
+        line-height: 1.3;
+    }
+
+    .directory-student span,
+    .directory-detail span {
+        margin-top: 4px;
+        font-size: 11px;
+        line-height: 1.35;
+    }
+}
+
+@media (max-width: 700px) {
+    .warden-section-header h2 {
+        font-size: 21px;
+    }
+
+    .warden-section-header p {
+        font-size: 12px;
+    }
+
+    .pending-request-row {
+        min-height: 112px;
+        padding: 13px;
+    }
+
+    .pending-request-student strong {
+        font-size: 14px;
+    }
+
+    .pending-request-student span {
+        font-size: 11px;
+    }
+
+    .pending-request-date strong,
+    .pending-request-purpose strong {
+        font-size: 12px;
+    }
+
+    .pending-request-date span,
+    .pending-request-purpose span {
+        font-size: 11px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        width: 84px;
+        height: 39px;
+        font-size: 11px;
+    }
+
+    .history-section .warden-section-header h2,
+    .students-directory-section .warden-section-header h2 {
+        font-size: 21px;
+    }
+
+    .history-section .warden-section-header p,
+    .students-directory-section .warden-section-header p {
+        font-size: 12px;
+    }
+
+    .gate-row {
+        min-height: 82px;
+        padding: 13px;
+    }
+
+    .gate-row > div > span {
+        font-size: 10px;
+    }
+
+    .gate-row > div > strong {
+        font-size: 12px;
+    }
+
+    .gate-status {
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+
+    .student-search-wrap {
+        min-height: 50px;
+    }
+
+    .student-search-wrap input {
+        font-size: 13px;
+    }
+
+    .student-refresh {
+        min-height: 50px;
+        font-size: 13px;
+    }
+
+    .student-directory-row {
+        min-height: 80px;
+        padding: 12px;
+    }
+
+    .directory-student strong {
+        font-size: 14px;
+    }
+
+    .directory-student span {
+        font-size: 10px;
+    }
+
+    .directory-detail strong {
+        font-size: 12px;
+    }
+
+    .directory-detail span {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 380px) {
+    .pending-request-student strong {
+        font-size: 13px;
+    }
+
+    .pending-request-date strong,
+    .pending-request-purpose strong {
+        font-size: 11px;
+    }
+
+    .student-search-wrap input {
+        font-size: 12px;
+    }
+
+    .directory-student strong {
+        font-size: 13px;
+    }
+}
+
+
+/* =========================================================
+   WARDEN MOBILE REFINEMENT — LOCKED DESKTOP
+   Only applies at <= 700px. Desktop styles above are untouched.
+   ========================================================= */
+@media (max-width: 700px) {
+    .parent-content {
+        padding: 24px 16px 28px;
+    }
+
+    .parent-hero {
+        margin-bottom: 19px;
+    }
+
+    .hero-eyebrow {
+        font-size: 10px;
+        letter-spacing: 1.7px;
+    }
+
+    .parent-hero h1 {
+        margin-top: 8px;
+        font-size: 27px;
+        line-height: 1.12;
+        letter-spacing: -.8px;
+        white-space: nowrap;
+    }
+
+    .parent-hero > div:first-child > p {
+        max-width: 340px;
+        margin-top: 8px;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    /* Hostel card */
+    .child-card {
+        padding: 17px;
+        border-radius: 16px;
+    }
+
+    .card-heading-row h2 {
+        font-size: 18px;
+        line-height: 1.2;
+    }
+
+    .child-main {
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .child-avatar {
+        width: 50px;
+        height: 50px;
+        flex-basis: 50px;
+    }
+
+    .child-avatar .ui-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .child-info h2 {
+        font-size: 20px;
+        line-height: 1.2;
+    }
+
+    .child-info p {
+        margin-top: 6px;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    /* Activity — four compact columns, like Parent/Student */
+    .activity-section {
+        margin-top: 16px;
+        padding: 15px 12px 12px;
+        border-radius: 16px;
+    }
+
+    .section-title-row {
+        padding: 0 2px 12px;
+    }
+
+    .section-title-row h2 {
+        font-size: 18px;
+        line-height: 1.2;
+    }
+
+    .stats-grid {
+        gap: 8px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .stat-card {
+        min-height: 84px;
+        gap: 5px;
+        padding: 9px 4px;
+        border-radius: 12px;
+    }
+
+    .stat-icon {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+    }
+
+    .stat-icon .ui-icon {
+        width: 17px;
+        height: 17px;
+    }
+
+    .stat-card strong {
+        font-size: 19px;
+        line-height: 1;
+    }
+
+    .stat-card span {
+        margin-top: 3px;
+        font-size: 8px;
+        line-height: 1.1;
+    }
+
+    /* Shared Warden sections */
+    .pending-request-section,
+    .history-section,
+    .students-directory-section {
+        margin-top: 16px;
+        padding: 17px;
+        border-radius: 16px;
+    }
+
+    .warden-section-header {
+        margin-bottom: 12px;
+        gap: 10px;
+    }
+
+    .warden-section-header h2 {
+        font-size: 20px;
+        line-height: 1.2;
+    }
+
+    .warden-section-header p {
+        margin-top: 6px;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    /* Pending requests: readable but compact. */
+    .pending-request-list,
+    .gate-list,
+    .student-directory-list {
+        border-radius: 12px;
+    }
+
+    .pending-request-row {
+        min-height: 112px;
+        grid-template-columns: 40px minmax(0, 1fr) 86px;
+        grid-template-rows: auto auto auto;
+        column-gap: 10px;
+        row-gap: 5px;
+        padding: 12px;
+    }
+
+    .pending-request-row .mini-avatar {
+        width: 38px;
+        height: 38px;
+        grid-column: 1;
+        grid-row: 1 / span 3;
+    }
+
+    .pending-request-student {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .pending-request-student strong {
+        font-size: 13px;
+        line-height: 1.25;
+    }
+
+    .pending-request-student span {
+        margin-top: 4px;
+        font-size: 9px;
+        line-height: 1.3;
+    }
+
+    .pending-request-date {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .pending-request-purpose {
+        grid-column: 2;
+        grid-row: 3;
+    }
+
+    .pending-request-date strong,
+    .pending-request-purpose strong {
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    .pending-request-date span,
+    .pending-request-purpose span {
+        margin-left: 5px;
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    .pending-request-actions {
+        grid-column: 3;
+        grid-row: 1 / span 3;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        width: 86px;
+        height: 38px;
+        padding: 0 7px;
+        border-radius: 9px;
+        font-size: 10px;
+    }
+
+    .row-approve-button .ui-icon,
+    .row-reject-button .ui-icon {
+        width: 12px;
+        height: 12px;
+    }
+
+    /* Gate history: compact single row. */
+    .gate-row {
+        min-height: 80px;
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        grid-template-rows: 1fr;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .gate-row > .mini-avatar {
+        width: 38px;
+        height: 38px;
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .gate-student {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: center;
+    }
+
+    .gate-student strong {
+        font-size: 13px;
+        line-height: 1.25;
+    }
+
+    .gate-student span {
+        margin-top: 5px;
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    .gate-status {
+        grid-column: 3;
+        grid-row: 1;
+        align-self: center;
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+
+    /* Students search */
+    .students-toolbar {
+        grid-template-columns: minmax(0, 1fr) 48px;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .student-search-wrap {
+        min-height: 48px;
+        gap: 8px;
+        padding: 0 12px;
+    }
+
+    .student-search-wrap .ui-icon {
+        width: 17px;
+        height: 17px;
+    }
+
+    .student-search-wrap input {
+        font-size: 12px;
+    }
+
+    .student-refresh {
+        width: 48px;
+        min-height: 48px;
+        padding: 0;
+        font-size: 0;
+    }
+
+    .student-refresh .ui-icon {
+        width: 17px;
+        height: 17px;
+    }
+
+    /* Student rows: name + course on phones; room stays hidden to avoid crowding. */
+    .student-directory-row {
+        min-height: 78px;
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        gap: 10px;
+        padding: 11px 12px;
+    }
+
+    .student-directory-row .mini-avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+    .directory-student strong {
+        font-size: 13px;
+        line-height: 1.25;
+    }
+
+    .directory-student span {
+        margin-top: 4px;
+        font-size: 9px;
+        line-height: 1.3;
+    }
+
+    .directory-detail strong {
+        font-size: 11px;
+        line-height: 1.25;
+    }
+
+    .directory-detail span {
+        margin-top: 3px;
+        font-size: 9px;
+        line-height: 1.3;
+    }
+
+    .directory-detail:last-child {
+        display: none;
+    }
+
+    /* Bottom navigation: same compact visual language as Parent/Student. */
+    .mobile-bottom-nav {
+        height: 66px;
         grid-template-columns: repeat(5, 1fr);
+        padding: 5px 10px env(safe-area-inset-bottom);
+    }
+
+    .mobile-nav-item {
+        height: 54px;
+        gap: 4px;
+        padding: 4px 2px;
+        border-radius: 10px;
+    }
+
+    .mobile-nav-item .ui-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .mobile-nav-item span {
+        font-size: 10px;
+        line-height: 1.1;
+    }
+}
+
+@media (max-width: 380px) {
+    .parent-content {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .parent-hero h1 {
+        font-size: 24px;
+    }
+
+    .stats-grid {
+        gap: 5px;
+    }
+
+    .stat-card {
+        min-height: 72px;
+        padding: 7px 3px;
+    }
+
+    .stat-icon {
+        width: 30px;
+        height: 30px;
+        flex-basis: 30px;
+    }
+
+    .stat-card strong {
+        font-size: 17px;
+    }
+
+    .stat-card span {
+        font-size: 7px;
+    }
+
+    .pending-request-row {
+        grid-template-columns: 36px minmax(0, 1fr) 78px;
+        column-gap: 8px;
+        padding: 10px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        width: 78px;
+        font-size: 9px;
+    }
+
+    .student-search-wrap input {
+        font-size: 11px;
+    }
+}
+
+
+
+/* =========================================================
+   MOBILE — PENDING REQUESTS / GATE HISTORY / STUDENTS
+   Refinement pass. Desktop is intentionally untouched.
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    /* ---------- Pending Requests ---------- */
+    .pending-request-section {
+        padding: 18px;
+    }
+
+    .pending-request-section .warden-section-header {
+        margin-bottom: 14px;
+    }
+
+    .pending-request-section .warden-section-header h2 {
+        font-size: 21px;
+        line-height: 1.2;
+    }
+
+    .pending-request-section .warden-section-header p {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .section-view-all {
+        font-size: 12px;
+    }
+
+    .pending-request-row {
+        min-height: 124px;
+        grid-template-columns: 42px minmax(0, 1fr) 90px;
+        grid-template-rows: auto auto auto;
+        column-gap: 11px;
+        row-gap: 7px;
+        padding: 14px;
+        border-radius: 13px;
+    }
+
+    .pending-request-row .mini-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 12px;
+    }
+
+    .pending-request-student strong {
+        font-size: 15px;
+        line-height: 1.25;
+    }
+
+    .pending-request-student span {
+        margin-top: 4px;
+        font-size: 10px;
+        line-height: 1.35;
+    }
+
+    .pending-request-date strong,
+    .pending-request-purpose strong {
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    .pending-request-date span,
+    .pending-request-purpose span {
+        margin-left: 6px;
+        font-size: 11px;
+        line-height: 1.35;
+    }
+
+    .pending-request-actions {
+        gap: 7px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        width: 90px;
+        height: 39px;
+        padding: 0 8px;
+        border-radius: 9px;
+        font-size: 11px;
+    }
+
+    .row-approve-button .ui-icon,
+    .row-reject-button .ui-icon {
+        width: 13px;
+        height: 13px;
+    }
+
+
+    /* ---------- Gate History ---------- */
+    .history-section {
+        padding: 18px;
+    }
+
+    .history-section .warden-section-header {
+        margin-bottom: 14px;
+    }
+
+    .history-section .warden-section-header h2 {
+        font-size: 21px;
+        line-height: 1.2;
+    }
+
+    .history-section .warden-section-header p {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .gate-row {
+        min-height: 84px;
+        grid-template-columns: 42px minmax(0, 1fr) auto;
+        gap: 11px;
+        padding: 14px;
+        border-radius: 13px;
+    }
+
+    .gate-row > .mini-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 12px;
+    }
+
+    .gate-student strong {
+        font-size: 15px;
+        line-height: 1.25;
+    }
+
+    .gate-student span {
+        margin-top: 5px;
+        font-size: 11px;
+        line-height: 1.35;
+    }
+
+    .gate-status {
+        padding: 8px 11px;
+        border-radius: 999px;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+
+    /* ---------- Students ---------- */
+    .students-directory-section {
+        padding: 18px;
+    }
+
+    .students-directory-section .warden-section-header {
+        margin-bottom: 14px;
+    }
+
+    .students-directory-section .warden-section-header h2 {
+        font-size: 21px;
+        line-height: 1.2;
+    }
+
+    .students-directory-section .warden-section-header p {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .students-toolbar {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .student-search-wrap {
+        min-height: 50px;
+        padding: 0 13px;
+        gap: 9px;
+        border-radius: 11px;
+    }
+
+    .student-search-wrap .ui-icon {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+    }
+
+    .student-search-wrap input {
+        min-width: 0;
+        font-size: 13px;
+        line-height: 1.2;
+    }
+
+    .student-refresh {
+        width: auto;
+        min-width: 82px;
+        min-height: 50px;
+        padding: 0 14px;
+        border-radius: 11px;
+        font-size: 12px;
+    }
+
+    .student-refresh .ui-icon {
+        width: 17px;
+        height: 17px;
+    }
+
+    .student-directory-list {
+        border-radius: 13px;
+    }
+
+    .student-directory-row {
+        min-height: 84px;
+        grid-template-columns: 42px minmax(0, 1fr) auto;
+        gap: 11px;
+        padding: 13px 14px;
+    }
+
+    .student-directory-row .mini-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 12px;
+    }
+
+    .directory-student strong {
+        font-size: 14px;
+        line-height: 1.3;
+    }
+
+    .directory-student span {
+        margin-top: 4px;
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    .directory-detail strong {
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    .directory-detail span {
+        margin-top: 3px;
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    /* Keep Course visible; Room is hidden on phones to avoid crowding. */
+    .directory-detail:last-child {
+        display: none;
+    }
+}
+
+
+/* Small phones: preserve the same hierarchy without overflow. */
+@media (max-width: 380px) {
+
+    .pending-request-section,
+    .history-section,
+    .students-directory-section {
+        padding: 15px;
+    }
+
+    .pending-request-row {
+        min-height: 118px;
+        grid-template-columns: 38px minmax(0, 1fr) 82px;
+        column-gap: 9px;
+        padding: 12px;
+    }
+
+    .pending-request-row .mini-avatar,
+    .gate-row > .mini-avatar,
+    .student-directory-row .mini-avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .pending-request-student strong,
+    .gate-student strong {
+        font-size: 14px;
+    }
+
+    .pending-request-student span,
+    .gate-student span {
+        font-size: 9px;
+    }
+
+    .pending-request-date strong,
+    .pending-request-purpose strong {
+        font-size: 11px;
+    }
+
+    .pending-request-date span,
+    .pending-request-purpose span {
+        font-size: 10px;
+    }
+
+    .row-approve-button,
+    .row-reject-button {
+        width: 82px;
+        height: 37px;
+        font-size: 10px;
+    }
+
+    .gate-row {
+        min-height: 78px;
+        grid-template-columns: 38px minmax(0, 1fr) auto;
+        gap: 9px;
+        padding: 11px;
+    }
+
+    .gate-status {
+        padding: 7px 9px;
+        font-size: 9px;
+    }
+
+    .student-search-wrap input {
+        font-size: 12px;
+    }
+
+    .student-refresh {
+        min-width: 76px;
+        padding: 0 11px;
+        font-size: 11px;
+    }
+
+    .student-directory-row {
+        min-height: 78px;
+        grid-template-columns: 38px minmax(0, 1fr) auto;
+        gap: 9px;
+        padding: 11px;
+    }
+
+    .directory-student strong {
+        font-size: 13px;
+    }
+
+    .directory-detail strong {
+        font-size: 11px;
+    }
+}
+
+/* =========================================================
+   FINAL MOBILE — GATE HISTORY
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .history-section .gate-row {
+        min-height: 132px;
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        grid-template-rows: auto auto;
+        column-gap: 10px;
+        row-gap: 13px;
+        align-items: center;
+        padding: 14px;
+    }
+
+    /* Avatar */
+    .history-section .gate-row > .mini-avatar {
+        grid-column: 1;
+        grid-row: 1;
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Student */
+    .history-section .gate-student {
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+        align-self: center;
+    }
+
+    .history-section .gate-student strong {
+        display: block;
+        font-size: 15px;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .history-section .gate-student span {
+        display: block;
+        margin-top: 5px;
+        font-size: 10px;
+        line-height: 1.3;
+        white-space: nowrap;
+    }
+
+    /* Status */
+    .history-section .gate-status {
+        grid-column: 3;
+        grid-row: 1;
+        align-self: center;
+        justify-self: end;
+        padding: 8px 10px;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+    /* OUT — third div */
+    .history-section .gate-row > div:nth-of-type(3) {
+        grid-column: 2;
+        grid-row: 2;
+        min-width: 0;
+    }
+
+    /* IN — fourth div */
+    .history-section .gate-row > div:nth-of-type(4) {
+        grid-column: 3;
+        grid-row: 2;
+        min-width: 0;
+    }
+
+    .history-section .gate-row > div:nth-of-type(3) > span,
+    .history-section .gate-row > div:nth-of-type(4) > span {
+        display: block;
+        margin: 0 0 4px;
+        color: #71838d;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: .6px;
+    }
+
+    .history-section .gate-row > div:nth-of-type(3) > strong,
+    .history-section .gate-row > div:nth-of-type(4) > strong {
+        display: block;
+        color: var(--navy);
+        font-size: 11px;
+        line-height: 1.25;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 380px) {
+
+    .history-section .gate-row {
+        min-height: 126px;
+        grid-template-columns: 36px minmax(0, 1fr) auto;
+        column-gap: 9px;
+        row-gap: 12px;
+        padding: 12px;
+    }
+
+    .history-section .gate-row > .mini-avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .history-section .gate-student strong {
+        font-size: 14px;
+    }
+
+    .history-section .gate-student span {
+        font-size: 9px;
+    }
+
+    .history-section .gate-status {
+        padding: 7px 9px;
+        font-size: 9px;
+    }
+
+    .history-section .gate-row > div:nth-of-type(3) > strong,
+    .history-section .gate-row > div:nth-of-type(4) > strong {
+        font-size: 10px;
+    }
+}
+
+.mobile-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 700px) {
+
+    .mobile-bottom-nav {
         position: fixed;
         left: 0;
         right: 0;
         bottom: 0;
-        width: 100%;
-        height: 67px;
-        padding: 0;
-        background: #ffffff;
-        border-top: 1px solid #dce8e4;
-        box-shadow: 0 -4px 16px rgba(20, 61, 52, 0.06);
         z-index: 50;
+
+        height: 66px;
+
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        align-items: center;
+
+        padding: 5px 10px env(safe-area-inset-bottom);
+
+        background: rgba(255, 255, 255, 0.97);
+        border-top: 1px solid var(--border);
+
+        backdrop-filter: blur(14px);
     }
 
-    .warden-mobile-nav button {
-        width: 100%;
-        height: 67px;
+    .mobile-bottom-nav .mobile-nav-item {
         min-width: 0;
-        margin: 0;
-        padding: 0;
-        border: 0;
-        border-radius: 0;
-        outline: 0;
-        background: transparent;
-        color: #75868e;
-        display: flex;
+        width: 100%;
+        height: 54px;
+
+        display: flex !important;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+
         gap: 4px;
-        font-family: inherit;
-        font-size: 10px;
-        line-height: 1;
+        padding: 4px 2px;
+
+        border: 0;
+        border-radius: 10px;
+
+        background: transparent;
+        color: #71838d;
+
+        font: inherit;
         cursor: pointer;
     }
 
-    .warden-mobile-nav button:hover {
-        background: #f7fbfa;
+    .mobile-bottom-nav .mobile-nav-item .ui-icon {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
     }
 
-    .warden-mobile-nav button.active {
-        color: #087461;
+    .mobile-bottom-nav .mobile-nav-item span {
+        display: block !important;
+
+        font-size: 10px;
+        line-height: 1.1;
+
+        white-space: nowrap;
+    }
+
+    .mobile-bottom-nav .mobile-nav-item.active {
+        background: #edf8f4;
+        color: var(--green-dark);
         font-weight: 700;
     }
 
-    .warden-mobile-nav button .ui-icon {
-        width: 19px;
-        height: 19px;
-        flex: 0 0 auto;
-        stroke-width: 1.8;
+    .mobile-bottom-nav .mobile-nav-logout {
+        color: #71838d;
+    }
+}
+
+@media (max-width: 380px) {
+
+    .mobile-bottom-nav {
+        padding-left: 5px;
+        padding-right: 5px;
     }
 
-    .warden-mobile-nav button span {
+    .mobile-bottom-nav .mobile-nav-item span {
         font-size: 9px;
-        font-weight: 650;
-    }
-
-    .warden-mobile-nav .warden-mobile-logout .ui-icon {
-        width: 19px;
-        height: 19px;
-        transform: scale(0.72);
-        transform-origin: center;
-        stroke-width: 1.8;
     }
 }
-}
-
 /* =========================================================
-   FINAL MOBILE OVERRIDE — PENDING REQUEST
+   FINAL MOBILE OVERRIDES
+   Logout visibility + five-item navigation
+   Desktop intentionally unchanged
    ========================================================= */
+
 @media (max-width: 700px) {
-    .pending-request-section .pending-request-list {
-        margin-top: 14px !important;
-        border-top: 1px solid #e1ebe8 !important;
+    .parent-page {
+        padding-bottom: 80px !important;
     }
 
-    .pending-request-section .pending-request-row {
-        width: 100% !important;
-        min-height: 72px !important;
-        margin: 0 !important;
-        padding: 12px 0 !important;
-        border: 0 !important;
-        border-bottom: 1px solid #e1ebe8 !important;
-        border-radius: 0 !important;
-        outline: 0 !important;
-        appearance: none !important;
-        -webkit-appearance: none !important;
-        background: transparent !important;
-        color: inherit !important;
-        display: grid !important;
-        grid-template-columns: 38px minmax(0, 1fr) auto !important;
-        align-items: center !important;
-        gap: 10px !important;
-        text-align: left !important;
-        font-family: inherit !important;
-        cursor: pointer !important;
-        box-sizing: border-box !important;
-    }
-
-    .pending-request-section .pending-request-row:hover,
-    .pending-request-section .pending-request-row.selected {
-        background: #f7fbfa !important;
-    }
-
-    .pending-request-section .pending-request-student,
-    .pending-request-section .pending-request-purpose,
-    .pending-request-section .pending-request-date {
-        min-width: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 3px !important;
-    }
-
-    .pending-request-section .pending-request-student strong,
-    .pending-request-section .pending-request-purpose strong,
-    .pending-request-section .pending-request-date strong {
-        color: #102c43 !important;
-        font-size: 12px !important;
-        line-height: 1.25 !important;
-        font-weight: 700 !important;
-        white-space: normal !important;
-    }
-
-    .pending-request-section .pending-request-student span,
-    .pending-request-section .pending-request-purpose span,
-    .pending-request-section .pending-request-date span {
-        color: #71838d !important;
-        font-size: 10px !important;
-        line-height: 1.3 !important;
-    }
-
-    .pending-request-section .pending-request-purpose {
+    .parent-topbar .topbar-actions {
         display: none !important;
     }
 
-    .pending-request-section .pending-request-date {
+    .mobile-bottom-nav {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 66px !important;
+        display: grid !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        align-items: center !important;
+        z-index: 99999 !important;
+        padding: 5px 10px env(safe-area-inset-bottom) !important;
+        background: #ffffff !important;
+        border-top: 1px solid var(--border) !important;
+    }
+
+    .mobile-bottom-nav > .mobile-nav-item {
         display: flex !important;
-        min-width: 78px !important;
-        text-align: right !important;
-    }
-
-    .pending-request-section .pending-request-date strong,
-    .pending-request-section .pending-request-date span {
-        white-space: nowrap !important;
-    }
-
-    .pending-request-section .review-button {
-        min-width: 68px !important;
-        height: 34px !important;
-        padding: 7px 9px !important;
-        border: 0 !important;
-        border-radius: 9px !important;
-        background: #e1f3ed !important;
-        color: #087461 !important;
-        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 54px !important;
+        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 5px !important;
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        white-space: nowrap !important;
-        box-sizing: border-box !important;
-    }
-
-    .pending-request-section .pending-review-panel {
-        width: 100% !important;
-        margin-top: 14px !important;
-        padding: 16px !important;
-        border: 1px solid #d6e8e2 !important;
-        border-radius: 14px !important;
-        background: #f8fcfa !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: stretch !important;
-        justify-content: flex-start !important;
-        gap: 16px !important;
-        box-sizing: border-box !important;
-    }
-
-    .pending-request-section .review-profile {
-        display: flex !important;
-        align-items: flex-start !important;
-        gap: 10px !important;
-    }
-
-    .pending-request-section .review-avatar {
-        width: 42px !important;
-        height: 42px !important;
-        flex: 0 0 42px !important;
-        font-size: 14px !important;
-    }
-
-    .pending-request-section .review-profile h3 {
-        margin: 2px 0 3px !important;
-        font-size: 16px !important;
-        line-height: 1.25 !important;
-    }
-
-    .pending-request-section .review-profile p {
-        font-size: 10px !important;
-        line-height: 1.35 !important;
-    }
-
-    .pending-request-section .review-details-grid {
-        margin-top: 0 !important;
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 13px 14px !important;
-    }
-
-    .pending-request-section .review-details-grid span {
-        font-size: 9px !important;
-        line-height: 1.2 !important;
-    }
-
-    .pending-request-section .review-details-grid strong {
-        margin-top: 4px !important;
-        font-size: 11px !important;
-        line-height: 1.3 !important;
-        overflow-wrap: anywhere !important;
-    }
-
-    .pending-request-section .review-actions {
-        width: 100% !important;
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 9px !important;
-        flex: none !important;
-    }
-
-    .pending-request-section .review-actions button {
-        width: 100% !important;
-        min-height: 42px !important;
-        padding: 9px 10px !important;
+        gap: 4px !important;
+        padding: 4px 2px !important;
+        border: 0 !important;
         border-radius: 10px !important;
-        font-size: 11px !important;
-        box-sizing: border-box !important;
+        background: transparent !important;
+        color: #71838d !important;
+        font: inherit !important;
+        cursor: pointer !important;
+    }
+
+    .mobile-bottom-nav > .mobile-nav-item .ui-icon {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 18px !important;
+        height: 18px !important;
+        flex: 0 0 18px !important;
+    }
+
+    .mobile-bottom-nav > .mobile-nav-item span {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 10px !important;
+        line-height: 1.1 !important;
+        white-space: nowrap !important;
+    }
+
+    .mobile-bottom-nav > .mobile-nav-item.active {
+        background: #edf8f4 !important;
+        color: var(--green-dark) !important;
+        font-weight: 700 !important;
+    }
+
+    .mobile-bottom-nav > .mobile-nav-logout {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        flex-direction: column !important;
+        color: #71838d !important;
+    }
+
+    .mobile-bottom-nav > .mobile-nav-logout span,
+    .mobile-bottom-nav > .mobile-nav-logout .ui-icon {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .mobile-bottom-nav {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+
+    .mobile-bottom-nav > .mobile-nav-item span {
+        font-size: 9px !important;
+    }
+}
+
+/* =========================================================
+   FINAL WARDEN MOBILE NAV FIX
+   Home | Requests | Students | History | Logout
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .parent-page > .mobile-bottom-nav {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+
+        width: 100% !important;
+        height: 66px !important;
+
+        display: grid !important;
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr)) !important;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        z-index: 99999 !important;
+
+        padding: 5px 10px !important;
+
+        background: #ffffff !important;
+        border-top: 1px solid #dbe9e5 !important;
+
+        overflow: visible !important;
+    }
+
+    .parent-page > .mobile-bottom-nav > button {
+        position: relative !important;
+
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 54px !important;
+
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        gap: 4px !important;
+
+        padding: 4px 2px !important;
+        margin: 0 !important;
+
+        border: 0 !important;
+        border-radius: 10px !important;
+
+        background: transparent !important;
+        color: #71838d !important;
+
+        overflow: visible !important;
+    }
+
+    .parent-page > .mobile-bottom-nav > button span {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        width: auto !important;
+        height: auto !important;
+
+        color: inherit !important;
+
+        font-size: 10px !important;
+        line-height: 1.1 !important;
+
+        white-space: nowrap !important;
+    }
+
+    .parent-page > .mobile-bottom-nav > button .ui-icon {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    /* FORCE THE 5TH BUTTON / LOGOUT TO EXIST VISUALLY */
+    .parent-page > .mobile-bottom-nav > button:nth-child(5) {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        grid-column: 5 !important;
+        grid-row: 1 !important;
+
+        color: #71838d !important;
+    }
+
+    .parent-page > .mobile-bottom-nav > button:nth-child(5) span {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        color: #71838d !important;
+    }
+
+    .parent-page > .mobile-bottom-nav > button:nth-child(5) .ui-icon {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .parent-page > .mobile-bottom-nav > button.active {
+        background: #edf8f4 !important;
+        color: #006f5d !important;
+        font-weight: 700 !important;
+    }
+}
+
+@media (max-width: 380px) {
+
+    .parent-page > .mobile-bottom-nav {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+
+    .parent-page > .mobile-bottom-nav > button span {
+        font-size: 9px !important;
     }
 }

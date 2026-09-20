@@ -75,11 +75,6 @@ function CampusIllustration() {
                 <span>TOMORROW</span>
                 <b />
             </div>
-            <div className="handwritten">
-                Same People.<br />
-                Safer Paths.
-                <span />
-            </div>
         </div>
     );
 }
@@ -144,11 +139,6 @@ function Login({ onLogin }) {
                         <small>Safer Campuses. Brighter Tomorrows.</small>
                     </div>
                 </header>
-
-                <div className="top-message">
-                    <span>A smarter campus for a safer tomorrow.</span>
-                    <b />
-                </div>
 
                 <div className="hero-copy">
                     <p className="eyebrow">HOSTEL OUTPASS MANAGEMENT SYSTEM</p>

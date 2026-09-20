@@ -183,11 +183,18 @@ function SecurityDashboard() {
 
             <main className="security-main" id="top">
                 <header className="security-topbar">
-                    <div className="security-user">
-                        <span>S</span>
-                        <strong>Security</strong>
-                        <small>⌄</small>
+                    <div className="security-mobile-brand">
+                        <strong>E Outpass</strong>
                     </div>
+
+                    <button
+                        type="button"
+                        className="security-top-profile"
+                        onClick={() => window.location.hash = "#profile"}
+                        aria-label="Open profile"
+                    >
+                        S
+                    </button>
                 </header>
 
                 <div className="security-content">
@@ -283,27 +290,6 @@ function SecurityDashboard() {
 
                     </section>
 
-                    <section className="security-manual-card">
-                        <div className="security-manual-head">
-                            <div>
-                                <p className="security-eyebrow">MANUAL VERIFICATION</p>
-                                <h2>Display by Outpass ID</h2>
-                                <p>Use this only when you already know the approved Outpass ID.</p>
-                            </div>
-                        </div>
-                        <div className="security-manual-row">
-                            <input
-                                value={outpassId}
-                                onChange={(e) => setOutpassId(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleDisplayQR()}
-                                placeholder="Example: OP-1789044128762-464"
-                            />
-                            <button onClick={handleDisplayQR} disabled={loading}>
-                                <Icon name="qr" size={15}/> {loading ? "Verifying..." : "Display QR"}
-                            </button>
-                        </div>
-                    </section>
-
                     {outpass && (
                         <section id="verified-outpass-card" className="security-verified-card">
                             <div className="security-verified-head">
@@ -388,15 +374,47 @@ function SecurityDashboard() {
                         )}
                     </section>
 
+                    {!outpass && (
+                        <section className="security-empty-dashboard">
+                            <div><Icon name="qr" size={22}/></div>
+                            <h3>Ready for gate verification</h3>
+                            <p>Search an approved outpass above to display its QR code.</p>
+                        </section>
+                    )}
+
                     <div className="security-footer-note"><Icon name="shield" size={14}/><span>E-Outpass securely records main-gate verification and student entry/exit activity.</span></div>
                 </div>
             </main>
 
             <nav className="security-mobile-nav">
-                <a href="#top" className="active"><Icon name="grid" size={19}/><span>Home</span></a>
-                <a href="#verification"><Icon name="qr" size={19}/><span>Verify</span></a>
-                <a href="#history"><Icon name="clock" size={19}/><span>History</span></a>
-                <a href="#profile"><Icon name="user" size={19}/><span>Profile</span></a>
+                <a href="#top" className="active">
+                    <Icon name="grid" size={19}/>
+                    <span>Home</span>
+                </a>
+
+                <a href="#verification">
+                    <Icon name="qr" size={19}/>
+                    <span>Verify</span>
+                </a>
+
+                <a href="#history">
+                    <Icon name="clock" size={19}/>
+                    <span>History</span>
+                </a>
+
+                <a href="#profile">
+                    <Icon name="user" size={19}/>
+                    <span>Profile</span>
+                </a>
+
+                <button
+                    type="button"
+                    onClick={handleLogout}
+                    aria-label="Logout"
+                >
+                    <Icon name="logout" size={19}/>
+                    <span>Logout</span>
+                </button>
             </nav>
         </div>
     );

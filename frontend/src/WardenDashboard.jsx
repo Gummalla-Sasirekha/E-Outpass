@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import "./WardenDashboard.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -50,14 +50,6 @@ function WardenDashboard() {
   const [actionLoading, setActionLoading] = useState(false);
 
   const token = localStorage.getItem("token");
-
-  const user = useMemo(() => {
-    try {
-      return JSON.parse(localStorage.getItem("user") || "null");
-    } catch {
-      return null;
-    }
-  }, []);
 
   const fetchPendingOutpasses = async () => {
     try {
@@ -166,24 +158,6 @@ function WardenDashboard() {
     fetchStudents();
   }, []);
 
-  useEffect(() => {
-    if (
-      outpasses.length > 0 &&
-      (
-        !selectedOutpass ||
-        !outpasses.some(
-          item => item.outpassId === selectedOutpass.outpassId
-        )
-      )
-    ) {
-      setSelectedOutpass(outpasses[0]);
-    }
-
-    if (outpasses.length === 0) {
-      setSelectedOutpass(null);
-    }
-  }, [outpasses]);
-
   const refreshDashboard = () => {
     setError("");
     fetchPendingOutpasses();
@@ -218,7 +192,6 @@ function WardenDashboard() {
         prev.filter(item => item.outpassId !== outpassId)
       );
 
-      setSelectedOutpass(null);
       await fetchAllOutpasses();
     } catch (err) {
       setError(err.message || "Unable to approve outpass.");
@@ -364,16 +337,17 @@ function WardenDashboard() {
   }
 
   return (
-    <div className="warden-dashboard">
-      <aside className="warden-sidebar">
+    <div className="parent-page">
+      <aside className="parent-sidebar">
         <div>
-          <div className="warden-sidebar-brand">
+          <div className="sidebar-brand">
             <strong>E Outpass</strong>
+            <span>Safer Campuses. Brighter<br />Tomorrows.</span>
           </div>
 
-          <nav className="warden-nav">
+          <nav className="sidebar-nav">
             <button
-              className="warden-nav-link active"
+              className="sidebar-link active"
               onClick={() =>
                 window.scrollTo({ top: 0, behavior: "smooth" })
               }
@@ -383,7 +357,7 @@ function WardenDashboard() {
             </button>
 
             <button
-              className="warden-nav-link"
+              className="sidebar-link"
               onClick={() =>
                 document
                   .getElementById("pending-request")
@@ -395,7 +369,7 @@ function WardenDashboard() {
             </button>
 
             <button
-              className="warden-nav-link"
+              className="sidebar-link"
               onClick={() =>
                 document
                   .getElementById("students-directory")
@@ -407,7 +381,7 @@ function WardenDashboard() {
             </button>
 
             <button
-              className="warden-nav-link"
+              className="sidebar-link"
               onClick={() =>
                 document
                   .getElementById("gate-history")
@@ -418,16 +392,12 @@ function WardenDashboard() {
               Outpass History
             </button>
 
-            <button className="warden-nav-link">
-              <Icon name="profile" />
-              Profile
-            </button>
           </nav>
         </div>
 
-        <div className="warden-sidebar-bottom">
+        <div className="sidebar-bottom">
           <button
-            className="warden-nav-link"
+            className="sidebar-link"
             onClick={handleLogout}
           >
             <Icon name="logout" />
@@ -436,35 +406,19 @@ function WardenDashboard() {
         </div>
       </aside>
 
-      <main className="warden-main">
-        <header className="warden-topbar">
-          <div className="warden-mobile-brand">
+      <main className="parent-main">
+        <header className="parent-topbar">
+          <div className="mobile-brand">
             <strong>E Outpass</strong>
+            <span>Safer Campuses. Brighter Tomorrows.</span>
           </div>
 
-          <div className="warden-topbar-actions">
-            <button
-              className="warden-refresh-button"
-              onClick={refreshDashboard}
-              title="Refresh dashboard"
-            >
-              <Icon name="refresh" size={17} />
-            </button>
-
-            <div className="warden-profile-chip">
-              <span className="warden-avatar">
-                {initials(user?.name)}
-              </span>
-              <span className="warden-role">Warden</span>
-              <span className="warden-chevron">⌄</span>
-            </div>
-          </div>
         </header>
 
-        <div className="warden-content">
-          <section className="warden-hero">
+        <div className="parent-content">
+          <section className="parent-hero">
             <div>
-              <span className="warden-eyebrow">
+              <span className="hero-eyebrow">
                 WARDEN PORTAL
               </span>
               <h1>Good morning, Warden!</h1>
@@ -475,40 +429,38 @@ function WardenDashboard() {
           </section>
 
           {error && (
-            <div className="warden-alert">
+            <div className="alert">
               <span>!</span>
               {error}
             </div>
           )}
 
-          <section className="hostel-card">
-            <div className="section-heading">Your Hostel</div>
+          <section className="child-card">
+            <div className="card-heading-row"><h2>Hostel Information</h2></div>
 
-            <div className="hostel-main">
-              <div className="hostel-icon">
+            <div className="child-main">
+              <div className="child-avatar">
                 <Icon name="hostel" size={25} />
               </div>
 
-              <div className="hostel-info">
+              <div className="child-info">
                 <h2>{hostelName}</h2>
                 <p>
-                  Warden-managed hostel
+                  Warden
                   <span>•</span>
-                  Student outpass administration
+                  {hostelName}
                 </p>
               </div>
             </div>
           </section>
 
-          <section className="activity-card">
-            <div className="section-heading-row">
-              <h2>
-                Outpass Activity <span>(This Month)</span>
-              </h2>
+          <section className="activity-section">
+            <div className="section-title-row">
+              <h2>Outpass Activity</h2>
             </div>
 
-            <div className="warden-stats">
-              <div className="warden-stat blue">
+            <div className="stats-grid">
+              <div className="stat-card stat-blue">
                 <div className="stat-icon">
                   <Icon name="document" />
                 </div>
@@ -520,7 +472,7 @@ function WardenDashboard() {
                 </div>
               </div>
 
-              <div className="warden-stat yellow">
+              <div className="stat-card stat-yellow">
                 <div className="stat-icon">
                   <Icon name="clock" />
                 </div>
@@ -532,7 +484,7 @@ function WardenDashboard() {
                 </div>
               </div>
 
-              <div className="warden-stat green">
+              <div className="stat-card stat-green">
                 <div className="stat-icon">
                   <Icon name="check" />
                 </div>
@@ -544,7 +496,7 @@ function WardenDashboard() {
                 </div>
               </div>
 
-              <div className="warden-stat red">
+              <div className="stat-card stat-red">
                 <div className="stat-icon">
                   <Icon name="close" />
                 </div>
@@ -558,119 +510,18 @@ function WardenDashboard() {
             </div>
           </section>
 
-          <div className="warden-two-column">
-            <section className="decisions-card">
-              <div className="section-header compact">
-                <div>
-                  <span className="warden-eyebrow">ACTIVITY</span>
-                  <h2>Recent Decisions</h2>
-                  <p>
-                    Latest status changes across your hostel.
-                  </p>
-                </div>
-              </div>
-
-              <div className="decision-list">
-                {allOutpasses
-                  .filter(item => item.status !== "pending")
-                  .slice(0, 5)
-                  .map(item => (
-                    <div
-                      className="decision-row"
-                      key={item.outpassId}
-                    >
-                      <div className="mini-avatar">
-                        {initials(item.student?.name)}
-                      </div>
-
-                      <div className="decision-info">
-                        <strong>
-                          {item.student?.name || "Unknown Student"}
-                        </strong>
-
-                        <span>
-                          {item.student?.course || "Student"}
-                          <i>•</i>
-                          {formatDate(item.dateRequestedFor)}
-                        </span>
-                      </div>
-
-                      <span
-                        className={`decision-badge ${item.status}`}
-                      >
-                        {item.status === "approved"
-                          ? "✓ Approved"
-                          : item.status === "rejected"
-                          ? "✕ Rejected"
-                          : "↩ Completed"}
-                      </span>
-                    </div>
-                  ))}
-
-                {allOutpasses.filter(
-                  item => item.status !== "pending"
-                ).length === 0 && (
-                  <div className="small-empty">
-                    No recent decisions yet.
-                  </div>
-                )}
-              </div>
-            </section>
-
-            <section className="quick-actions-card">
-              <div className="section-heading">
-                Quick Access
-              </div>
-
-              <button
-                onClick={() =>
-                  document
-                    .getElementById("students-directory")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                <span>
-                  <Icon name="students" />
-                </span>
-                <div>
-                  <strong>View All Students</strong>
-                  <small>
-                    Search and view student details
-                  </small>
-                </div>
-                <Icon name="arrow" size={16} />
-              </button>
-
-              <button onClick={refreshDashboard}>
-                <span>
-                  <Icon name="refresh" />
-                </span>
-                <div>
-                  <strong>Refresh Dashboard</strong>
-                  <small>
-                    Update the latest records
-                  </small>
-                </div>
-                <Icon name="arrow" size={16} />
-              </button>
-            </section>
-          </div>
-
           <section
             className="pending-request-section"
             id="pending-request"
           >
-            <div className="section-header">
+            <div className="warden-section-header">
               <div>
-                <h2>Pending Request</h2>
+                <h2>Pending Requests</h2>
                 <p>
                   Review and decide on the outpass request.
                 </p>
               </div>
 
-              <span className="history-count">
-                {outpasses.length}
-              </span>
             </div>
 
             {outpasses.length === 0 ? (
@@ -685,18 +536,9 @@ function WardenDashboard() {
               <>
                 <div className="pending-request-list">
                   {outpasses.slice(0, 6).map(outpass => (
-                    <button
-                      type="button"
+                    <div
                       key={outpass.outpassId}
-                      className={`pending-request-row ${
-                        selectedOutpass?.outpassId ===
-                        outpass.outpassId
-                          ? "selected"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setSelectedOutpass(outpass)
-                      }
+                      className="pending-request-row"
                     >
                       <div className="mini-avatar">
                         {initials(outpass.student?.name)}
@@ -712,15 +554,6 @@ function WardenDashboard() {
                         </span>
                       </div>
 
-                      <div className="pending-request-purpose">
-                        <strong>
-                          {outpass.reason || "Outpass Request"}
-                        </strong>
-                        <span>
-                          {outpass.placeOfVisit || "—"}
-                        </span>
-                      </div>
-
                       <div className="pending-request-date">
                         <strong>
                           {formatDate(outpass.dateRequestedFor)}
@@ -730,116 +563,45 @@ function WardenDashboard() {
                         </span>
                       </div>
 
-                      <span className="review-button">
-                        Review
-                        <Icon name="arrow" size={15} />
-                      </span>
-                    </button>
+                      <div className="pending-request-purpose">
+                        <strong>
+                          {outpass.reason || "Outpass Request"}
+                        </strong>
+                        <span>
+                          {outpass.placeOfVisit || "—"}
+                        </span>
+                      </div>
+
+                      <div className="pending-request-actions">
+                        <button
+                          type="button"
+                          className="row-approve-button"
+                          onClick={event => {
+                            event.stopPropagation();
+                            approveOutpass(outpass.outpassId);
+                          }}
+                          disabled={actionLoading}
+                        >
+                          <Icon name="check" size={14} />
+                          Approve
+                        </button>
+
+                        <button
+                          type="button"
+                          className="row-reject-button"
+                          onClick={event => {
+                            event.stopPropagation();
+                            openRejectModal(outpass);
+                          }}
+                          disabled={actionLoading}
+                        >
+                          <Icon name="close" size={14} />
+                          Reject
+                        </button>
+                      </div>
+                    </div>
                   ))}
                 </div>
-
-                {selectedOutpass && (
-                  <div className="pending-review-panel">
-                    <div className="pending-review-main">
-                      <div className="review-profile">
-                        <div className="review-avatar">
-                          {initials(
-                            selectedOutpass.student?.name
-                          )}
-                        </div>
-
-                        <div>
-                          <span>STUDENT</span>
-                          <h3>
-                            {selectedOutpass.student?.name ||
-                              "Unknown Student"}
-                          </h3>
-                          <p>
-                            {selectedOutpass.student?.studentId ||
-                              "Student ID unavailable"}
-                            <i>•</i>
-                            {selectedOutpass.student?.course ||
-                              "Course unavailable"}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="review-details-grid">
-                        <div>
-                          <span>PLACE OF VISIT</span>
-                          <strong>
-                            {selectedOutpass.placeOfVisit || "—"}
-                          </strong>
-                        </div>
-
-                        <div>
-                          <span>REASON</span>
-                          <strong>
-                            {selectedOutpass.reason || "—"}
-                          </strong>
-                        </div>
-
-                        <div>
-                          <span>DATE</span>
-                          <strong>
-                            {formatDate(
-                              selectedOutpass.dateRequestedFor
-                            )}
-                          </strong>
-                        </div>
-
-                        <div>
-                          <span>TIME OF LEAVING</span>
-                          <strong>
-                            {selectedOutpass.timeOfLeaving || "—"}
-                          </strong>
-                        </div>
-
-                        <div>
-                          <span>EXPECTED RETURN</span>
-                          <strong>
-                            {selectedOutpass.expectedReturnTime || "—"}
-                          </strong>
-                        </div>
-
-                        <div>
-                          <span>OUTPASS ID</span>
-                          <strong>
-                            {selectedOutpass.outpassId || "—"}
-                          </strong>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="review-actions">
-                      <button
-                        className="reject-action"
-                        onClick={() =>
-                          openRejectModal(selectedOutpass)
-                        }
-                        disabled={actionLoading}
-                      >
-                        <Icon name="close" size={17} />
-                        Reject
-                      </button>
-
-                      <button
-                        className="approve-action"
-                        onClick={() =>
-                          approveOutpass(
-                            selectedOutpass.outpassId
-                          )
-                        }
-                        disabled={actionLoading}
-                      >
-                        <Icon name="check" size={17} />
-                        {actionLoading
-                          ? "Processing..."
-                          : "Approve"}
-                      </button>
-                    </div>
-                  </div>
-                )}
               </>
             )}
           </section>
@@ -848,9 +610,9 @@ function WardenDashboard() {
             className="history-section"
             id="gate-history"
           >
-            <div className="section-header">
+            <div className="warden-section-header">
               <div>
-                <span className="warden-eyebrow">
+                <span className="hero-eyebrow">
                   CAMPUS MOVEMENT
                 </span>
                 <h2>Gate History</h2>
@@ -859,9 +621,6 @@ function WardenDashboard() {
                 </p>
               </div>
 
-              <span className="history-count">
-                {gateHistory.length}
-              </span>
             </div>
 
             {historyLoading ? (
@@ -942,9 +701,9 @@ function WardenDashboard() {
             className="students-directory-section"
             id="students-directory"
           >
-            <div className="section-header">
+            <div className="warden-section-header">
               <div>
-                <span className="warden-eyebrow">
+                <span className="hero-eyebrow">
                   HOSTEL STUDENTS
                 </span>
                 <h2>Students</h2>
@@ -953,9 +712,6 @@ function WardenDashboard() {
                 </p>
               </div>
 
-              <span className="history-count">
-                {studentsLoading ? "—" : students.length}
-              </span>
             </div>
 
             <div className="students-toolbar">
@@ -1043,47 +799,78 @@ function WardenDashboard() {
           </section>
         </div>
       </main>
-
-      <nav className="warden-mobile-nav">
+      {/* ======================================
+          MOBILE BOTTOM NAVIGATION
+          Home | Requests | Students | History | Logout
+      ====================================== */}
+      <nav className="mobile-bottom-nav">
+        {/* Home */}
         <button
-          className="active"
+          type="button"
+          className="mobile-nav-item active"
           onClick={() =>
-            window.scrollTo({ top: 0, behavior: "smooth" })
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            })
           }
         >
           <Icon name="grid" />
           <span>Home</span>
         </button>
 
+        {/* Requests */}
         <button
+          type="button"
+          className="mobile-nav-item"
           onClick={() =>
             document
               .getElementById("pending-request")
-              ?.scrollIntoView({ behavior: "smooth" })
+              ?.scrollIntoView({
+                behavior: "smooth"
+              })
           }
         >
           <Icon name="request" />
           <span>Requests</span>
         </button>
 
+        {/* Students */}
         <button
+          type="button"
+          className="mobile-nav-item"
           onClick={() =>
             document
               .getElementById("students-directory")
-              ?.scrollIntoView({ behavior: "smooth" })
+              ?.scrollIntoView({
+                behavior: "smooth"
+              })
           }
         >
           <Icon name="students" />
           <span>Students</span>
         </button>
 
-        <button>
-          <Icon name="profile" />
-          <span>Profile</span>
+        {/* History */}
+        <button
+          type="button"
+          className="mobile-nav-item"
+          onClick={() =>
+            document
+              .getElementById("gate-history")
+              ?.scrollIntoView({
+                behavior: "smooth"
+              })
+          }
+        >
+          <Icon name="history" />
+          <span>History</span>
         </button>
 
+        {/* Logout */}
         <button
-          className="warden-mobile-logout"
+          type="button"
+          className="mobile-nav-item mobile-nav-logout"
           onClick={handleLogout}
         >
           <Icon name="logout" />
