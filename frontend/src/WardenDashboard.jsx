@@ -337,8 +337,8 @@ function WardenDashboard() {
   }
 
   return (
-    <div className="parent-page">
-      <aside className="parent-sidebar">
+    <div className="warden-page">
+      <aside className="warden-sidebar">
         <div>
           <div className="sidebar-brand">
             <strong>E Outpass</strong>
@@ -406,8 +406,8 @@ function WardenDashboard() {
         </div>
       </aside>
 
-      <main className="parent-main">
-        <header className="parent-topbar">
+      <main className="warden-main">
+        <header className="warden-topbar">
           <div className="mobile-brand">
             <strong>E Outpass</strong>
             <span>Safer Campuses. Brighter Tomorrows.</span>
@@ -415,8 +415,8 @@ function WardenDashboard() {
 
         </header>
 
-        <div className="parent-content">
-          <section className="parent-hero">
+        <div className="warden-content">
+          <section className="warden-hero">
             <div>
               <span className="hero-eyebrow">
                 WARDEN PORTAL
@@ -803,11 +803,11 @@ function WardenDashboard() {
           MOBILE BOTTOM NAVIGATION
           Home | Requests | Students | History | Logout
       ====================================== */}
-      <nav className="mobile-bottom-nav">
+      <nav className="warden-mobile-bottom-nav">
         {/* Home */}
         <button
           type="button"
-          className="mobile-nav-item active"
+          className="warden-mobile-nav-item active"
           onClick={() =>
             window.scrollTo({
               top: 0,
@@ -822,7 +822,7 @@ function WardenDashboard() {
         {/* Requests */}
         <button
           type="button"
-          className="mobile-nav-item"
+          className="warden-mobile-nav-item"
           onClick={() =>
             document
               .getElementById("pending-request")
@@ -838,7 +838,7 @@ function WardenDashboard() {
         {/* Students */}
         <button
           type="button"
-          className="mobile-nav-item"
+          className="warden-mobile-nav-item"
           onClick={() =>
             document
               .getElementById("students-directory")
@@ -854,7 +854,7 @@ function WardenDashboard() {
         {/* History */}
         <button
           type="button"
-          className="mobile-nav-item"
+          className="warden-mobile-nav-item"
           onClick={() =>
             document
               .getElementById("gate-history")
@@ -870,7 +870,7 @@ function WardenDashboard() {
         {/* Logout */}
         <button
           type="button"
-          className="mobile-nav-item mobile-nav-logout"
+          className="warden-mobile-nav-item warden-mobile-nav-logout"
           onClick={handleLogout}
         >
           <Icon name="logout" />

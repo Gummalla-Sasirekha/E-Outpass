@@ -4,7 +4,7 @@
    Visual source: Parent + Student dashboards / Warden mockup
    ========================================================= */
 
-:root {
+:root{
     --green: #008f73;
     --green-dark: #006f5d;
     --green-soft: #e7f7f1;
@@ -18,16 +18,15 @@
     --red-bg: #fff0f1;
 }
 
-* {
+.warden-page, .warden-page *{
     box-sizing: border-box;
 }
 
-button,
-input {
+.warden-page button, .warden-page input{
     font: inherit;
 }
 
-.warden-loading {
+.warden-page .warden-loading{
     min-height: 100vh;
     display: grid;
     place-items: center;
@@ -36,7 +35,7 @@ input {
     color: var(--text);
 }
 
-.warden-spinner {
+.warden-page .warden-spinner{
     width: 30px;
     height: 30px;
     border: 3px solid #dcece7;
@@ -49,7 +48,7 @@ input {
     to { transform: rotate(360deg); }
 }
 
-.parent-page {
+.warden-page{
     min-height: 100vh;
     display: flex;
     background:
@@ -63,7 +62,7 @@ input {
    SIDEBAR — same measurements as Parent / Student
    ========================================================= */
 
-.parent-sidebar {
+.warden-page .warden-sidebar{
     position: fixed;
     inset: 0 auto 0 0;
     width: 228px;
@@ -76,11 +75,11 @@ input {
     z-index: 20;
 }
 
-.sidebar-brand {
+.warden-page .sidebar-brand{
     padding: 0 17px 28px;
 }
 
-.sidebar-brand strong {
+.warden-page .sidebar-brand strong{
     display: block;
     color: var(--green-dark);
     font-size: 25px;
@@ -88,7 +87,7 @@ input {
     letter-spacing: -.8px;
 }
 
-.sidebar-brand span {
+.warden-page .sidebar-brand span{
     display: block;
     margin-top: 5px;
     color: var(--muted);
@@ -96,13 +95,13 @@ input {
     line-height: 1.35;
 }
 
-.sidebar-nav {
+.warden-page .sidebar-nav{
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
 
-.sidebar-link {
+.warden-page .sidebar-link{
     width: 100%;
     min-height: 44px;
     display: flex;
@@ -119,19 +118,19 @@ input {
     cursor: pointer;
 }
 
-.sidebar-link:hover {
+.warden-page .sidebar-link:hover{
     background: #f1f8f5;
     color: var(--green-dark);
 }
 
-.sidebar-link.active {
+.warden-page .sidebar-link.active{
     border-left-color: var(--green);
     background: #edf8f4;
     color: var(--green-dark);
     font-weight: 700;
 }
 
-.sidebar-bottom {
+.warden-page .sidebar-bottom{
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -141,28 +140,27 @@ input {
    MAIN / HERO
    ========================================================= */
 
-.parent-main {
+.warden-page .warden-main{
     width: calc(100% - 228px);
     margin-left: 228px;
     min-width: 0;
 }
 
-.parent-topbar {
+.warden-page .warden-topbar{
     display: none;
 }
 
-.mobile-brand,
-.topbar-actions {
+.warden-page .mobile-brand, .warden-page .topbar-actions{
     display: none;
 }
 
-.parent-content {
+.warden-page .warden-content{
     width: min(100%, 1060px);
     margin: 0 auto;
     padding: 35px 38px 55px;
 }
 
-.parent-hero {
+.warden-page .warden-hero{
     position: relative;
     display: flex;
     align-items: flex-end;
@@ -172,7 +170,7 @@ input {
     margin-bottom: 23px;
 }
 
-.hero-eyebrow {
+.warden-page .hero-eyebrow{
     display: inline-block;
     color: #b0812d;
     font-size: 9px;
@@ -180,7 +178,7 @@ input {
     letter-spacing: 1.7px;
 }
 
-.parent-hero h1 {
+.warden-page .warden-hero h1{
     margin: 7px 0 0;
     color: var(--navy);
     font-size: 31px;
@@ -188,7 +186,7 @@ input {
     letter-spacing: -.9px;
 }
 
-.parent-hero > div:first-child > p {
+.warden-page .warden-hero > div:first-child > p{
     margin: 7px 0 0;
     color: var(--text);
     font-size: 13px;
@@ -198,24 +196,18 @@ input {
    SHARED CARD SYSTEM
    ========================================================= */
 
-.child-card,
-.activity-section,
-.pending-request-section,
-.history-section,
-.students-directory-section {
+.warden-page .child-card, .warden-page .activity-section, .warden-page .pending-request-section, .warden-page .history-section, .warden-page .students-directory-section{
     background: rgba(255, 255, 255, .96);
     border: 1px solid var(--border);
     border-radius: 16px;
     box-shadow: 0 7px 24px rgba(24, 68, 59, .045);
 }
 
-.child-card {
+.warden-page .child-card{
     padding: 17px 20px 18px;
 }
 
-.card-heading-row h2,
-.section-title-row h2,
-.warden-section-header h2 {
+.warden-page .card-heading-row h2, .warden-page .section-title-row h2, .warden-page .warden-section-header h2{
     margin: 0;
     color: var(--navy);
     font-size: 17px;
@@ -223,14 +215,14 @@ input {
     letter-spacing: -.2px;
 }
 
-.child-main {
+.warden-page .child-main{
     display: flex;
     align-items: center;
     gap: 15px;
     margin-top: 13px;
 }
 
-.child-avatar {
+.warden-page .child-avatar{
     width: 58px;
     height: 58px;
     flex: 0 0 58px;
@@ -241,14 +233,14 @@ input {
     color: var(--green-dark);
 }
 
-.child-info h2 {
+.warden-page .child-info h2{
     margin: 0;
     color: var(--navy);
     font-size: 17px;
     line-height: 1.2;
 }
 
-.child-info p {
+.warden-page .child-info p{
     display: flex;
     align-items: center;
     gap: 7px;
@@ -261,25 +253,25 @@ input {
    ACTIVITY — exact 4-column compact pattern
    ========================================================= */
 
-.activity-section {
+.warden-page .activity-section{
     margin-top: 15px;
     padding: 13px 10px 11px;
 }
 
-.section-title-row {
+.warden-page .section-title-row{
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2px 10px;
 }
 
-.stats-grid {
+.warden-page .stats-grid{
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px;
 }
 
-.stat-card {
+.warden-page .stat-card{
     min-height: 78px;
     display: flex;
     align-items: center;
@@ -288,12 +280,12 @@ input {
     border-radius: 12px;
 }
 
-.stat-blue { background: var(--blue-bg); }
-.stat-yellow { background: var(--yellow-bg); }
-.stat-green { background: var(--green-bg); }
-.stat-red { background: var(--red-bg); }
+.warden-page .stat-blue{ background: var(--blue-bg); }
+.warden-page .stat-yellow{ background: var(--yellow-bg); }
+.warden-page .stat-green{ background: var(--green-bg); }
+.warden-page .stat-red{ background: var(--red-bg); }
 
-.stat-icon {
+.warden-page .stat-icon{
     width: 37px;
     height: 37px;
     flex: 0 0 37px;
@@ -302,23 +294,23 @@ input {
     border-radius: 50%;
 }
 
-.stat-blue .stat-icon { background: #d5ebff; color: #1688db; }
-.stat-yellow .stat-icon { background: #ffebba; color: #e79b00; }
-.stat-green .stat-icon { background: #cef0e2; color: #009b72; }
-.stat-red .stat-icon { background: #ffd8db; color: #ed3340; }
+.warden-page .stat-blue .stat-icon{ background: #d5ebff; color: #1688db; }
+.warden-page .stat-yellow .stat-icon{ background: #ffebba; color: #e79b00; }
+.warden-page .stat-green .stat-icon{ background: #cef0e2; color: #009b72; }
+.warden-page .stat-red .stat-icon{ background: #ffd8db; color: #ed3340; }
 
-.stat-card > div:last-child {
+.warden-page .stat-card > div:last-child{
     min-width: 0;
 }
 
-.stat-card strong {
+.warden-page .stat-card strong{
     display: block;
     color: var(--navy);
     font-size: 20px;
     line-height: 1;
 }
 
-.stat-card span {
+.warden-page .stat-card span{
     display: block;
     margin-top: 5px;
     color: #58707e;
@@ -330,14 +322,12 @@ input {
    WARDEN SECTIONS
    ========================================================= */
 
-.pending-request-section,
-.history-section,
-.students-directory-section {
+.warden-page .pending-request-section, .warden-page .history-section, .warden-page .students-directory-section{
     margin-top: 15px;
     padding: 18px 20px 20px;
 }
 
-.warden-section-header {
+.warden-page .warden-section-header{
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -345,16 +335,14 @@ input {
     margin-bottom: 12px;
 }
 
-.warden-section-header p {
+.warden-page .warden-section-header p{
     margin: 5px 0 0;
     color: var(--muted);
     font-size: 10px;
     line-height: 1.45;
 }
 
-.pending-request-list,
-.gate-list,
-.student-directory-list {
+.warden-page .pending-request-list, .warden-page .gate-list, .warden-page .student-directory-list{
     overflow: hidden;
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -362,7 +350,7 @@ input {
 }
 
 /* Pending request rows follow the reference table-like layout. */
-.pending-request-row {
+.warden-page .pending-request-row{
     min-height: 70px;
     display: grid;
     grid-template-columns: 42px minmax(180px, 1.35fr) 145px 170px auto;
@@ -372,13 +360,11 @@ input {
     border-bottom: 1px solid #e7efec;
 }
 
-.pending-request-row:last-child,
-.gate-row:last-child,
-.student-directory-row:last-child {
+.warden-page .pending-request-row:last-child, .warden-page .gate-row:last-child, .warden-page .student-directory-row:last-child{
     border-bottom: 0;
 }
 
-.mini-avatar {
+.warden-page .mini-avatar{
     width: 37px;
     height: 37px;
     display: grid;
@@ -390,18 +376,14 @@ input {
     font-weight: 800;
 }
 
-.pending-request-student strong,
-.pending-request-date strong,
-.pending-request-purpose strong {
+.warden-page .pending-request-student strong, .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
     display: block;
     color: var(--navy);
     font-size: 12px;
     line-height: 1.25;
 }
 
-.pending-request-student span,
-.pending-request-date span,
-.pending-request-purpose span {
+.warden-page .pending-request-student span, .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
     display: block;
     margin-top: 4px;
     color: #6f838d;
@@ -409,14 +391,13 @@ input {
     line-height: 1.25;
 }
 
-.pending-request-actions {
+.warden-page .pending-request-actions{
     display: flex;
     justify-content: flex-end;
     gap: 8px;
 }
 
-.row-approve-button,
-.row-reject-button {
+.warden-page .row-approve-button, .warden-page .row-reject-button{
     height: 36px;
     display: inline-flex;
     align-items: center;
@@ -429,20 +410,20 @@ input {
     cursor: pointer;
 }
 
-.row-approve-button {
+.warden-page .row-approve-button{
     border: 1px solid var(--green);
     background: var(--green);
     color: #fff;
 }
 
-.row-reject-button {
+.warden-page .row-reject-button{
     border: 1px solid #ef525b;
     background: #fff;
     color: #df303a;
 }
 
 /* Gate history */
-.gate-row {
+.warden-page .gate-row{
     min-height: 70px;
     display: grid;
     grid-template-columns: 42px minmax(180px, 1.4fr) 1fr 1fr auto;
@@ -452,28 +433,26 @@ input {
     border-bottom: 1px solid #e7efec;
 }
 
-.gate-student strong,
-.gate-row > div > strong {
+.warden-page .gate-student strong, .warden-page .gate-row > div > strong{
     display: block;
     color: var(--navy);
     font-size: 11px;
 }
 
-.gate-student span,
-.gate-row > div > span {
+.warden-page .gate-student span, .warden-page .gate-row > div > span{
     display: block;
     margin-top: 4px;
     color: #70838d;
     font-size: 9px;
 }
 
-.gate-student i {
+.warden-page .gate-student i{
     margin: 0 5px;
     color: #aab6ba;
     font-style: normal;
 }
 
-.gate-status {
+.warden-page .gate-status{
     justify-self: end;
     padding: 7px 10px;
     border-radius: 999px;
@@ -482,25 +461,25 @@ input {
     white-space: nowrap;
 }
 
-.gate-status.returned {
+.warden-page .gate-status.returned{
     background: #e8f8f1;
     color: #087d5f;
 }
 
-.gate-status.outside {
+.warden-page .gate-status.outside{
     background: #fff4dd;
     color: #9a6700;
 }
 
 /* Students */
-.students-toolbar {
+.warden-page .students-toolbar{
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 10px;
     margin-bottom: 12px;
 }
 
-.student-search-wrap {
+.warden-page .student-search-wrap{
     min-height: 42px;
     display: flex;
     align-items: center;
@@ -512,7 +491,7 @@ input {
     color: #71858e;
 }
 
-.student-search-wrap input {
+.warden-page .student-search-wrap input{
     width: 100%;
     min-width: 0;
     border: 0;
@@ -522,7 +501,7 @@ input {
     font-size: 11px;
 }
 
-.student-refresh {
+.warden-page .student-refresh{
     min-height: 42px;
     display: inline-flex;
     align-items: center;
@@ -538,7 +517,7 @@ input {
     cursor: pointer;
 }
 
-.student-directory-row {
+.warden-page .student-directory-row{
     min-height: 70px;
     display: grid;
     grid-template-columns: 42px minmax(220px, 1.5fr) 1fr 1fr;
@@ -548,22 +527,20 @@ input {
     border-bottom: 1px solid #e7efec;
 }
 
-.directory-student strong,
-.directory-detail strong {
+.warden-page .directory-student strong, .warden-page .directory-detail strong{
     display: block;
     color: var(--navy);
     font-size: 12px;
 }
 
-.directory-student span,
-.directory-detail span {
+.warden-page .directory-student span, .warden-page .directory-detail span{
     display: block;
     margin-top: 4px;
     color: #71848e;
     font-size: 9px;
 }
 
-.empty-card {
+.warden-page .empty-card{
     min-height: 120px;
     display: flex;
     flex-direction: column;
@@ -575,7 +552,7 @@ input {
     text-align: center;
 }
 
-.empty-icon {
+.warden-page .empty-icon{
     width: 38px;
     height: 38px;
     display: grid;
@@ -585,24 +562,24 @@ input {
     color: var(--green);
 }
 
-.empty-card h3 {
+.warden-page .empty-card h3{
     margin: 9px 0 0;
     color: var(--navy);
     font-size: 12px;
 }
 
-.empty-card p {
+.warden-page .empty-card p{
     margin: 5px 0 0;
     color: var(--muted);
     font-size: 9px;
 }
 
-.alert {
+.warden-page .alert{
     margin-bottom: 14px;
 }
 
 /* Mobile navigation hidden on desktop. */
-.mobile-bottom-nav {
+.warden-page .warden-mobile-bottom-nav{
     display: none;
 }
 
@@ -611,22 +588,22 @@ input {
    ========================================================= */
 
 @media (max-width: 700px) {
-    .parent-page {
+    .warden-page{
         min-height: 100svh;
         padding-bottom: 72px;
         background: #f5faf8;
     }
 
-    .parent-sidebar {
+    .warden-page .warden-sidebar{
         display: none;
     }
 
-    .parent-main {
+    .warden-page .warden-main{
         width: 100%;
         margin-left: 0;
     }
 
-    .parent-topbar {
+    .warden-page .warden-topbar{
         height: 64px;
         display: flex;
         align-items: center;
@@ -636,41 +613,40 @@ input {
         border-bottom: 1px solid var(--border);
     }
 
-    .mobile-brand {
+    .warden-page .mobile-brand{
         display: flex;
         flex-direction: column;
     }
 
-    .mobile-brand strong {
+    .warden-page .mobile-brand strong{
         color: var(--green-dark);
         font-size: 19px;
         line-height: 1;
         letter-spacing: -.5px;
     }
 
-    .mobile-brand span {
+    .warden-page .mobile-brand span{
         margin-top: 4px;
         color: #72848d;
         font-size: 8px;
         line-height: 1.25;
     }
 
-    .topbar-actions {
+    .warden-page .topbar-actions{
         display: flex;
         align-items: center;
     }
 
-    .profile-chip {
+    .warden-page .profile-chip{
         display: flex;
         align-items: center;
     }
 
-    .profile-role,
-    .profile-chevron {
+    .warden-page .profile-role, .warden-page .profile-chevron{
         display: none;
     }
 
-    .profile-avatar {
+    .warden-page .profile-avatar{
         width: 34px;
         height: 34px;
         display: grid;
@@ -682,23 +658,23 @@ input {
         font-weight: 800;
     }
 
-    .parent-content {
+    .warden-page .warden-content{
         width: 100%;
         padding: 20px 16px 24px;
     }
 
-    .parent-hero {
+    .warden-page .warden-hero{
         min-height: 0;
         margin-bottom: 17px;
         padding-right: 0;
     }
 
-    .hero-eyebrow {
+    .warden-page .hero-eyebrow{
         font-size: 9px;
         letter-spacing: 1.6px;
     }
 
-    .parent-hero h1 {
+    .warden-page .warden-hero h1{
         margin-top: 7px;
         font-size: 23px;
         line-height: 1.15;
@@ -706,66 +682,66 @@ input {
         white-space: nowrap;
     }
 
-    .parent-hero > div:first-child > p {
+    .warden-page .warden-hero > div:first-child > p{
         max-width: 340px;
         margin-top: 7px;
         font-size: 10px;
         line-height: 1.45;
     }
 
-    .child-card {
+    .warden-page .child-card{
         padding: 15px 16px 16px;
         border-radius: 16px;
     }
 
-    .card-heading-row h2 {
+    .warden-page .card-heading-row h2{
         font-size: 16px;
     }
 
-    .child-main {
+    .warden-page .child-main{
         gap: 12px;
         margin-top: 12px;
     }
 
-    .child-avatar {
+    .warden-page .child-avatar{
         width: 46px;
         height: 46px;
         flex-basis: 46px;
     }
 
-    .child-avatar .ui-icon {
+    .warden-page .child-avatar .ui-icon{
         width: 22px;
         height: 22px;
     }
 
-    .child-info h2 {
+    .warden-page .child-info h2{
         font-size: 17px;
     }
 
-    .child-info p {
+    .warden-page .child-info p{
         margin-top: 5px;
         font-size: 9px;
     }
 
-    .activity-section {
+    .warden-page .activity-section{
         margin-top: 14px;
         padding: 13px 10px 10px;
         border-radius: 16px;
     }
 
-    .section-title-row {
+    .warden-page .section-title-row{
         padding: 0 2px 9px;
     }
 
-    .section-title-row h2 {
+    .warden-page .section-title-row h2{
         font-size: 16px;
     }
 
-    .stats-grid {
+    .warden-page .stats-grid{
         gap: 6px;
     }
 
-    .stat-card {
+    .warden-page .stat-card{
         min-height: 78px;
         display: flex;
         flex-direction: column;
@@ -776,58 +752,54 @@ input {
         text-align: center;
     }
 
-    .stat-icon {
+    .warden-page .stat-icon{
         width: 28px;
         height: 28px;
         flex-basis: 28px;
     }
 
-    .stat-icon .ui-icon {
+    .warden-page .stat-icon .ui-icon{
         width: 15px;
         height: 15px;
     }
 
-    .stat-card strong {
+    .warden-page .stat-card strong{
         font-size: 16px;
     }
 
-    .stat-card span {
+    .warden-page .stat-card span{
         margin-top: 2px;
         font-size: 7px;
         line-height: 1.1;
         white-space: nowrap;
     }
 
-    .pending-request-section,
-    .history-section,
-    .students-directory-section {
+    .warden-page .pending-request-section, .warden-page .history-section, .warden-page .students-directory-section{
         margin-top: 14px;
         padding: 15px 16px 16px;
         border-radius: 16px;
     }
 
-    .warden-section-header {
+    .warden-page .warden-section-header{
         margin-bottom: 10px;
         gap: 10px;
     }
 
-    .warden-section-header h2 {
+    .warden-page .warden-section-header h2{
         font-size: 17px;
     }
 
-    .warden-section-header p {
+    .warden-page .warden-section-header p{
         margin-top: 5px;
         font-size: 9px;
     }
 
     /* Pending card: compact but readable. */
-    .pending-request-list,
-    .gate-list,
-    .student-directory-list {
+    .warden-page .pending-request-list, .warden-page .gate-list, .warden-page .student-directory-list{
         border-radius: 12px;
     }
 
-    .pending-request-row {
+    .warden-page .pending-request-row{
         min-height: 96px;
         grid-template-columns: 36px minmax(0, 1fr) 72px;
         grid-template-rows: auto auto auto;
@@ -836,55 +808,51 @@ input {
         padding: 10px;
     }
 
-    .pending-request-row .mini-avatar {
+    .warden-page .pending-request-row .mini-avatar{
         width: 34px;
         height: 34px;
         grid-column: 1;
         grid-row: 1 / span 3;
     }
 
-    .pending-request-student {
+    .warden-page .pending-request-student{
         grid-column: 2;
         grid-row: 1;
         min-width: 0;
     }
 
-    .pending-request-student strong {
+    .warden-page .pending-request-student strong{
         font-size: 10px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    .pending-request-student span {
+    .warden-page .pending-request-student span{
         margin-top: 3px;
         font-size: 7px;
     }
 
-    .pending-request-date {
+    .warden-page .pending-request-date{
         grid-column: 2;
         grid-row: 2;
     }
 
-    .pending-request-purpose {
+    .warden-page .pending-request-purpose{
         grid-column: 2;
         grid-row: 3;
     }
 
-    .pending-request-date strong,
-    .pending-request-purpose strong,
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong, .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         display: inline;
         font-size: 7px;
     }
 
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         margin-left: 4px;
     }
 
-    .pending-request-actions {
+    .warden-page .pending-request-actions{
         grid-column: 3;
         grid-row: 1 / span 3;
         flex-direction: column;
@@ -892,8 +860,7 @@ input {
         gap: 5px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         width: 72px;
         height: 30px;
         padding: 0 5px;
@@ -901,14 +868,13 @@ input {
         font-size: 8px;
     }
 
-    .row-approve-button .ui-icon,
-    .row-reject-button .ui-icon {
+    .warden-page .row-approve-button .ui-icon, .warden-page .row-reject-button .ui-icon{
         width: 10px;
         height: 10px;
     }
 
     /* Gate history mobile row. */
-    .gate-row {
+    .warden-page .gate-row{
         min-height: 70px;
         grid-template-columns: 34px minmax(0, 1fr) auto;
         grid-template-rows: 1fr;
@@ -916,20 +882,20 @@ input {
         padding: 10px;
     }
 
-    .gate-row > .mini-avatar {
+    .warden-page .gate-row > .mini-avatar{
         grid-column: 1;
         grid-row: 1;
         width: 34px;
         height: 34px;
     }
 
-    .gate-student {
+    .warden-page .gate-student{
         grid-column: 2;
         grid-row: 1;
         align-self: center;
     }
 
-    .gate-status {
+    .warden-page .gate-status{
         grid-column: 3;
         grid-row: 1;
         align-self: center;
@@ -938,70 +904,70 @@ input {
     }
 
     /* Students. */
-    .students-toolbar {
+    .warden-page .students-toolbar{
         grid-template-columns: minmax(0, 1fr) 40px;
         gap: 7px;
         margin-bottom: 10px;
     }
 
-    .student-search-wrap {
+    .warden-page .student-search-wrap{
         min-height: 42px;
         gap: 7px;
         padding: 0 10px;
     }
 
-    .student-search-wrap .ui-icon {
+    .warden-page .student-search-wrap .ui-icon{
         width: 15px;
         height: 15px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 9px;
     }
 
-    .student-refresh {
+    .warden-page .student-refresh{
         width: 40px;
         min-height: 42px;
         padding: 0;
         font-size: 0;
     }
 
-    .student-refresh .ui-icon {
+    .warden-page .student-refresh .ui-icon{
         width: 15px;
         height: 15px;
     }
 
-    .student-directory-row {
+    .warden-page .student-directory-row{
         min-height: 64px;
         grid-template-columns: 34px minmax(0, 1fr) auto;
         gap: 8px;
         padding: 9px 10px;
     }
 
-    .student-directory-row .mini-avatar {
+    .warden-page .student-directory-row .mini-avatar{
         width: 34px;
         height: 34px;
     }
 
-    .directory-student strong {
+    .warden-page .directory-student strong{
         font-size: 10px;
     }
 
-    .directory-student span {
+    .warden-page .directory-student span{
         margin-top: 3px;
         font-size: 7px;
     }
 
-    .directory-detail strong {
+    .warden-page .directory-detail strong{
         font-size: 9px;
     }
 
-    .directory-detail span {
+    .warden-page .directory-detail span{
         margin-top: 3px;
         font-size: 7px;
     }
 
-    .directory-detail:last-child {
+    .warden-page .directory-detail:last-child{
         display: none;
     }
 
@@ -1012,13 +978,13 @@ input {
    MOBILE BOTTOM NAV — 5 ITEMS
    ========================================================= */
 
-.mobile-bottom-nav {
+.warden-page .warden-mobile-bottom-nav{
     display: none;
 }
 
 @media (max-width: 700px) {
 
-    .mobile-bottom-nav {
+    .warden-page .warden-mobile-bottom-nav{
         position: fixed;
         left: 0;
         right: 0;
@@ -1040,7 +1006,7 @@ input {
         backdrop-filter: blur(14px);
     }
 
-    .mobile-bottom-nav .mobile-nav-item {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-item{
         min-width: 0;
         width: 100%;
         height: 54px;
@@ -1064,20 +1030,20 @@ input {
         cursor: pointer;
     }
 
-    .mobile-bottom-nav .mobile-nav-item .ui-icon {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-item .ui-icon{
         width: 18px;
         height: 18px;
         flex: 0 0 18px;
     }
 
-    .mobile-bottom-nav .mobile-nav-item span {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-item span{
         display: block !important;
         font-size: 10px;
         line-height: 1.1;
         white-space: nowrap;
     }
 
-    .mobile-bottom-nav .mobile-nav-item.active {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-item.active{
         background: #edf8f4;
         color: var(--green-dark);
         font-weight: 700;
@@ -1086,43 +1052,43 @@ input {
 
 @media (max-width: 380px) {
 
-    .mobile-bottom-nav {
+    .warden-page .warden-mobile-bottom-nav{
         padding-left: 5px;
         padding-right: 5px;
     }
 
-    .mobile-bottom-nav .mobile-nav-item span {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-item span{
         font-size: 9px;
     }
 }
 
 @media (max-width: 380px) {
-    .parent-content {
+    .warden-page .warden-content{
         padding-left: 12px;
         padding-right: 12px;
     }
 
-    .parent-hero h1 {
+    .warden-page .warden-hero h1{
         font-size: 22px;
     }
 
-    .stats-grid {
+    .warden-page .stats-grid{
         gap: 5px;
     }
 
-    .stat-card {
+    .warden-page .stat-card{
         min-height: 74px;
     }
 
-    .stat-card strong {
+    .warden-page .stat-card strong{
         font-size: 15px;
     }
 
-    .stat-card span {
+    .warden-page .stat-card span{
         font-size: 6.5px;
     }
 
-    .mobile-bottom-nav {
+    .warden-page .warden-mobile-bottom-nav{
         padding-left: 5px;
         padding-right: 5px;
     }
@@ -1136,44 +1102,39 @@ input {
 
 /* ---------- Desktop: Pending Requests ---------- */
 @media (min-width: 701px) {
-    .warden-section-header h2 {
+    .warden-page .warden-section-header h2{
         font-size: 20px;
         line-height: 1.2;
     }
 
-    .warden-section-header p {
+    .warden-page .warden-section-header p{
         font-size: 11px;
         line-height: 1.45;
     }
 
-    .pending-request-row {
+    .warden-page .pending-request-row{
         min-height: 78px;
         padding: 10px 13px;
     }
 
-    .pending-request-row .mini-avatar {
+    .warden-page .pending-request-row .mini-avatar{
         width: 39px;
         height: 39px;
         font-size: 12px;
     }
 
-    .pending-request-student strong,
-    .pending-request-date strong,
-    .pending-request-purpose strong {
+    .warden-page .pending-request-student strong, .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
         font-size: 13px;
         line-height: 1.3;
     }
 
-    .pending-request-student span,
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-student span, .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         margin-top: 4px;
         font-size: 10px;
         line-height: 1.3;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         height: 40px;
         padding: 0 14px;
         border-radius: 10px;
@@ -1181,67 +1142,63 @@ input {
     }
 
     /* ---------- Desktop: Gate History ---------- */
-    .gate-row {
+    .warden-page .gate-row{
         min-height: 78px;
         padding: 10px 13px;
     }
 
-    .gate-row > .mini-avatar {
+    .warden-page .gate-row > .mini-avatar{
         width: 39px;
         height: 39px;
         font-size: 12px;
     }
 
-    .gate-student strong,
-    .gate-row > div > strong {
+    .warden-page .gate-student strong, .warden-page .gate-row > div > strong{
         font-size: 12px;
     }
 
-    .gate-student span,
-    .gate-row > div > span {
+    .warden-page .gate-student span, .warden-page .gate-row > div > span{
         margin-top: 4px;
         font-size: 10px;
     }
 
-    .gate-status {
+    .warden-page .gate-status{
         padding: 8px 11px;
         font-size: 10px;
     }
 
     /* ---------- Desktop: Students ---------- */
-    .student-search-wrap {
+    .warden-page .student-search-wrap{
         min-height: 46px;
         padding: 0 14px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 13px;
     }
 
-    .student-refresh {
+    .warden-page .student-refresh{
         min-height: 46px;
         padding: 0 17px;
         font-size: 13px;
     }
 
-    .student-directory-row {
+    .warden-page .student-directory-row{
         min-height: 78px;
         padding: 10px 13px;
     }
 
-    .student-directory-row .mini-avatar {
+    .warden-page .student-directory-row .mini-avatar{
         width: 39px;
         height: 39px;
         font-size: 12px;
     }
 
-    .directory-student strong,
-    .directory-detail strong {
+    .warden-page .directory-student strong, .warden-page .directory-detail strong{
         font-size: 13px;
     }
 
-    .directory-student span,
-    .directory-detail span {
+    .warden-page .directory-student span, .warden-page .directory-detail span{
         margin-top: 4px;
         font-size: 10px;
     }
@@ -1249,24 +1206,22 @@ input {
 
 /* ---------- Mobile: Pending Requests ---------- */
 @media (max-width: 700px) {
-    .pending-request-section,
-    .history-section,
-    .students-directory-section {
+    .warden-page .pending-request-section, .warden-page .history-section, .warden-page .students-directory-section{
         padding: 17px;
     }
 
-    .warden-section-header h2 {
+    .warden-page .warden-section-header h2{
         font-size: 20px;
         line-height: 1.2;
     }
 
-    .warden-section-header p {
+    .warden-page .warden-section-header p{
         margin-top: 6px;
         font-size: 11px;
         line-height: 1.45;
     }
 
-    .pending-request-row {
+    .warden-page .pending-request-row{
         min-height: 108px;
         grid-template-columns: 40px minmax(0, 1fr) 82px;
         column-gap: 10px;
@@ -1274,36 +1229,31 @@ input {
         padding: 12px;
     }
 
-    .pending-request-row .mini-avatar {
+    .warden-page .pending-request-row .mini-avatar{
         width: 38px;
         height: 38px;
     }
 
-    .pending-request-student strong {
+    .warden-page .pending-request-student strong{
         font-size: 13px;
         line-height: 1.25;
     }
 
-    .pending-request-student span {
+    .warden-page .pending-request-student span{
         margin-top: 4px;
         font-size: 9px;
     }
 
-    .pending-request-date strong,
-    .pending-request-purpose strong,
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong, .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         font-size: 10px;
         line-height: 1.3;
     }
 
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         margin-left: 5px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         width: 82px;
         height: 36px;
         padding: 0 7px;
@@ -1311,88 +1261,87 @@ input {
         font-size: 10px;
     }
 
-    .row-approve-button .ui-icon,
-    .row-reject-button .ui-icon {
+    .warden-page .row-approve-button .ui-icon, .warden-page .row-reject-button .ui-icon{
         width: 12px;
         height: 12px;
     }
 
     /* ---------- Mobile: Gate History ---------- */
-    .gate-row {
+    .warden-page .gate-row{
         min-height: 78px;
         grid-template-columns: 40px minmax(0, 1fr) auto;
         gap: 10px;
         padding: 12px;
     }
 
-    .gate-row > .mini-avatar {
+    .warden-page .gate-row > .mini-avatar{
         width: 38px;
         height: 38px;
     }
 
-    .gate-status {
+    .warden-page .gate-status{
         padding: 7px 9px;
         font-size: 9px;
     }
 
     /* ---------- Mobile: Students ---------- */
-    .students-toolbar {
+    .warden-page .students-toolbar{
         grid-template-columns: minmax(0, 1fr) 46px;
         gap: 8px;
     }
 
-    .student-search-wrap {
+    .warden-page .student-search-wrap{
         min-height: 46px;
         padding: 0 12px;
         gap: 8px;
     }
 
-    .student-search-wrap .ui-icon {
+    .warden-page .student-search-wrap .ui-icon{
         width: 17px;
         height: 17px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 12px;
     }
 
-    .student-refresh {
+    .warden-page .student-refresh{
         width: 46px;
         min-height: 46px;
     }
 
-    .student-refresh .ui-icon {
+    .warden-page .student-refresh .ui-icon{
         width: 17px;
         height: 17px;
     }
 
-    .student-directory-row {
+    .warden-page .student-directory-row{
         min-height: 76px;
         grid-template-columns: 40px minmax(0, 1fr) auto;
         gap: 10px;
         padding: 11px 12px;
     }
 
-    .student-directory-row .mini-avatar {
+    .warden-page .student-directory-row .mini-avatar{
         width: 38px;
         height: 38px;
     }
 
-    .directory-student strong {
+    .warden-page .directory-student strong{
         font-size: 13px;
         line-height: 1.25;
     }
 
-    .directory-student span {
+    .warden-page .directory-student span{
         margin-top: 4px;
         font-size: 9px;
     }
 
-    .directory-detail strong {
+    .warden-page .directory-detail strong{
         font-size: 11px;
     }
 
-    .directory-detail span {
+    .warden-page .directory-detail span{
         margin-top: 3px;
         font-size: 9px;
     }
@@ -1400,23 +1349,22 @@ input {
 
 /* Keep the smallest phones readable without allowing overflow. */
 @media (max-width: 380px) {
-    .pending-request-row {
+    .warden-page .pending-request-row{
         grid-template-columns: 36px minmax(0, 1fr) 76px;
         column-gap: 8px;
         padding: 10px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         width: 76px;
         font-size: 9px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 11px;
     }
 
-    .directory-student strong {
+    .warden-page .directory-student strong{
         font-size: 12px;
     }
 }
@@ -1430,155 +1378,141 @@ input {
    ========================================================= */
 
 @media (min-width: 701px) {
-    .warden-section-header h2 {
+    .warden-page .warden-section-header h2{
         font-size: 22px;
     }
 
-    .warden-section-header p {
+    .warden-page .warden-section-header p{
         font-size: 12px;
     }
 
-    .pending-request-student strong,
-    .pending-request-date strong,
-    .pending-request-purpose strong {
+    .warden-page .pending-request-student strong, .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
         font-size: 14px;
     }
 
-    .pending-request-student span,
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-student span, .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         font-size: 11px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         height: 42px;
         padding: 0 15px;
         font-size: 13px;
     }
 
-    .gate-student strong,
-    .gate-row > div > strong {
+    .warden-page .gate-student strong, .warden-page .gate-row > div > strong{
         font-size: 14px;
     }
 
-    .gate-student span,
-    .gate-row > div > span {
+    .warden-page .gate-student span, .warden-page .gate-row > div > span{
         font-size: 11px;
     }
 
-    .gate-status {
+    .warden-page .gate-status{
         padding: 9px 12px;
         font-size: 11px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 14px;
     }
 
-    .student-refresh {
+    .warden-page .student-refresh{
         min-height: 48px;
         font-size: 14px;
     }
 
-    .directory-student strong,
-    .directory-detail strong {
+    .warden-page .directory-student strong, .warden-page .directory-detail strong{
         font-size: 14px;
     }
 
-    .directory-student span,
-    .directory-detail span {
+    .warden-page .directory-student span, .warden-page .directory-detail span{
         font-size: 11px;
     }
 }
 
 @media (max-width: 700px) {
-    .warden-section-header h2 {
+    .warden-page .warden-section-header h2{
         font-size: 22px;
     }
 
-    .warden-section-header p {
+    .warden-page .warden-section-header p{
         font-size: 12px;
         line-height: 1.5;
     }
 
-    .pending-request-student strong {
+    .warden-page .pending-request-student strong{
         font-size: 14px;
     }
 
-    .pending-request-student span {
+    .warden-page .pending-request-student span{
         font-size: 10px;
     }
 
-    .pending-request-date strong,
-    .pending-request-purpose strong {
+    .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
         font-size: 11px;
     }
 
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         font-size: 10px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         width: 82px;
         height: 38px;
         font-size: 11px;
     }
 
-    .gate-status {
+    .warden-page .gate-status{
         padding: 8px 10px;
         font-size: 10px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 13px;
     }
 
-    .student-refresh {
+    .warden-page .student-refresh{
         min-height: 48px;
         font-size: 13px;
     }
 
-    .directory-student strong {
+    .warden-page .directory-student strong{
         font-size: 14px;
     }
 
-    .directory-student span {
+    .warden-page .directory-student span{
         font-size: 10px;
     }
 
-    .directory-detail strong {
+    .warden-page .directory-detail strong{
         font-size: 12px;
     }
 
-    .directory-detail span {
+    .warden-page .directory-detail span{
         font-size: 10px;
     }
 }
 
 @media (max-width: 380px) {
-    .pending-request-student strong {
+    .warden-page .pending-request-student strong{
         font-size: 13px;
     }
 
-    .pending-request-date strong,
-    .pending-request-purpose strong {
+    .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
         font-size: 10px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         width: 76px;
         font-size: 10px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 12px;
     }
 
-    .directory-student strong {
+    .warden-page .directory-student strong{
         font-size: 13px;
     }
 }
@@ -1590,39 +1524,34 @@ input {
 
 @media (min-width: 701px) {
     /* Pending Requests */
-    .warden-section-header h2 {
+    .warden-page .warden-section-header h2{
         font-size: 22px;
         line-height: 1.2;
     }
 
-    .warden-section-header p {
+    .warden-page .warden-section-header p{
         margin-top: 6px;
         font-size: 12px;
         line-height: 1.45;
     }
 
-    .pending-request-row {
+    .warden-page .pending-request-row{
         min-height: 84px;
         padding: 11px 14px;
     }
 
-    .pending-request-student strong,
-    .pending-request-date strong,
-    .pending-request-purpose strong {
+    .warden-page .pending-request-student strong, .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
         font-size: 15px;
         line-height: 1.3;
     }
 
-    .pending-request-student span,
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-student span, .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         margin-top: 4px;
         font-size: 11px;
         line-height: 1.35;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         height: 42px;
         padding: 0 16px;
         border-radius: 10px;
@@ -1630,74 +1559,70 @@ input {
     }
 
     /* Gate History */
-    .history-section .warden-section-header h2 {
+    .warden-page .history-section .warden-section-header h2{
         font-size: 23px;
     }
 
-    .history-section .warden-section-header p {
+    .warden-page .history-section .warden-section-header p{
         font-size: 13px;
     }
 
-    .gate-row {
+    .warden-page .gate-row{
         min-height: 82px;
         padding: 11px 14px;
     }
 
-    .gate-student strong,
-    .gate-row > div > strong {
+    .warden-page .gate-student strong, .warden-page .gate-row > div > strong{
         font-size: 14px;
         line-height: 1.3;
     }
 
-    .gate-student span,
-    .gate-row > div > span {
+    .warden-page .gate-student span, .warden-page .gate-row > div > span{
         margin-top: 4px;
         font-size: 11px;
         line-height: 1.35;
     }
 
-    .gate-status {
+    .warden-page .gate-status{
         padding: 9px 12px;
         font-size: 11px;
     }
 
     /* Students */
-    .students-directory-section .warden-section-header h2 {
+    .warden-page .students-directory-section .warden-section-header h2{
         font-size: 23px;
     }
 
-    .students-directory-section .warden-section-header p {
+    .warden-page .students-directory-section .warden-section-header p{
         font-size: 13px;
     }
 
-    .student-search-wrap {
+    .warden-page .student-search-wrap{
         min-height: 50px;
         padding: 0 15px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 15px;
     }
 
-    .student-refresh {
+    .warden-page .student-refresh{
         min-height: 50px;
         padding: 0 18px;
         font-size: 14px;
     }
 
-    .student-directory-row {
+    .warden-page .student-directory-row{
         min-height: 82px;
         padding: 11px 14px;
     }
 
-    .directory-student strong,
-    .directory-detail strong {
+    .warden-page .directory-student strong, .warden-page .directory-detail strong{
         font-size: 15px;
         line-height: 1.3;
     }
 
-    .directory-student span,
-    .directory-detail span {
+    .warden-page .directory-student span, .warden-page .directory-detail span{
         margin-top: 4px;
         font-size: 11px;
         line-height: 1.35;
@@ -1705,122 +1630,116 @@ input {
 }
 
 @media (max-width: 700px) {
-    .warden-section-header h2 {
+    .warden-page .warden-section-header h2{
         font-size: 21px;
     }
 
-    .warden-section-header p {
+    .warden-page .warden-section-header p{
         font-size: 12px;
     }
 
-    .pending-request-row {
+    .warden-page .pending-request-row{
         min-height: 112px;
         padding: 13px;
     }
 
-    .pending-request-student strong {
+    .warden-page .pending-request-student strong{
         font-size: 14px;
     }
 
-    .pending-request-student span {
+    .warden-page .pending-request-student span{
         font-size: 11px;
     }
 
-    .pending-request-date strong,
-    .pending-request-purpose strong {
+    .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
         font-size: 12px;
     }
 
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         font-size: 11px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         width: 84px;
         height: 39px;
         font-size: 11px;
     }
 
-    .history-section .warden-section-header h2,
-    .students-directory-section .warden-section-header h2 {
+    .warden-page .history-section .warden-section-header h2, .warden-page .students-directory-section .warden-section-header h2{
         font-size: 21px;
     }
 
-    .history-section .warden-section-header p,
-    .students-directory-section .warden-section-header p {
+    .warden-page .history-section .warden-section-header p, .warden-page .students-directory-section .warden-section-header p{
         font-size: 12px;
     }
 
-    .gate-row {
+    .warden-page .gate-row{
         min-height: 82px;
         padding: 13px;
     }
 
-    .gate-row > div > span {
+    .warden-page .gate-row > div > span{
         font-size: 10px;
     }
 
-    .gate-row > div > strong {
+    .warden-page .gate-row > div > strong{
         font-size: 12px;
     }
 
-    .gate-status {
+    .warden-page .gate-status{
         padding: 8px 10px;
         font-size: 10px;
     }
 
-    .student-search-wrap {
+    .warden-page .student-search-wrap{
         min-height: 50px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 13px;
     }
 
-    .student-refresh {
+    .warden-page .student-refresh{
         min-height: 50px;
         font-size: 13px;
     }
 
-    .student-directory-row {
+    .warden-page .student-directory-row{
         min-height: 80px;
         padding: 12px;
     }
 
-    .directory-student strong {
+    .warden-page .directory-student strong{
         font-size: 14px;
     }
 
-    .directory-student span {
+    .warden-page .directory-student span{
         font-size: 10px;
     }
 
-    .directory-detail strong {
+    .warden-page .directory-detail strong{
         font-size: 12px;
     }
 
-    .directory-detail span {
+    .warden-page .directory-detail span{
         font-size: 10px;
     }
 }
 
 @media (max-width: 380px) {
-    .pending-request-student strong {
+    .warden-page .pending-request-student strong{
         font-size: 13px;
     }
 
-    .pending-request-date strong,
-    .pending-request-purpose strong {
+    .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
         font-size: 11px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 12px;
     }
 
-    .directory-student strong {
+    .warden-page .directory-student strong{
         font-size: 13px;
     }
 }
@@ -1831,20 +1750,20 @@ input {
    Only applies at <= 700px. Desktop styles above are untouched.
    ========================================================= */
 @media (max-width: 700px) {
-    .parent-content {
+    .warden-page .warden-content{
         padding: 24px 16px 28px;
     }
 
-    .parent-hero {
+    .warden-page .warden-hero{
         margin-bottom: 19px;
     }
 
-    .hero-eyebrow {
+    .warden-page .hero-eyebrow{
         font-size: 10px;
         letter-spacing: 1.7px;
     }
 
-    .parent-hero h1 {
+    .warden-page .warden-hero h1{
         margin-top: 8px;
         font-size: 27px;
         line-height: 1.12;
@@ -1852,7 +1771,7 @@ input {
         white-space: nowrap;
     }
 
-    .parent-hero > div:first-child > p {
+    .warden-page .warden-hero > div:first-child > p{
         max-width: 340px;
         margin-top: 8px;
         font-size: 12px;
@@ -1860,126 +1779,122 @@ input {
     }
 
     /* Hostel card */
-    .child-card {
+    .warden-page .child-card{
         padding: 17px;
         border-radius: 16px;
     }
 
-    .card-heading-row h2 {
+    .warden-page .card-heading-row h2{
         font-size: 18px;
         line-height: 1.2;
     }
 
-    .child-main {
+    .warden-page .child-main{
         gap: 12px;
         margin-top: 14px;
     }
 
-    .child-avatar {
+    .warden-page .child-avatar{
         width: 50px;
         height: 50px;
         flex-basis: 50px;
     }
 
-    .child-avatar .ui-icon {
+    .warden-page .child-avatar .ui-icon{
         width: 24px;
         height: 24px;
     }
 
-    .child-info h2 {
+    .warden-page .child-info h2{
         font-size: 20px;
         line-height: 1.2;
     }
 
-    .child-info p {
+    .warden-page .child-info p{
         margin-top: 6px;
         font-size: 11px;
         line-height: 1.4;
     }
 
     /* Activity — four compact columns, like Parent/Student */
-    .activity-section {
+    .warden-page .activity-section{
         margin-top: 16px;
         padding: 15px 12px 12px;
         border-radius: 16px;
     }
 
-    .section-title-row {
+    .warden-page .section-title-row{
         padding: 0 2px 12px;
     }
 
-    .section-title-row h2 {
+    .warden-page .section-title-row h2{
         font-size: 18px;
         line-height: 1.2;
     }
 
-    .stats-grid {
+    .warden-page .stats-grid{
         gap: 8px;
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
-    .stat-card {
+    .warden-page .stat-card{
         min-height: 84px;
         gap: 5px;
         padding: 9px 4px;
         border-radius: 12px;
     }
 
-    .stat-icon {
+    .warden-page .stat-icon{
         width: 34px;
         height: 34px;
         flex-basis: 34px;
     }
 
-    .stat-icon .ui-icon {
+    .warden-page .stat-icon .ui-icon{
         width: 17px;
         height: 17px;
     }
 
-    .stat-card strong {
+    .warden-page .stat-card strong{
         font-size: 19px;
         line-height: 1;
     }
 
-    .stat-card span {
+    .warden-page .stat-card span{
         margin-top: 3px;
         font-size: 8px;
         line-height: 1.1;
     }
 
     /* Shared Warden sections */
-    .pending-request-section,
-    .history-section,
-    .students-directory-section {
+    .warden-page .pending-request-section, .warden-page .history-section, .warden-page .students-directory-section{
         margin-top: 16px;
         padding: 17px;
         border-radius: 16px;
     }
 
-    .warden-section-header {
+    .warden-page .warden-section-header{
         margin-bottom: 12px;
         gap: 10px;
     }
 
-    .warden-section-header h2 {
+    .warden-page .warden-section-header h2{
         font-size: 20px;
         line-height: 1.2;
     }
 
-    .warden-section-header p {
+    .warden-page .warden-section-header p{
         margin-top: 6px;
         font-size: 11px;
         line-height: 1.45;
     }
 
     /* Pending requests: readable but compact. */
-    .pending-request-list,
-    .gate-list,
-    .student-directory-list {
+    .warden-page .pending-request-list, .warden-page .gate-list, .warden-page .student-directory-list{
         border-radius: 12px;
     }
 
-    .pending-request-row {
+    .warden-page .pending-request-row{
         min-height: 112px;
         grid-template-columns: 40px minmax(0, 1fr) 86px;
         grid-template-rows: auto auto auto;
@@ -1988,53 +1903,51 @@ input {
         padding: 12px;
     }
 
-    .pending-request-row .mini-avatar {
+    .warden-page .pending-request-row .mini-avatar{
         width: 38px;
         height: 38px;
         grid-column: 1;
         grid-row: 1 / span 3;
     }
 
-    .pending-request-student {
+    .warden-page .pending-request-student{
         grid-column: 2;
         grid-row: 1;
     }
 
-    .pending-request-student strong {
+    .warden-page .pending-request-student strong{
         font-size: 13px;
         line-height: 1.25;
     }
 
-    .pending-request-student span {
+    .warden-page .pending-request-student span{
         margin-top: 4px;
         font-size: 9px;
         line-height: 1.3;
     }
 
-    .pending-request-date {
+    .warden-page .pending-request-date{
         grid-column: 2;
         grid-row: 2;
     }
 
-    .pending-request-purpose {
+    .warden-page .pending-request-purpose{
         grid-column: 2;
         grid-row: 3;
     }
 
-    .pending-request-date strong,
-    .pending-request-purpose strong {
+    .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
         font-size: 10px;
         line-height: 1.3;
     }
 
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         margin-left: 5px;
         font-size: 10px;
         line-height: 1.3;
     }
 
-    .pending-request-actions {
+    .warden-page .pending-request-actions{
         grid-column: 3;
         grid-row: 1 / span 3;
         flex-direction: column;
@@ -2042,8 +1955,7 @@ input {
         gap: 6px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         width: 86px;
         height: 38px;
         padding: 0 7px;
@@ -2051,14 +1963,13 @@ input {
         font-size: 10px;
     }
 
-    .row-approve-button .ui-icon,
-    .row-reject-button .ui-icon {
+    .warden-page .row-approve-button .ui-icon, .warden-page .row-reject-button .ui-icon{
         width: 12px;
         height: 12px;
     }
 
     /* Gate history: compact single row. */
-    .gate-row {
+    .warden-page .gate-row{
         min-height: 80px;
         grid-template-columns: 40px minmax(0, 1fr) auto;
         grid-template-rows: 1fr;
@@ -2066,31 +1977,31 @@ input {
         padding: 12px;
     }
 
-    .gate-row > .mini-avatar {
+    .warden-page .gate-row > .mini-avatar{
         width: 38px;
         height: 38px;
         grid-column: 1;
         grid-row: 1;
     }
 
-    .gate-student {
+    .warden-page .gate-student{
         grid-column: 2;
         grid-row: 1;
         align-self: center;
     }
 
-    .gate-student strong {
+    .warden-page .gate-student strong{
         font-size: 13px;
         line-height: 1.25;
     }
 
-    .gate-student span {
+    .warden-page .gate-student span{
         margin-top: 5px;
         font-size: 10px;
         line-height: 1.3;
     }
 
-    .gate-status {
+    .warden-page .gate-status{
         grid-column: 3;
         grid-row: 1;
         align-self: center;
@@ -2099,149 +2010,148 @@ input {
     }
 
     /* Students search */
-    .students-toolbar {
+    .warden-page .students-toolbar{
         grid-template-columns: minmax(0, 1fr) 48px;
         gap: 8px;
         margin-bottom: 12px;
     }
 
-    .student-search-wrap {
+    .warden-page .student-search-wrap{
         min-height: 48px;
         gap: 8px;
         padding: 0 12px;
     }
 
-    .student-search-wrap .ui-icon {
+    .warden-page .student-search-wrap .ui-icon{
         width: 17px;
         height: 17px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 12px;
     }
 
-    .student-refresh {
+    .warden-page .student-refresh{
         width: 48px;
         min-height: 48px;
         padding: 0;
         font-size: 0;
     }
 
-    .student-refresh .ui-icon {
+    .warden-page .student-refresh .ui-icon{
         width: 17px;
         height: 17px;
     }
 
     /* Student rows: name + course on phones; room stays hidden to avoid crowding. */
-    .student-directory-row {
+    .warden-page .student-directory-row{
         min-height: 78px;
         grid-template-columns: 40px minmax(0, 1fr) auto;
         gap: 10px;
         padding: 11px 12px;
     }
 
-    .student-directory-row .mini-avatar {
+    .warden-page .student-directory-row .mini-avatar{
         width: 38px;
         height: 38px;
     }
 
-    .directory-student strong {
+    .warden-page .directory-student strong{
         font-size: 13px;
         line-height: 1.25;
     }
 
-    .directory-student span {
+    .warden-page .directory-student span{
         margin-top: 4px;
         font-size: 9px;
         line-height: 1.3;
     }
 
-    .directory-detail strong {
+    .warden-page .directory-detail strong{
         font-size: 11px;
         line-height: 1.25;
     }
 
-    .directory-detail span {
+    .warden-page .directory-detail span{
         margin-top: 3px;
         font-size: 9px;
         line-height: 1.3;
     }
 
-    .directory-detail:last-child {
+    .warden-page .directory-detail:last-child{
         display: none;
     }
 
     /* Bottom navigation: same compact visual language as Parent/Student. */
-    .mobile-bottom-nav {
+    .warden-page .warden-mobile-bottom-nav{
         height: 66px;
         grid-template-columns: repeat(5, 1fr);
         padding: 5px 10px env(safe-area-inset-bottom);
     }
 
-    .mobile-nav-item {
+    .warden-page .warden-mobile-nav-item{
         height: 54px;
         gap: 4px;
         padding: 4px 2px;
         border-radius: 10px;
     }
 
-    .mobile-nav-item .ui-icon {
+    .warden-page .warden-mobile-nav-item .ui-icon{
         width: 18px;
         height: 18px;
     }
 
-    .mobile-nav-item span {
+    .warden-page .warden-mobile-nav-item span{
         font-size: 10px;
         line-height: 1.1;
     }
 }
 
 @media (max-width: 380px) {
-    .parent-content {
+    .warden-page .warden-content{
         padding-left: 10px;
         padding-right: 10px;
     }
 
-    .parent-hero h1 {
+    .warden-page .warden-hero h1{
         font-size: 24px;
     }
 
-    .stats-grid {
+    .warden-page .stats-grid{
         gap: 5px;
     }
 
-    .stat-card {
+    .warden-page .stat-card{
         min-height: 72px;
         padding: 7px 3px;
     }
 
-    .stat-icon {
+    .warden-page .stat-icon{
         width: 30px;
         height: 30px;
         flex-basis: 30px;
     }
 
-    .stat-card strong {
+    .warden-page .stat-card strong{
         font-size: 17px;
     }
 
-    .stat-card span {
+    .warden-page .stat-card span{
         font-size: 7px;
     }
 
-    .pending-request-row {
+    .warden-page .pending-request-row{
         grid-template-columns: 36px minmax(0, 1fr) 78px;
         column-gap: 8px;
         padding: 10px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         width: 78px;
         font-size: 9px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 11px;
     }
 }
@@ -2256,30 +2166,30 @@ input {
 @media (max-width: 700px) {
 
     /* ---------- Pending Requests ---------- */
-    .pending-request-section {
+    .warden-page .pending-request-section{
         padding: 18px;
     }
 
-    .pending-request-section .warden-section-header {
+    .warden-page .pending-request-section .warden-section-header{
         margin-bottom: 14px;
     }
 
-    .pending-request-section .warden-section-header h2 {
+    .warden-page .pending-request-section .warden-section-header h2{
         font-size: 21px;
         line-height: 1.2;
     }
 
-    .pending-request-section .warden-section-header p {
+    .warden-page .pending-request-section .warden-section-header p{
         margin-top: 6px;
         font-size: 12px;
         line-height: 1.45;
     }
 
-    .section-view-all {
+    .warden-page .section-view-all{
         font-size: 12px;
     }
 
-    .pending-request-row {
+    .warden-page .pending-request-row{
         min-height: 124px;
         grid-template-columns: 42px minmax(0, 1fr) 90px;
         grid-template-rows: auto auto auto;
@@ -2289,42 +2199,39 @@ input {
         border-radius: 13px;
     }
 
-    .pending-request-row .mini-avatar {
+    .warden-page .pending-request-row .mini-avatar{
         width: 40px;
         height: 40px;
         font-size: 12px;
     }
 
-    .pending-request-student strong {
+    .warden-page .pending-request-student strong{
         font-size: 15px;
         line-height: 1.25;
     }
 
-    .pending-request-student span {
+    .warden-page .pending-request-student span{
         margin-top: 4px;
         font-size: 10px;
         line-height: 1.35;
     }
 
-    .pending-request-date strong,
-    .pending-request-purpose strong {
+    .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
         font-size: 12px;
         line-height: 1.3;
     }
 
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         margin-left: 6px;
         font-size: 11px;
         line-height: 1.35;
     }
 
-    .pending-request-actions {
+    .warden-page .pending-request-actions{
         gap: 7px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         width: 90px;
         height: 39px;
         padding: 0 8px;
@@ -2332,34 +2239,33 @@ input {
         font-size: 11px;
     }
 
-    .row-approve-button .ui-icon,
-    .row-reject-button .ui-icon {
+    .warden-page .row-approve-button .ui-icon, .warden-page .row-reject-button .ui-icon{
         width: 13px;
         height: 13px;
     }
 
 
     /* ---------- Gate History ---------- */
-    .history-section {
+    .warden-page .history-section{
         padding: 18px;
     }
 
-    .history-section .warden-section-header {
+    .warden-page .history-section .warden-section-header{
         margin-bottom: 14px;
     }
 
-    .history-section .warden-section-header h2 {
+    .warden-page .history-section .warden-section-header h2{
         font-size: 21px;
         line-height: 1.2;
     }
 
-    .history-section .warden-section-header p {
+    .warden-page .history-section .warden-section-header p{
         margin-top: 6px;
         font-size: 12px;
         line-height: 1.45;
     }
 
-    .gate-row {
+    .warden-page .gate-row{
         min-height: 84px;
         grid-template-columns: 42px minmax(0, 1fr) auto;
         gap: 11px;
@@ -2367,24 +2273,24 @@ input {
         border-radius: 13px;
     }
 
-    .gate-row > .mini-avatar {
+    .warden-page .gate-row > .mini-avatar{
         width: 40px;
         height: 40px;
         font-size: 12px;
     }
 
-    .gate-student strong {
+    .warden-page .gate-student strong{
         font-size: 15px;
         line-height: 1.25;
     }
 
-    .gate-student span {
+    .warden-page .gate-student span{
         margin-top: 5px;
         font-size: 11px;
         line-height: 1.35;
     }
 
-    .gate-status {
+    .warden-page .gate-status{
         padding: 8px 11px;
         border-radius: 999px;
         font-size: 10px;
@@ -2393,51 +2299,51 @@ input {
 
 
     /* ---------- Students ---------- */
-    .students-directory-section {
+    .warden-page .students-directory-section{
         padding: 18px;
     }
 
-    .students-directory-section .warden-section-header {
+    .warden-page .students-directory-section .warden-section-header{
         margin-bottom: 14px;
     }
 
-    .students-directory-section .warden-section-header h2 {
+    .warden-page .students-directory-section .warden-section-header h2{
         font-size: 21px;
         line-height: 1.2;
     }
 
-    .students-directory-section .warden-section-header p {
+    .warden-page .students-directory-section .warden-section-header p{
         margin-top: 6px;
         font-size: 12px;
         line-height: 1.45;
     }
 
-    .students-toolbar {
+    .warden-page .students-toolbar{
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 8px;
         margin-bottom: 12px;
     }
 
-    .student-search-wrap {
+    .warden-page .student-search-wrap{
         min-height: 50px;
         padding: 0 13px;
         gap: 9px;
         border-radius: 11px;
     }
 
-    .student-search-wrap .ui-icon {
+    .warden-page .student-search-wrap .ui-icon{
         width: 18px;
         height: 18px;
         flex: 0 0 18px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         min-width: 0;
         font-size: 13px;
         line-height: 1.2;
     }
 
-    .student-refresh {
+    .warden-page .student-refresh{
         width: auto;
         min-width: 82px;
         min-height: 50px;
@@ -2446,52 +2352,52 @@ input {
         font-size: 12px;
     }
 
-    .student-refresh .ui-icon {
+    .warden-page .student-refresh .ui-icon{
         width: 17px;
         height: 17px;
     }
 
-    .student-directory-list {
+    .warden-page .student-directory-list{
         border-radius: 13px;
     }
 
-    .student-directory-row {
+    .warden-page .student-directory-row{
         min-height: 84px;
         grid-template-columns: 42px minmax(0, 1fr) auto;
         gap: 11px;
         padding: 13px 14px;
     }
 
-    .student-directory-row .mini-avatar {
+    .warden-page .student-directory-row .mini-avatar{
         width: 40px;
         height: 40px;
         font-size: 12px;
     }
 
-    .directory-student strong {
+    .warden-page .directory-student strong{
         font-size: 14px;
         line-height: 1.3;
     }
 
-    .directory-student span {
+    .warden-page .directory-student span{
         margin-top: 4px;
         font-size: 10px;
         line-height: 1.3;
     }
 
-    .directory-detail strong {
+    .warden-page .directory-detail strong{
         font-size: 12px;
         line-height: 1.3;
     }
 
-    .directory-detail span {
+    .warden-page .directory-detail span{
         margin-top: 3px;
         font-size: 10px;
         line-height: 1.3;
     }
 
     /* Keep Course visible; Room is hidden on phones to avoid crowding. */
-    .directory-detail:last-child {
+    .warden-page .directory-detail:last-child{
         display: none;
     }
 }
@@ -2500,87 +2406,78 @@ input {
 /* Small phones: preserve the same hierarchy without overflow. */
 @media (max-width: 380px) {
 
-    .pending-request-section,
-    .history-section,
-    .students-directory-section {
+    .warden-page .pending-request-section, .warden-page .history-section, .warden-page .students-directory-section{
         padding: 15px;
     }
 
-    .pending-request-row {
+    .warden-page .pending-request-row{
         min-height: 118px;
         grid-template-columns: 38px minmax(0, 1fr) 82px;
         column-gap: 9px;
         padding: 12px;
     }
 
-    .pending-request-row .mini-avatar,
-    .gate-row > .mini-avatar,
-    .student-directory-row .mini-avatar {
+    .warden-page .pending-request-row .mini-avatar, .warden-page .gate-row > .mini-avatar, .warden-page .student-directory-row .mini-avatar{
         width: 36px;
         height: 36px;
     }
 
-    .pending-request-student strong,
-    .gate-student strong {
+    .warden-page .pending-request-student strong, .warden-page .gate-student strong{
         font-size: 14px;
     }
 
-    .pending-request-student span,
-    .gate-student span {
+    .warden-page .pending-request-student span, .warden-page .gate-student span{
         font-size: 9px;
     }
 
-    .pending-request-date strong,
-    .pending-request-purpose strong {
+    .warden-page .pending-request-date strong, .warden-page .pending-request-purpose strong{
         font-size: 11px;
     }
 
-    .pending-request-date span,
-    .pending-request-purpose span {
+    .warden-page .pending-request-date span, .warden-page .pending-request-purpose span{
         font-size: 10px;
     }
 
-    .row-approve-button,
-    .row-reject-button {
+    .warden-page .row-approve-button, .warden-page .row-reject-button{
         width: 82px;
         height: 37px;
         font-size: 10px;
     }
 
-    .gate-row {
+    .warden-page .gate-row{
         min-height: 78px;
         grid-template-columns: 38px minmax(0, 1fr) auto;
         gap: 9px;
         padding: 11px;
     }
 
-    .gate-status {
+    .warden-page .gate-status{
         padding: 7px 9px;
         font-size: 9px;
     }
 
-    .student-search-wrap input {
+    .warden-page .student-search-wrap input{
         font-size: 12px;
     }
 
-    .student-refresh {
+    .warden-page .student-refresh{
         min-width: 76px;
         padding: 0 11px;
         font-size: 11px;
     }
 
-    .student-directory-row {
+    .warden-page .student-directory-row{
         min-height: 78px;
         grid-template-columns: 38px minmax(0, 1fr) auto;
         gap: 9px;
         padding: 11px;
     }
 
-    .directory-student strong {
+    .warden-page .directory-student strong{
         font-size: 13px;
     }
 
-    .directory-detail strong {
+    .warden-page .directory-detail strong{
         font-size: 11px;
     }
 }
@@ -2591,7 +2488,7 @@ input {
 
 @media (max-width: 700px) {
 
-    .history-section .gate-row {
+    .warden-page .history-section .gate-row{
         min-height: 132px;
         display: grid;
         grid-template-columns: 40px minmax(0, 1fr) auto;
@@ -2603,7 +2500,7 @@ input {
     }
 
     /* Avatar */
-    .history-section .gate-row > .mini-avatar {
+    .warden-page .history-section .gate-row > .mini-avatar{
         grid-column: 1;
         grid-row: 1;
         width: 40px;
@@ -2611,14 +2508,14 @@ input {
     }
 
     /* Student */
-    .history-section .gate-student {
+    .warden-page .history-section .gate-student{
         grid-column: 2;
         grid-row: 1;
         min-width: 0;
         align-self: center;
     }
 
-    .history-section .gate-student strong {
+    .warden-page .history-section .gate-student strong{
         display: block;
         font-size: 15px;
         line-height: 1.2;
@@ -2627,7 +2524,7 @@ input {
         text-overflow: ellipsis;
     }
 
-    .history-section .gate-student span {
+    .warden-page .history-section .gate-student span{
         display: block;
         margin-top: 5px;
         font-size: 10px;
@@ -2636,7 +2533,7 @@ input {
     }
 
     /* Status */
-    .history-section .gate-status {
+    .warden-page .history-section .gate-status{
         grid-column: 3;
         grid-row: 1;
         align-self: center;
@@ -2647,21 +2544,20 @@ input {
     }
 
     /* OUT — third div */
-    .history-section .gate-row > div:nth-of-type(3) {
+    .warden-page .history-section .gate-row > div:nth-of-type(3){
         grid-column: 2;
         grid-row: 2;
         min-width: 0;
     }
 
     /* IN — fourth div */
-    .history-section .gate-row > div:nth-of-type(4) {
+    .warden-page .history-section .gate-row > div:nth-of-type(4){
         grid-column: 3;
         grid-row: 2;
         min-width: 0;
     }
 
-    .history-section .gate-row > div:nth-of-type(3) > span,
-    .history-section .gate-row > div:nth-of-type(4) > span {
+    .warden-page .history-section .gate-row > div:nth-of-type(3) > span, .warden-page .history-section .gate-row > div:nth-of-type(4) > span{
         display: block;
         margin: 0 0 4px;
         color: #71838d;
@@ -2670,8 +2566,7 @@ input {
         letter-spacing: .6px;
     }
 
-    .history-section .gate-row > div:nth-of-type(3) > strong,
-    .history-section .gate-row > div:nth-of-type(4) > strong {
+    .warden-page .history-section .gate-row > div:nth-of-type(3) > strong, .warden-page .history-section .gate-row > div:nth-of-type(4) > strong{
         display: block;
         color: var(--navy);
         font-size: 11px;
@@ -2682,7 +2577,7 @@ input {
 
 @media (max-width: 380px) {
 
-    .history-section .gate-row {
+    .warden-page .history-section .gate-row{
         min-height: 126px;
         grid-template-columns: 36px minmax(0, 1fr) auto;
         column-gap: 9px;
@@ -2690,37 +2585,36 @@ input {
         padding: 12px;
     }
 
-    .history-section .gate-row > .mini-avatar {
+    .warden-page .history-section .gate-row > .mini-avatar{
         width: 36px;
         height: 36px;
     }
 
-    .history-section .gate-student strong {
+    .warden-page .history-section .gate-student strong{
         font-size: 14px;
     }
 
-    .history-section .gate-student span {
+    .warden-page .history-section .gate-student span{
         font-size: 9px;
     }
 
-    .history-section .gate-status {
+    .warden-page .history-section .gate-status{
         padding: 7px 9px;
         font-size: 9px;
     }
 
-    .history-section .gate-row > div:nth-of-type(3) > strong,
-    .history-section .gate-row > div:nth-of-type(4) > strong {
+    .warden-page .history-section .gate-row > div:nth-of-type(3) > strong, .warden-page .history-section .gate-row > div:nth-of-type(4) > strong{
         font-size: 10px;
     }
 }
 
-.mobile-bottom-nav {
+.warden-page .warden-mobile-bottom-nav{
     display: none;
 }
 
 @media (max-width: 700px) {
 
-    .mobile-bottom-nav {
+    .warden-page .warden-mobile-bottom-nav{
         position: fixed;
         left: 0;
         right: 0;
@@ -2741,7 +2635,7 @@ input {
         backdrop-filter: blur(14px);
     }
 
-    .mobile-bottom-nav .mobile-nav-item {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-item{
         min-width: 0;
         width: 100%;
         height: 54px;
@@ -2764,13 +2658,13 @@ input {
         cursor: pointer;
     }
 
-    .mobile-bottom-nav .mobile-nav-item .ui-icon {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-item .ui-icon{
         width: 18px;
         height: 18px;
         flex: 0 0 18px;
     }
 
-    .mobile-bottom-nav .mobile-nav-item span {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-item span{
         display: block !important;
 
         font-size: 10px;
@@ -2779,25 +2673,25 @@ input {
         white-space: nowrap;
     }
 
-    .mobile-bottom-nav .mobile-nav-item.active {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-item.active{
         background: #edf8f4;
         color: var(--green-dark);
         font-weight: 700;
     }
 
-    .mobile-bottom-nav .mobile-nav-logout {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-logout{
         color: #71838d;
     }
 }
 
 @media (max-width: 380px) {
 
-    .mobile-bottom-nav {
+    .warden-page .warden-mobile-bottom-nav{
         padding-left: 5px;
         padding-right: 5px;
     }
 
-    .mobile-bottom-nav .mobile-nav-item span {
+    .warden-page .warden-mobile-bottom-nav .warden-mobile-nav-item span{
         font-size: 9px;
     }
 }
@@ -2808,15 +2702,15 @@ input {
    ========================================================= */
 
 @media (max-width: 700px) {
-    .parent-page {
+    .warden-page{
         padding-bottom: 80px !important;
     }
 
-    .parent-topbar .topbar-actions {
+    .warden-page .warden-topbar .topbar-actions{
         display: none !important;
     }
 
-    .mobile-bottom-nav {
+    .warden-page .warden-mobile-bottom-nav{
         position: fixed !important;
         left: 0 !important;
         right: 0 !important;
@@ -2832,7 +2726,7 @@ input {
         border-top: 1px solid var(--border) !important;
     }
 
-    .mobile-bottom-nav > .mobile-nav-item {
+    .warden-page .warden-mobile-bottom-nav > .warden-mobile-nav-item{
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -2852,7 +2746,7 @@ input {
         cursor: pointer !important;
     }
 
-    .mobile-bottom-nav > .mobile-nav-item .ui-icon {
+    .warden-page .warden-mobile-bottom-nav > .warden-mobile-nav-item .ui-icon{
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -2861,7 +2755,7 @@ input {
         flex: 0 0 18px !important;
     }
 
-    .mobile-bottom-nav > .mobile-nav-item span {
+    .warden-page .warden-mobile-bottom-nav > .warden-mobile-nav-item span{
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -2870,13 +2764,13 @@ input {
         white-space: nowrap !important;
     }
 
-    .mobile-bottom-nav > .mobile-nav-item.active {
+    .warden-page .warden-mobile-bottom-nav > .warden-mobile-nav-item.active{
         background: #edf8f4 !important;
         color: var(--green-dark) !important;
         font-weight: 700 !important;
     }
 
-    .mobile-bottom-nav > .mobile-nav-logout {
+    .warden-page .warden-mobile-bottom-nav > .warden-mobile-nav-logout{
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -2884,8 +2778,7 @@ input {
         color: #71838d !important;
     }
 
-    .mobile-bottom-nav > .mobile-nav-logout span,
-    .mobile-bottom-nav > .mobile-nav-logout .ui-icon {
+    .warden-page .warden-mobile-bottom-nav > .warden-mobile-nav-logout span, .warden-page .warden-mobile-bottom-nav > .warden-mobile-nav-logout .ui-icon{
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -2893,12 +2786,12 @@ input {
 }
 
 @media (max-width: 380px) {
-    .mobile-bottom-nav {
+    .warden-page .warden-mobile-bottom-nav{
         padding-left: 5px !important;
         padding-right: 5px !important;
     }
 
-    .mobile-bottom-nav > .mobile-nav-item span {
+    .warden-page .warden-mobile-bottom-nav > .warden-mobile-nav-item span{
         font-size: 9px !important;
     }
 }
@@ -2910,7 +2803,7 @@ input {
 
 @media (max-width: 700px) {
 
-    .parent-page > .mobile-bottom-nav {
+    .warden-page > .warden-mobile-bottom-nav{
         position: fixed !important;
         left: 0 !important;
         right: 0 !important;
@@ -2936,7 +2829,7 @@ input {
         overflow: visible !important;
     }
 
-    .parent-page > .mobile-bottom-nav > button {
+    .warden-page > .warden-mobile-bottom-nav > button{
         position: relative !important;
 
         display: flex !important;
@@ -2965,7 +2858,7 @@ input {
         overflow: visible !important;
     }
 
-    .parent-page > .mobile-bottom-nav > button span {
+    .warden-page > .warden-mobile-bottom-nav > button span{
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -2981,7 +2874,7 @@ input {
         white-space: nowrap !important;
     }
 
-    .parent-page > .mobile-bottom-nav > button .ui-icon {
+    .warden-page > .warden-mobile-bottom-nav > button .ui-icon{
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -2991,7 +2884,7 @@ input {
     }
 
     /* FORCE THE 5TH BUTTON / LOGOUT TO EXIST VISUALLY */
-    .parent-page > .mobile-bottom-nav > button:nth-child(5) {
+    .warden-page > .warden-mobile-bottom-nav > button:nth-child(5){
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
@@ -3002,20 +2895,20 @@ input {
         color: #71838d !important;
     }
 
-    .parent-page > .mobile-bottom-nav > button:nth-child(5) span {
+    .warden-page > .warden-mobile-bottom-nav > button:nth-child(5) span{
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
         color: #71838d !important;
     }
 
-    .parent-page > .mobile-bottom-nav > button:nth-child(5) .ui-icon {
+    .warden-page > .warden-mobile-bottom-nav > button:nth-child(5) .ui-icon{
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
     }
 
-    .parent-page > .mobile-bottom-nav > button.active {
+    .warden-page > .warden-mobile-bottom-nav > button.active{
         background: #edf8f4 !important;
         color: #006f5d !important;
         font-weight: 700 !important;
@@ -3024,12 +2917,12 @@ input {
 
 @media (max-width: 380px) {
 
-    .parent-page > .mobile-bottom-nav {
+    .warden-page > .warden-mobile-bottom-nav{
         padding-left: 5px !important;
         padding-right: 5px !important;
     }
 
-    .parent-page > .mobile-bottom-nav > button span {
+    .warden-page > .warden-mobile-bottom-nav > button span{
         font-size: 9px !important;
     }
 }
@@ -3042,7 +2935,7 @@ input {
 
 @media (max-width: 700px) {
 
-    .parent-page > .mobile-bottom-nav {
+    .warden-page > .warden-mobile-bottom-nav{
         position: fixed !important;
 
         left: 0 !important;
@@ -3087,7 +2980,7 @@ input {
 
 
     /* EVERY NAV BUTTON */
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item{
         position: static !important;
 
         grid-row: 1 !important;
@@ -3134,30 +3027,30 @@ input {
 
     /* EXPLICIT COLUMN ASSIGNMENT */
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item:nth-child(1) {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item:nth-child(1){
         grid-column: 1 !important;
     }
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item:nth-child(2) {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item:nth-child(2){
         grid-column: 2 !important;
     }
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item:nth-child(3) {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item:nth-child(3){
         grid-column: 3 !important;
     }
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item:nth-child(4) {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item:nth-child(4){
         grid-column: 4 !important;
     }
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item:nth-child(5) {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item:nth-child(5){
         grid-column: 5 !important;
     }
 
 
     /* ICONS */
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item > .ui-icon {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item > .ui-icon{
         display: block !important;
 
         width: 18px !important;
@@ -3182,7 +3075,7 @@ input {
 
     /* LABELS */
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item > span {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item > span{
         display: block !important;
 
         width: auto !important;
@@ -3214,7 +3107,7 @@ input {
 
     /* ACTIVE HOME */
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item.active {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item.active{
         background: #edf8f4 !important;
         color: #006f5d !important;
         font-weight: 700 !important;
@@ -3223,7 +3116,7 @@ input {
 
     /* LOGOUT */
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-logout {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-logout{
         grid-column: 5 !important;
         grid-row: 1 !important;
 
@@ -3237,7 +3130,7 @@ input {
 
 @media (max-width: 380px) {
 
-    .parent-page > .mobile-bottom-nav {
+    .warden-page > .warden-mobile-bottom-nav{
         height: 62px !important;
 
         grid-template-rows: 1fr !important;
@@ -3246,11 +3139,11 @@ input {
         padding-right: 2px !important;
     }
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item{
         height: 58px !important;
     }
 
-    .parent-page > .mobile-bottom-nav > .mobile-nav-item > span {
+    .warden-page > .warden-mobile-bottom-nav > .warden-mobile-nav-item > span{
         font-size: 9px !important;
         line-height: 11px !important;
     }
