@@ -51,7 +51,6 @@ function GateConfirmation() {
                 return;
             }
 
-            console.log("Gate status:", data);
             setAction(data.action);
             setLoading(false);
         } catch (error) {
@@ -80,8 +79,6 @@ function GateConfirmation() {
             );
 
             const data = await response.json();
-
-            console.log("Gate confirmation:", data);
 
             if (!response.ok) {
                 setError(
@@ -118,8 +115,7 @@ function GateConfirmation() {
                     <div className="gate-icon">🔄</div>
                     <h1>Verifying Outpass</h1>
                     <p>
-                        Please wait while we verify
-                        your outpass.
+                        Please wait while we verify your outpass.
                     </p>
                 </div>
             </div>
@@ -148,7 +144,7 @@ function GateConfirmation() {
         return (
             <div className="gate-page">
                 <div className="gate-card state-card">
-                    <div className="gate-icon success">✅</div>
+                    <div className="gate-icon success">✓</div>
 
                     <h1>
                         {action === "exit"
@@ -167,8 +163,7 @@ function GateConfirmation() {
                     </div>
 
                     <p className="small-text">
-                        Your gate record has been
-                        updated successfully.
+                        Your gate record has been updated successfully.
                     </p>
                 </div>
             </div>
@@ -179,39 +174,13 @@ function GateConfirmation() {
         <div className="gate-page">
             <div className="gate-shell">
 
-                {/* E-OUTPASS BRAND HEADER */}
                 <header className="gate-header">
-                    <div className="gate-brand">
-                        <div className="gate-brand-mark">🎓</div>
-
-                        <div className="gate-brand-copy">
-                            <h1>E-Outpass</h1>
-                            <p>Safer Campuses. Brighter Tomorrows.</p>
-                        </div>
-                    </div>
-
-                    <div className="gate-header-badge">
-                        <span className="badge-icon">🛡️</span>
-                        <span>MAIN GATE</span>
-                        <strong>Verification</strong>
+                    <div className="gate-brand-copy">
+                        <h1>E Outpass</h1>
+                        <p>Safer Campuses. Brighter Tomorrows.</p>
                     </div>
                 </header>
 
-                <section className="gate-intro">
-                    <span className="gate-intro-eyebrow">GATE VERIFICATION</span>
-                    <h2>
-                        {action === "return"
-                            ? "Confirm Student Return"
-                            : "Confirm Student Exit"}
-                    </h2>
-                    <p>
-                        {action === "return"
-                            ? "Verify and record student return at the main gate."
-                            : "Verify and record student exit at the main gate."}
-                    </p>
-                </section>
-
-                {/* CONFIRMATION CARD */}
                 <main className="gate-card confirmation-card">
 
                     {action === "exit" && (
@@ -220,13 +189,7 @@ function GateConfirmation() {
                                 🚪
                             </div>
 
-                            <span className="gate-eyebrow">
-                                OUTPASS ACTION
-                            </span>
-
-                            <h2>
-                                Confirm Exit?
-                            </h2>
+                            <h2>Confirm Exit?</h2>
 
                             <p className="gate-description">
                                 You are about to leave the campus.
@@ -250,13 +213,7 @@ function GateConfirmation() {
                                 🏫
                             </div>
 
-                            <span className="gate-eyebrow">
-                                OUTPASS ACTION
-                            </span>
-
-                            <h2>
-                                Confirm Return?
-                            </h2>
+                            <h2>Confirm Return?</h2>
 
                             <p className="gate-description">
                                 You are confirming your return to campus.
@@ -295,10 +252,7 @@ function GateConfirmation() {
                             onClick={handleConfirm}
                             disabled={confirming}
                         >
-                            {confirming
-                                ? "Confirming..."
-                                : "Confirm"
-                            }
+                            {confirming ? "Confirming..." : "Confirm →"}
                         </button>
                     </div>
 
