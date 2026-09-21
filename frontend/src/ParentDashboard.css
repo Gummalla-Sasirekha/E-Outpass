@@ -1656,9 +1656,9 @@
   }
 
   .mobile-bottom-nav {
-    padding-left: 5px;
+    padding-left: 0;
 
-    padding-right: 5px;
+    padding-right: 0;
   }
 
   .mobile-nav-item span {
@@ -1707,35 +1707,6 @@
   margin-top: 8px;
 }
 
-/* Mobile: exactly Home | History | Logout */
-@media (max-width: 700px) {
-  .mobile-bottom-nav {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-
-  .mobile-bottom-nav button {
-    min-width: 0;
-    width: 100%;
-  }
-
-  .mobile-bottom-nav span,
-  .mobile-bottom-nav small {
-    font-size: 10px;
-  }
-
-  .form-card {
-    margin-top: 18px;
-  }
-
-  .form-actions {
-    flex-direction: column-reverse;
-  }
-
-  .form-actions button {
-    width: 100%;
-  }
-}
-
 
 /* =========================================================
    E OUTPASS — PARENT DASHBOARD FINAL POLISH
@@ -1777,70 +1748,6 @@
   min-height: 48px;
 }
 
-/* Mobile bottom navigation: ONLY Home | History | Logout */
-@media (max-width: 700px) {
-  .mobile-bottom-nav {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-
-  .mobile-bottom-nav button {
-    min-width: 0;
-    width: 100%;
-  }
-
-  .mobile-bottom-nav span,
-  .mobile-bottom-nav small {
-    font-size: 10px;
-  }
-
-  .mobile-bottom-nav {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .form-card {
-    margin-top: 18px;
-  }
-
-  .form-card-header {
-    gap: 12px;
-  }
-
-  .form-actions {
-    flex-direction: column-reverse;
-  }
-
-  .form-actions button {
-    width: 100%;
-  }
-}
-
-/* =========================================================
-   FINAL NAVIGATION / SCROLL POLISH
-   ========================================================= */
-
-#parent-dashboard-top,
-#my-child-section,
-#request-outpass-form,
-#outpass-history-section {
-  scroll-margin-top: 82px;
-}
-
-/* Mobile navigation is exactly:
-   Home | History | Logout
-*/
-@media (max-width: 700px) {
-  .mobile-bottom-nav {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-
-  .mobile-bottom-nav button {
-    min-width: 0;
-    width: 100%;
-  }
-}
-
 
 /* =========================================================
    NAVIGATION / SCROLL POLISH
@@ -1851,18 +1758,6 @@
 #request-outpass-form,
 #outpass-history-section {
   scroll-margin-top: 82px;
-}
-
-@media (max-width: 700px) {
-  .mobile-bottom-nav {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-
-  .mobile-bottom-nav button {
-    min-width: 0;
-    width: 100%;
-  }
 }
 
 
