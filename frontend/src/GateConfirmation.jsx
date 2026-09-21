@@ -201,8 +201,10 @@ function GateConfirmation() {
                             </div>
 
                             <p className="warning-text">
-                                By confirming, your campus exit
-                                will be recorded.
+                                <span className="warning-mark">!</span>
+                                <span>
+                                    By confirming, your campus exit will be recorded.
+                                </span>
                             </p>
                         </>
                     )}
@@ -225,9 +227,11 @@ function GateConfirmation() {
                             </div>
 
                             <p className="warning-text">
-                                By confirming, your campus return
-                                will be recorded and the outpass
-                                will be completed.
+                                <span className="warning-mark">!</span>
+                                <span>
+                                    By confirming, your campus return will be recorded
+                                    and the outpass will be completed.
+                                </span>
                             </p>
                         </>
                     )}
