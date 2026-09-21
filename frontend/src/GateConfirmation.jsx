@@ -186,15 +186,30 @@ function GateConfirmation() {
 
                         <div className="gate-brand-copy">
                             <h1>E-Outpass</h1>
-                            <p>Safe Campus • Smart Verification</p>
+                            <p>Safer Campuses. Brighter Tomorrows.</p>
                         </div>
                     </div>
 
                     <div className="gate-header-badge">
+                        <span className="badge-icon">🛡️</span>
                         <span>MAIN GATE</span>
                         <strong>Verification</strong>
                     </div>
                 </header>
+
+                <section className="gate-intro">
+                    <span className="gate-intro-eyebrow">GATE VERIFICATION</span>
+                    <h2>
+                        {action === "return"
+                            ? "Confirm Student Return"
+                            : "Confirm Student Exit"}
+                    </h2>
+                    <p>
+                        {action === "return"
+                            ? "Verify and record student return at the main gate."
+                            : "Verify and record student exit at the main gate."}
+                    </p>
+                </section>
 
                 {/* CONFIRMATION CARD */}
                 <main className="gate-card confirmation-card">
@@ -287,9 +302,6 @@ function GateConfirmation() {
                         </button>
                     </div>
 
-                    <p className="gate-secure-note">
-                        🔒 Secure gate verification
-                    </p>
                 </main>
             </div>
         </div>
