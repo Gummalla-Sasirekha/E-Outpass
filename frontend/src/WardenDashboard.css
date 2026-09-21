@@ -3149,3 +3149,213 @@
     }
 
 }
+
+/* =========================================================
+   WARDEN REJECT MODAL
+   Fully scoped so Parent/Student modal styles cannot affect it.
+   ========================================================= */
+.warden-page .reject-modal-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 1000000 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    background: rgba(9, 45, 73, 0.42) !important;
+    box-sizing: border-box !important;
+}
+
+.warden-page .reject-modal {
+    position: relative !important;
+    width: min(460px, 100%) !important;
+    max-width: 460px !important;
+    max-height: min(90vh, 620px) !important;
+    overflow-y: auto !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+    border: 1px solid #dbe9e5 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 24px 70px rgba(9, 45, 73, 0.20) !important;
+    color: #163d57 !important;
+}
+
+.warden-page .reject-modal .modal-header {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+    margin: 0 0 14px !important;
+}
+
+.warden-page .reject-modal .modal-header span {
+    display: block !important;
+    margin: 0 0 6px !important;
+    color: #b0812d !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1.7px !important;
+}
+
+.warden-page .reject-modal .modal-header h2 {
+    margin: 0 !important;
+    color: #092d49 !important;
+    font-size: 24px !important;
+    line-height: 1.15 !important;
+}
+
+.warden-page .reject-modal .close-modal {
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: grid !important;
+    place-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid #cfded9 !important;
+    border-radius: 9px !important;
+    background: #ffffff !important;
+    color: #526c78 !important;
+    cursor: pointer !important;
+}
+
+.warden-page .reject-modal .modal-description {
+    margin: 0 0 18px !important;
+    color: #6c818d !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+}
+
+.warden-page .reject-modal .modal-label {
+    display: block !important;
+    margin: 0 0 7px !important;
+    color: #163d57 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+}
+
+.warden-page .reject-modal textarea {
+    display: block !important;
+    width: 100% !important;
+    min-height: 110px !important;
+    max-height: 220px !important;
+    margin: 0 !important;
+    padding: 11px 12px !important;
+    box-sizing: border-box !important;
+    resize: vertical !important;
+    border: 1px solid #cfded9 !important;
+    border-radius: 10px !important;
+    outline: none !important;
+    background: #ffffff !important;
+    color: #163d57 !important;
+    font: inherit !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+}
+
+.warden-page .reject-modal textarea:focus {
+    border-color: #008f73 !important;
+    box-shadow: 0 0 0 3px rgba(0, 143, 115, 0.10) !important;
+}
+
+.warden-page .reject-modal .modal-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 9px !important;
+    margin: 16px 0 0 !important;
+}
+
+.warden-page .reject-modal .cancel-reject,
+.warden-page .reject-modal .confirm-reject {
+    min-height: 40px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 15px !important;
+    border-radius: 9px !important;
+    font: inherit !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+}
+
+.warden-page .reject-modal .cancel-reject {
+    border: 1px solid #cfded9 !important;
+    background: #ffffff !important;
+    color: #526c78 !important;
+}
+
+.warden-page .reject-modal .confirm-reject {
+    border: 1px solid #008f73 !important;
+    background: #008f73 !important;
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   WARDEN MOBILE REFINEMENT
+   ========================================================= */
+@media (max-width: 700px) {
+    .warden-page .warden-content {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 20px 16px 88px !important;
+        box-sizing: border-box !important;
+    }
+
+    .warden-page .warden-main {
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+    }
+
+    .warden-page .warden-topbar {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .warden-page .reject-modal-overlay {
+        align-items: center !important;
+        padding: 16px !important;
+    }
+
+    .warden-page .reject-modal {
+        width: 100% !important;
+        max-width: 420px !important;
+        max-height: calc(100svh - 32px) !important;
+        padding: 20px !important;
+        border-radius: 16px !important;
+    }
+
+    .warden-page .reject-modal .modal-header h2 {
+        font-size: 22px !important;
+    }
+
+    .warden-page .reject-modal .modal-description {
+        font-size: 12px !important;
+    }
+
+    .warden-page .reject-modal .modal-actions {
+        display: grid !important;
+        grid-template-columns: 1fr 1.35fr !important;
+    }
+
+    .warden-page .reject-modal .cancel-reject,
+    .warden-page .reject-modal .confirm-reject {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .warden-page .reject-modal {
+        padding: 17px !important;
+    }
+
+    .warden-page .reject-modal .modal-header h2 {
+        font-size: 20px !important;
+    }
+}
