@@ -1554,7 +1554,7 @@
     display: grid;
 
     grid-template-columns:
-      repeat(3, 1fr);
+      repeat(3, minmax(0, 1fr));
 
     align-items: center;
 
@@ -1725,7 +1725,7 @@
 /* Mobile: exactly Home | History | Logout */
 @media (max-width: 700px) {
   .mobile-bottom-nav {
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) ;
   }
 
   .mobile-bottom-nav button {
@@ -1795,7 +1795,7 @@
 /* Mobile bottom navigation: ONLY Home | History | Logout */
 @media (max-width: 700px) {
   .mobile-bottom-nav {
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) ;
   }
 
   .mobile-bottom-nav button {
@@ -1847,7 +1847,7 @@
 @media (max-width: 700px) {
   .mobile-bottom-nav {
     display: grid;
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .mobile-bottom-nav button {
@@ -1871,7 +1871,7 @@
 @media (max-width: 700px) {
   .mobile-bottom-nav {
     display: grid;
-    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .mobile-bottom-nav button {
@@ -2693,4 +2693,67 @@
   .gate-pass-summary span {
     text-align: left;
   }
+}
+
+/* STUDENT MOBILE BOTTOM NAV FIX */
+@media (max-width: 700px) {
+    .student-page .mobile-bottom-nav {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 66px !important;
+
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+
+        align-items: center !important;
+
+        padding: 5px 10px !important;
+
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-top: 1px solid var(--border) !important;
+
+        z-index: 9999 !important;
+    }
+
+    .student-page .mobile-nav-item {
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 54px !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        gap: 4px !important;
+        padding: 4px 2px !important;
+        margin: 0 !important;
+
+        border: 0 !important;
+        border-radius: 10px !important;
+
+        background: transparent !important;
+        color: #71838d !important;
+    }
+
+    .student-page .mobile-nav-item span {
+        display: block !important;
+        font-size: 10px !important;
+        line-height: 1.1 !important;
+        white-space: nowrap !important;
+    }
+
+    .student-page .mobile-nav-item .ui-icon {
+        display: block !important;
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    .student-page .mobile-nav-item.active {
+        background: #edf8f4 !important;
+        color: var(--green-dark) !important;
+    }
 }
