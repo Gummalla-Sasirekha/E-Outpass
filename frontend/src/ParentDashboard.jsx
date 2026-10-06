@@ -135,13 +135,23 @@ function ParentDashboard() {
 
   const [parentUser, setParentUser] = useState(null);
 
-  /* REQUEST OUTPASS FORM */
+  /* =========================================================
+     REQUEST OUTPASS FORM
+     ========================================================= */
+
   const [showForm, setShowForm] = useState(false);
+
+  const [passType, setPassType] = useState("day");
+
   const [placeOfVisit, setPlaceOfVisit] = useState("");
   const [reason, setReason] = useState("");
+
   const [dateRequestedFor, setDateRequestedFor] = useState("");
+  const [returnDate, setReturnDate] = useState("");
+
   const [timeOfLeaving, setTimeOfLeaving] = useState("");
   const [expectedInTime, setExpectedInTime] = useState("");
+
   const [submitting, setSubmitting] = useState(false);
 
   /* =========================================================
@@ -257,6 +267,7 @@ function ParentDashboard() {
   const openRequestPage = () => {
     setMessage("");
     setError("");
+
     setShowForm(true);
 
     setTimeout(() => {
@@ -267,6 +278,49 @@ function ParentDashboard() {
           block: "start",
         });
     }, 100);
+  };
+
+  const handlePassTypeChange = (value) => {
+    setPassType(value);
+
+    /*
+      For a day outpass, return date is always
+      the same as the leaving date.
+    */
+    if (value === "day") {
+      setReturnDate(dateRequestedFor);
+    } else {
+      /*
+        Clear it when switching to long duration so
+        the parent explicitly selects the return date.
+      */
+      setReturnDate("");
+    }
+  };
+
+  const handleLeavingDateChange = (value) => {
+    setDateRequestedFor(value);
+
+    /*
+      Day pass automatically uses the same date
+      for return.
+    */
+    if (passType === "day") {
+      setReturnDate(value);
+    }
+
+    /*
+      If long-duration and an existing return date
+      becomes invalid, clear it.
+    */
+    if (
+      passType === "long_duration" &&
+      returnDate &&
+      value &&
+      returnDate < value
+    ) {
+      setReturnDate("");
+    }
   };
 
   const handleRequestSubmit = async (event) => {
@@ -290,6 +344,9 @@ function ParentDashboard() {
       return;
     }
 
+    /*
+      Basic validation
+    */
     if (
       !placeOfVisit.trim() ||
       !reason.trim() ||
@@ -301,12 +358,48 @@ function ParentDashboard() {
       return;
     }
 
+    /*
+      Long-duration pass must have a return date.
+    */
+    if (passType === "long_duration" && !returnDate) {
+      setError("Please select the return date.");
+      return;
+    }
+
+    /*
+      Day pass always returns on the same date.
+    */
+    if (passType === "day") {
+      if (returnDate !== dateRequestedFor) {
+        setReturnDate(dateRequestedFor);
+      }
+    }
+
+    /*
+      Long-duration return date must be after
+      the leaving date.
+    */
+    if (
+      passType === "long_duration" &&
+      returnDate <= dateRequestedFor
+    ) {
+      setError(
+        "For a long-duration pass, the return date must be after the leaving date."
+      );
+      return;
+    }
+
     try {
       setSubmitting(true);
       setMessage("");
       setError("");
 
       const token = localStorage.getItem("token");
+
+      const finalReturnDate =
+        passType === "day"
+          ? dateRequestedFor
+          : returnDate;
 
       const response = await fetch(
         `${API_URL}/api/outpass/request`,
@@ -320,9 +413,16 @@ function ParentDashboard() {
 
           body: JSON.stringify({
             studentId: student.studentId,
+
+            passType,
+
             placeOfVisit: placeOfVisit.trim(),
             reason: reason.trim(),
+
             dateRequestedFor,
+
+            returnDate: finalReturnDate,
+
             timeOfLeaving,
             expectedInTime,
           }),
@@ -342,9 +442,14 @@ function ParentDashboard() {
           "Outpass request submitted successfully."
       );
 
+      /*
+        Reset form
+      */
+      setPassType("day");
       setPlaceOfVisit("");
       setReason("");
       setDateRequestedFor("");
+      setReturnDate("");
       setTimeOfLeaving("");
       setExpectedInTime("");
 
@@ -834,6 +939,7 @@ function ParentDashboard() {
                 studentLoading
               }
             >
+
               <span>
                 Request Outpass
               </span>
@@ -842,6 +948,7 @@ function ParentDashboard() {
                 name="arrow"
                 size={18}
               />
+
             </button>
 
           </section>
@@ -889,6 +996,50 @@ function ParentDashboard() {
                 onSubmit={handleRequestSubmit}
               >
 
+                {/* =================================================
+                    PASS TYPE
+                    ================================================= */}
+
+                <div className="form-group">
+
+                  <label htmlFor="passType">
+                    Pass Type
+                  </label>
+
+                  <select
+                    id="passType"
+                    value={passType}
+                    onChange={(e) =>
+                      handlePassTypeChange(e.target.value)
+                    }
+                    required
+                    style={{
+                      width: "100%",
+                      height: "43px",
+                      border: "1px solid #d5e0dc",
+                      borderRadius: "9px",
+                      outline: "none",
+                      background: "#fbfdfc",
+                      color: "#102b3c",
+                      padding: "10px 12px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    <option value="day">
+                      Day Outpass
+                    </option>
+
+                    <option value="long_duration">
+                      Long-Duration Pass
+                    </option>
+                  </select>
+
+                </div>
+
+                {/* =================================================
+                    PLACE + LEAVING DATE
+                    ================================================= */}
+
                 <div className="form-row">
 
                   <div className="form-group">
@@ -913,7 +1064,7 @@ function ParentDashboard() {
                   <div className="form-group">
 
                     <label htmlFor="dateRequestedFor">
-                      Date
+                      Leaving Date
                     </label>
 
                     <input
@@ -921,7 +1072,9 @@ function ParentDashboard() {
                       type="date"
                       value={dateRequestedFor}
                       onChange={(e) =>
-                        setDateRequestedFor(e.target.value)
+                        handleLeavingDateChange(
+                          e.target.value
+                        )
                       }
                       required
                     />
@@ -929,6 +1082,10 @@ function ParentDashboard() {
                   </div>
 
                 </div>
+
+                {/* =================================================
+                    REASON
+                    ================================================= */}
 
                 <div className="form-group">
 
@@ -948,6 +1105,10 @@ function ParentDashboard() {
                   />
 
                 </div>
+
+                {/* =================================================
+                    LEAVING TIME + RETURN DATE
+                    ================================================= */}
 
                 <div className="form-row">
 
@@ -969,25 +1130,69 @@ function ParentDashboard() {
 
                   </div>
 
-                  <div className="form-group">
+                  {passType === "long_duration" ? (
+                    <div className="form-group">
 
-                    <label htmlFor="expectedInTime">
-                      Expected Return Time
-                    </label>
+                      <label htmlFor="returnDate">
+                        Return Date
+                      </label>
 
-                    <input
-                      id="expectedInTime"
-                      type="time"
-                      value={expectedInTime}
-                      onChange={(e) =>
-                        setExpectedInTime(e.target.value)
-                      }
-                      required
-                    />
+                      <input
+                        id="returnDate"
+                        type="date"
+                        value={returnDate}
+                        min={dateRequestedFor || undefined}
+                        onChange={(e) =>
+                          setReturnDate(e.target.value)
+                        }
+                        required
+                      />
 
-                  </div>
+                    </div>
+                  ) : (
+                    <div className="form-group">
+
+                      <label htmlFor="returnDate">
+                        Return Date
+                      </label>
+
+                      <input
+                        id="returnDate"
+                        type="date"
+                        value={dateRequestedFor}
+                        readOnly
+                      />
+
+                    </div>
+                  )}
 
                 </div>
+
+                {/* =================================================
+                    EXPECTED RETURN TIME
+                    ================================================= */}
+
+                <div className="form-group">
+
+                  <label htmlFor="expectedInTime">
+                    Expected Return Time
+                  </label>
+
+                  <input
+                    id="expectedInTime"
+                    type="time"
+                    value={expectedInTime}
+                    onChange={(e) =>
+                      setExpectedInTime(e.target.value)
+                    }
+                    required
+                  />
+
+                </div>
+
+                {/* =================================================
+                    ACTIONS
+                    ================================================= */}
 
                 <div className="form-actions">
 
@@ -1112,6 +1317,7 @@ function ParentDashboard() {
 
                 {recentOutpasses.map(
                   (outpass) => (
+
                     <div
                       className="recent-row"
                       key={outpass._id}
@@ -1120,10 +1326,12 @@ function ParentDashboard() {
                       <div className="destination-cell">
 
                         <span className="location-icon">
+
                           <Icon
                             name="location"
                             size={16}
                           />
+
                         </span>
 
                         <strong>
@@ -1136,7 +1344,10 @@ function ParentDashboard() {
                         {outpass.reason}
                       </span>
 
+                      {/* OUT DATE */}
+
                       <span>
+
                         {formatDate(
                           outpass.dateRequestedFor
                         )}
@@ -1144,19 +1355,27 @@ function ParentDashboard() {
                         <small>
                           {outpass.timeOfLeaving || "—"}
                         </small>
+
                       </span>
 
+                      {/* RETURN DATE */}
+
                       <span>
+
                         {outpass.expectedInTime
                           ? formatDate(
-                              outpass.dateRequestedFor
+                              outpass.returnDate ||
+                                outpass.dateRequestedFor
                             )
                           : "—"}
 
                         <small>
                           {outpass.expectedInTime || "—"}
                         </small>
+
                       </span>
+
+                      {/* STATUS */}
 
                       <span
                         className={statusClass(
@@ -1167,11 +1386,26 @@ function ParentDashboard() {
                       </span>
 
                       <span className="row-arrow">
+
                         <Icon
                           name="arrow"
                           size={16}
                         />
+
                       </span>
+
+                      {/* PASS TYPE */}
+
+                      {outpass.passType ===
+                        "long_duration" && (
+                        <div className="row-note approved-note">
+                          <span className="approved-dot">
+                            ↗
+                          </span>
+
+                          Long-duration pass
+                        </div>
+                      )}
 
                       {/* REJECTION */}
 

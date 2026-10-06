@@ -47,10 +47,42 @@ const outpassSchema = new mongoose.Schema(
             trim: true
         },
 
+        // =====================================================
+        // PASS TYPE
+        // =====================================================
+
+        passType: {
+            type: String,
+            enum: [
+                "day",
+                "long_duration"
+            ],
+            default: "day"
+        },
+
+        // =====================================================
+        // LEAVING DATE
+        // =====================================================
+
         dateRequestedFor: {
             type: Date,
             required: true
         },
+
+        // =====================================================
+        // RETURN DATE
+        // For day pass: same as dateRequestedFor
+        // For long-duration pass: future date
+        // =====================================================
+
+        returnDate: {
+            type: Date,
+            required: true
+        },
+
+        // =====================================================
+        // LEAVING / RETURN TIMES
+        // =====================================================
 
         timeOfLeaving: {
             type: String,
@@ -66,6 +98,7 @@ const outpassSchema = new mongoose.Schema(
 
         // =====================================================
         // DAY TYPE
+        // Based on the leaving date
         // =====================================================
 
         dayType: {
@@ -197,10 +230,16 @@ const outpassSchema = new mongoose.Schema(
         },
 
         // =====================================================
-        // QR CODE
+        // QR CODES
+        // Separate QR for exit and return
         // =====================================================
 
-        qrCode: {
+        exitQrCode: {
+            type: String,
+            default: null
+        },
+
+        returnQrCode: {
             type: String,
             default: null
         }

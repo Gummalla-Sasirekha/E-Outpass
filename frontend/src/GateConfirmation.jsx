@@ -13,7 +13,7 @@ function GateConfirmation() {
     const [error, setError] = useState("");
 
     // ======================================================
-    // GET OUTPASS ID FROM QR URL
+    // GET OUTPASS ID + ACTION FROM QR URL
     // ======================================================
 
     useEffect(() => {
@@ -27,31 +27,59 @@ function GateConfirmation() {
 
         if (
             gateIndex === -1 ||
-            !pathParts[gateIndex + 1]
+            !pathParts[gateIndex + 1] ||
+            !pathParts[gateIndex + 2]
         ) {
             setError("Invalid QR code.");
             setLoading(false);
             return;
         }
 
+        const qrAction =
+            pathParts[gateIndex + 1];
+
         const id =
             decodeURIComponent(
-                pathParts[gateIndex + 1]
+                pathParts[gateIndex + 2]
             );
 
-        setOutpassId(id);
+        // --------------------------------------------------
+        // ONLY EXIT OR RETURN QR IS VALID
+        // --------------------------------------------------
 
-        checkGateStatus(id);
+        if (
+            qrAction !== "exit" &&
+            qrAction !== "return"
+        ) {
+            setError("Invalid gate QR code.");
+            setLoading(false);
+            return;
+        }
+
+        setOutpassId(id);
+        setAction(qrAction);
+
+        // --------------------------------------------------
+        // VERIFY QR WITH BACKEND
+        // --------------------------------------------------
+
+        checkGateStatus(
+            id,
+            qrAction
+        );
     }, []);
 
     // ======================================================
     // CHECK PUBLIC GATE STATUS
     // ======================================================
 
-    const checkGateStatus = async (id) => {
+    const checkGateStatus = async (
+        id,
+        qrAction
+    ) => {
         try {
             const response = await fetch(
-                `${API_URL}/api/outpass/public-gate-status/${encodeURIComponent(id)}`,
+                `${API_URL}/api/outpass/public-gate-status/${qrAction}/${encodeURIComponent(id)}`,
                 {
                     method: "GET",
                     headers: {
@@ -69,15 +97,39 @@ function GateConfirmation() {
                     data.message ||
                     "Unable to verify this outpass."
                 );
-
                 setLoading(false);
                 return;
             }
 
-            setAction(data.action);
+            // --------------------------------------------------
+            // EXIT QR
+            // --------------------------------------------------
+
+            if (qrAction === "exit") {
+                if (data.action !== "exit") {
+                    setError(
+                        "This exit QR has already been used or the student is currently outside."
+                    );
+                    setLoading(false);
+                    return;
+                }
+            }
+
+            // --------------------------------------------------
+            // RETURN QR
+            // --------------------------------------------------
+
+            if (qrAction === "return") {
+                if (data.action !== "return") {
+                    setError(
+                        "This return QR cannot be used yet. The student must exit first."
+                    );
+                    setLoading(false);
+                    return;
+                }
+            }
 
             setLoading(false);
-
         } catch (error) {
             console.error(
                 "Public gate status error:",
@@ -109,7 +161,7 @@ function GateConfirmation() {
             setError("");
 
             const response = await fetch(
-                `${API_URL}/api/outpass/public-gate-confirm/${encodeURIComponent(outpassId)}`,
+                `${API_URL}/api/outpass/public-gate-confirm/${action}/${encodeURIComponent(outpassId)}`,
                 {
                     method: "POST",
                     headers: {
@@ -143,7 +195,6 @@ function GateConfirmation() {
             );
 
             setConfirming(false);
-
         } catch (error) {
             console.error(
                 "Public gate confirmation error:",
@@ -174,7 +225,6 @@ function GateConfirmation() {
         return (
             <div className="gate-page">
                 <div className="gate-card state-card">
-
                     <div className="gate-icon">
                         🔄
                     </div>
@@ -187,7 +237,6 @@ function GateConfirmation() {
                         Please wait while we
                         verify your outpass.
                     </p>
-
                 </div>
             </div>
         );
@@ -199,13 +248,11 @@ function GateConfirmation() {
 
     if (
         error &&
-        !action &&
-        !success
+        !action
     ) {
         return (
             <div className="gate-page">
                 <div className="gate-card state-card">
-
                     <div className="gate-icon error">
                         ❌
                     </div>
@@ -224,7 +271,6 @@ function GateConfirmation() {
                     >
                         Go Back
                     </button>
-
                 </div>
             </div>
         );
@@ -237,9 +283,7 @@ function GateConfirmation() {
     if (success) {
         return (
             <div className="gate-page">
-
                 <div className="gate-card state-card">
-
                     <div className="gate-icon success">
                         ✓
                     </div>
@@ -256,7 +300,6 @@ function GateConfirmation() {
                     </p>
 
                     <div className="gate-info">
-
                         <strong>
                             Outpass ID
                         </strong>
@@ -264,16 +307,13 @@ function GateConfirmation() {
                         <span>
                             {outpassId}
                         </span>
-
                     </div>
 
                     <p className="small-text">
                         Your gate record has been
                         updated successfully.
                     </p>
-
                 </div>
-
             </div>
         );
     }
@@ -284,13 +324,9 @@ function GateConfirmation() {
 
     return (
         <div className="gate-page">
-
             <div className="gate-shell">
-
                 <header className="gate-header">
-
                     <div className="gate-brand-copy">
-
                         <h1>
                             E Outpass
                         </h1>
@@ -299,12 +335,14 @@ function GateConfirmation() {
                             Safer Campuses.
                             Brighter Tomorrows.
                         </p>
-
                     </div>
-
                 </header>
 
                 <main className="gate-card confirmation-card">
+
+                    {/* ==================================================
+                        EXIT CONFIRMATION
+                    ================================================== */}
 
                     {action === "exit" && (
                         <>
@@ -322,7 +360,6 @@ function GateConfirmation() {
                             </p>
 
                             <div className="gate-info">
-
                                 <strong>
                                     Outpass ID
                                 </strong>
@@ -330,11 +367,9 @@ function GateConfirmation() {
                                 <span>
                                     {outpassId}
                                 </span>
-
                             </div>
 
                             <p className="warning-text">
-
                                 <span className="warning-mark">
                                     !
                                 </span>
@@ -344,10 +379,13 @@ function GateConfirmation() {
                                     your campus exit
                                     will be recorded.
                                 </span>
-
                             </p>
                         </>
                     )}
+
+                    {/* ==================================================
+                        RETURN CONFIRMATION
+                    ================================================== */}
 
                     {action === "return" && (
                         <>
@@ -365,7 +403,6 @@ function GateConfirmation() {
                             </p>
 
                             <div className="gate-info">
-
                                 <strong>
                                     Outpass ID
                                 </strong>
@@ -373,11 +410,9 @@ function GateConfirmation() {
                                 <span>
                                     {outpassId}
                                 </span>
-
                             </div>
 
                             <p className="warning-text">
-
                                 <span className="warning-mark">
                                     !
                                 </span>
@@ -389,7 +424,6 @@ function GateConfirmation() {
                                     the outpass will be
                                     completed.
                                 </span>
-
                             </p>
                         </>
                     )}
@@ -401,7 +435,6 @@ function GateConfirmation() {
                     )}
 
                     <div className="gate-actions">
-
                         <button
                             className="gate-button secondary"
                             onClick={handleGoBack}
@@ -423,13 +456,9 @@ function GateConfirmation() {
                                 : "Confirm →"
                             }
                         </button>
-
                     </div>
-
                 </main>
-
             </div>
-
         </div>
     );
 }

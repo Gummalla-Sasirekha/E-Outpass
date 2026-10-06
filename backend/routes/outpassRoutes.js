@@ -6,27 +6,21 @@ const {
     requestOutpass,
     getMyStudent,
     getMyOutpasses,
-
     getPendingOutpasses,
     getWardenOutpassHistory,
     approveOutpass,
     rejectOutpass,
-
     getAcademicPendingOutpasses,
     approveAcademicOutpass,
     rejectAcademicOutpass,
-
     validateOutpass,
     getSecurityApprovedOutpasses,
     scanOut,
     scanIn,
-
     studentGateStatus,
     studentConfirmGateAction,
-
     publicGateStatus,
     publicGateConfirm,
-
     getGateHistory
 } = require("../controllers/outpassController");
 
@@ -35,12 +29,10 @@ const {
     authorize
 } = require("../middleware/authMiddleware");
 
-
 // ======================================================
 // PARENT ROUTES
 // ======================================================
 
-// Request a new outpass
 router.post(
     "/request",
     protect,
@@ -48,7 +40,6 @@ router.post(
     requestOutpass
 );
 
-// Get linked student
 router.get(
     "/my-student",
     protect,
@@ -56,7 +47,6 @@ router.get(
     getMyStudent
 );
 
-// Get parent's outpasses
 router.get(
     "/my",
     protect,
@@ -64,13 +54,11 @@ router.get(
     getMyOutpasses
 );
 
-
 // ======================================================
 // ACADEMIC APPROVAL ROUTES
 // HOD / CLASS ADVISOR
 // ======================================================
 
-// Get academic approval requests
 router.get(
     "/academic-pending",
     protect,
@@ -78,7 +66,6 @@ router.get(
     getAcademicPendingOutpasses
 );
 
-// Approve academic request
 router.patch(
     "/:outpassId/academic-approve",
     protect,
@@ -86,7 +73,6 @@ router.patch(
     approveAcademicOutpass
 );
 
-// Reject academic request
 router.patch(
     "/:outpassId/academic-reject",
     protect,
@@ -94,12 +80,10 @@ router.patch(
     rejectAcademicOutpass
 );
 
-
 // ======================================================
 // WARDEN ROUTES
 // ======================================================
 
-// Pending requests
 router.get(
     "/pending",
     protect,
@@ -107,7 +91,6 @@ router.get(
     getPendingOutpasses
 );
 
-// Current frontend route
 router.get(
     "/history",
     protect,
@@ -115,7 +98,6 @@ router.get(
     getWardenOutpassHistory
 );
 
-// Legacy frontend route
 router.get(
     "/warden-history",
     protect,
@@ -123,7 +105,6 @@ router.get(
     getWardenOutpassHistory
 );
 
-// Approve
 router.patch(
     "/:outpassId/approve",
     protect,
@@ -131,7 +112,6 @@ router.patch(
     approveOutpass
 );
 
-// Reject
 router.patch(
     "/:outpassId/reject",
     protect,
@@ -139,12 +119,10 @@ router.patch(
     rejectOutpass
 );
 
-
 // ======================================================
 // SECURITY ROUTES
 // ======================================================
 
-// Current frontend route
 router.get(
     "/approved",
     protect,
@@ -152,7 +130,6 @@ router.get(
     getSecurityApprovedOutpasses
 );
 
-// Legacy frontend route
 router.get(
     "/security-approved",
     protect,
@@ -160,12 +137,10 @@ router.get(
     getSecurityApprovedOutpasses
 );
 
-
-// ------------------------------------------------------
+// ======================================================
 // VALIDATE OUTPASS
-// ------------------------------------------------------
+// ======================================================
 
-// Current route
 router.get(
     "/validate/:outpassId",
     protect,
@@ -173,7 +148,6 @@ router.get(
     validateOutpass
 );
 
-// Additional compatible route
 router.get(
     "/:outpassId/validate",
     protect,
@@ -181,14 +155,11 @@ router.get(
     validateOutpass
 );
 
-// Legacy route
-// Frontend sends outpassId in request body
 router.post(
     "/validate",
     protect,
     authorize("security"),
     (req, res, next) => {
-
         if (!req.body || !req.body.outpassId) {
             return res.status(400).json({
                 valid: false,
@@ -204,12 +175,10 @@ router.post(
     validateOutpass
 );
 
-
-// ------------------------------------------------------
+// ======================================================
 // SCAN OUT
-// ------------------------------------------------------
+// ======================================================
 
-// Current route
 router.post(
     "/:outpassId/scan-out",
     protect,
@@ -217,14 +186,11 @@ router.post(
     scanOut
 );
 
-// Legacy route
-// Frontend sends outpassId in request body
 router.post(
     "/scan-out",
     protect,
     authorize("security"),
     (req, res, next) => {
-
         if (!req.body || !req.body.outpassId) {
             return res.status(400).json({
                 message: "Outpass ID is required."
@@ -239,12 +205,10 @@ router.post(
     scanOut
 );
 
-
-// ------------------------------------------------------
+// ======================================================
 // SCAN IN
-// ------------------------------------------------------
+// ======================================================
 
-// Current route
 router.post(
     "/:outpassId/scan-in",
     protect,
@@ -252,14 +216,11 @@ router.post(
     scanIn
 );
 
-// Legacy route
-// Frontend sends outpassId in request body
 router.post(
     "/scan-in",
     protect,
     authorize("security"),
     (req, res, next) => {
-
         if (!req.body || !req.body.outpassId) {
             return res.status(400).json({
                 message: "Outpass ID is required."
@@ -274,31 +235,77 @@ router.post(
     scanIn
 );
 
-
 // ======================================================
 // PUBLIC QR GATE ROUTES
 // NO LOGIN REQUIRED
 // ======================================================
 
-// QR scan checks whether the outpass can exit or return
+// ------------------------------------------------------
+// EXIT QR
+// /gate/exit/:outpassId
+// ------------------------------------------------------
+
+router.get(
+    "/public-gate-status/exit/:outpassId",
+    (req, res, next) => {
+        req.params.qrAction = "exit";
+        next();
+    },
+    publicGateStatus
+);
+
+router.post(
+    "/public-gate-confirm/exit/:outpassId",
+    (req, res, next) => {
+        req.params.qrAction = "exit";
+        next();
+    },
+    publicGateConfirm
+);
+
+// ------------------------------------------------------
+// RETURN / ENTRY QR
+// /gate/return/:outpassId
+// ------------------------------------------------------
+
+router.get(
+    "/public-gate-status/return/:outpassId",
+    (req, res, next) => {
+        req.params.qrAction = "return";
+        next();
+    },
+    publicGateStatus
+);
+
+router.post(
+    "/public-gate-confirm/return/:outpassId",
+    (req, res, next) => {
+        req.params.qrAction = "return";
+        next();
+    },
+    publicGateConfirm
+);
+
+// ------------------------------------------------------
+// LEGACY PUBLIC QR ROUTES
+// Kept temporarily for compatibility
+// ------------------------------------------------------
+
 router.get(
     "/public-gate-status/:outpassId",
     publicGateStatus
 );
 
-// QR confirmation records exit / return
 router.post(
     "/public-gate-confirm/:outpassId",
     publicGateConfirm
 );
-
 
 // ======================================================
 // STUDENT GATE ROUTES
 // LOGIN REQUIRED
 // ======================================================
 
-// Current route
 router.get(
     "/:outpassId/gate-status",
     protect,
@@ -306,7 +313,6 @@ router.get(
     studentGateStatus
 );
 
-// Current route
 router.post(
     "/:outpassId/gate-action",
     protect,
@@ -314,18 +320,15 @@ router.post(
     studentConfirmGateAction
 );
 
-
-// ------------------------------------------------------
+// ======================================================
 // LEGACY STUDENT GATE ROUTES
-// ------------------------------------------------------
+// ======================================================
 
-// Legacy frontend sends outpassId in body
 router.post(
     "/student-status",
     protect,
     authorize("student"),
     (req, res, next) => {
-
         if (!req.body || !req.body.outpassId) {
             return res.status(400).json({
                 message: "Outpass ID is required."
@@ -340,13 +343,11 @@ router.post(
     studentGateStatus
 );
 
-// Legacy frontend sends outpassId + action in body
 router.post(
     "/student-confirm",
     protect,
     authorize("student"),
     (req, res, next) => {
-
         if (!req.body || !req.body.outpassId) {
             return res.status(400).json({
                 message: "Outpass ID is required."
@@ -360,7 +361,6 @@ router.post(
     },
     studentConfirmGateAction
 );
-
 
 // ======================================================
 // GATE HISTORY
@@ -377,7 +377,6 @@ router.get(
     ),
     getGateHistory
 );
-
 
 // ======================================================
 // EXPORT

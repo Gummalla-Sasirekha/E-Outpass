@@ -5,26 +5,105 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 function Icon({ name, size = 18 }) {
     const common = {
-        width: size, height: size, viewBox: "0 0 24 24", fill: "none",
-        stroke: "currentColor", strokeWidth: 1.8,
-        strokeLinecap: "round", strokeLinejoin: "round"
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: "currentColor",
+        strokeWidth: 1.8,
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
     };
 
     const paths = {
-        grid: <><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></>,
-        document: <><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h5"/></>,
-        user: <><circle cx="12" cy="8" r="3"/><path d="M5 21c.6-4.2 2.8-6 7-6s6.4 1.8 7 6"/></>,
-        logout: <><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 3v18"/></>,
-        shield: <><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="m9 12 2 2 4-4"/></>,
-        search: <><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></>,
-        qr: <><rect x="3" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="3" y="15" width="6" height="6"/><path d="M15 15h3v3h-3zM18 18h3v3h-3zM15 21h3M21 15v3"/></>,
-        clock: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
-        check: <><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></>,
-        refresh: <><path d="M20 11a8 8 0 0 0-14-5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14 5l2-2"/><path d="M20 20v-4h-4"/></>,
-        arrow: <><path d="M5 12h13"/><path d="m13 6 6 6-6 6"/></>,
-        map: <><path d="M9 18l-6 3V6l6-3 6 3 6-3v15l-6 3z"/><path d="M9 3v15M15 6v15"/></>,
-        info: <><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></>
+        grid: (
+            <>
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+            </>
+        ),
+        document: (
+            <>
+                <path d="M6 3h8l4 4v14H6z" />
+                <path d="M14 3v5h5" />
+                <path d="M9 13h6M9 17h5" />
+            </>
+        ),
+        user: (
+            <>
+                <circle cx="12" cy="8" r="3" />
+                <path d="M5 21c.6-4.2 2.8-6 7-6s6.4 1.8 7 6" />
+            </>
+        ),
+        logout: (
+            <>
+                <path d="M10 17l5-5-5-5" />
+                <path d="M15 12H3" />
+                <path d="M21 3v18" />
+            </>
+        ),
+        shield: (
+            <>
+                <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z" />
+                <path d="m9 12 2 2 4-4" />
+            </>
+        ),
+        search: (
+            <>
+                <circle cx="11" cy="11" r="6" />
+                <path d="m16 16 4 4" />
+            </>
+        ),
+        qr: (
+            <>
+                <rect x="3" y="3" width="6" height="6" />
+                <rect x="15" y="3" width="6" height="6" />
+                <rect x="3" y="15" width="6" height="6" />
+                <path d="M15 15h3v3h-3zM18 18h3v3h-3zM15 21h3M21 15v3" />
+            </>
+        ),
+        clock: (
+            <>
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+            </>
+        ),
+        check: (
+            <>
+                <circle cx="12" cy="12" r="9" />
+                <path d="m8 12 2.5 2.5L16 9" />
+            </>
+        ),
+        refresh: (
+            <>
+                <path d="M20 11a8 8 0 0 0-14-5L4 8" />
+                <path d="M4 4v4h4" />
+                <path d="M4 13a8 8 0 0 0 14 5l2-2" />
+                <path d="M20 20v-4h-4" />
+            </>
+        ),
+        arrow: (
+            <>
+                <path d="M5 12h13" />
+                <path d="m13 6 6 6-6 6" />
+            </>
+        ),
+        map: (
+            <>
+                <path d="M9 18l-6 3V6l6-3 6 3 6-3v15l-6 3z" />
+                <path d="M9 3v15M15 6v15" />
+            </>
+        ),
+        info: (
+            <>
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 10v6M12 7h.01" />
+            </>
+        )
     };
+
     return <svg {...common}>{paths[name] || paths.document}</svg>;
 }
 
@@ -42,28 +121,55 @@ function SecurityDashboard() {
 
     const token = localStorage.getItem("token");
 
-    const formatDate = (date) => date ? new Date(date).toLocaleDateString("en-IN", {
-        day: "2-digit", month: "short", year: "numeric"
-    }) : "-";
+    const formatDate = (date) =>
+        date
+            ? new Date(date).toLocaleDateString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric"
+              })
+            : "-";
 
-    const formatDateTime = (date) => date ? new Date(date).toLocaleString("en-IN", {
-        day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
-    }) : "-";
+    const formatDateTime = (date) =>
+        date
+            ? new Date(date).toLocaleString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit"
+              })
+            : "-";
 
     const formatTime = (time) => time || "-";
 
     const fetchApprovedOutpasses = async () => {
         try {
             setApprovedLoading(true);
-            const response = await fetch(`${API_URL}/api/outpass/security-approved`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+
+            const response = await fetch(
+                `${API_URL}/api/outpass/security-approved`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
             const data = await response.json();
-            if (!response.ok) throw new Error(data.message || "Unable to fetch approved outpasses.");
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Unable to fetch approved outpasses."
+                );
+            }
+
             setApprovedOutpasses(data.outpasses || []);
         } catch (err) {
             console.error("Approved outpasses error:", err);
-            setError(err.message || "Unable to load approved outpasses.");
+            setError(
+                err.message || "Unable to load approved outpasses."
+            );
         } finally {
             setApprovedLoading(false);
         }
@@ -72,15 +178,30 @@ function SecurityDashboard() {
     const fetchGateHistory = async () => {
         try {
             setHistoryLoading(true);
-            const response = await fetch(`${API_URL}/api/outpass/gate-history`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+
+            const response = await fetch(
+                `${API_URL}/api/outpass/gate-history`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
             const data = await response.json();
-            if (!response.ok) throw new Error(data.message || "Unable to fetch gate history.");
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Unable to fetch gate history."
+                );
+            }
+
             setGateHistory(data.gateLogs || []);
         } catch (err) {
             console.error("Gate history error:", err);
-            setError(err.message || "Unable to load gate history.");
+            setError(
+                err.message || "Unable to load gate history."
+            );
         } finally {
             setHistoryLoading(false);
         }
@@ -99,26 +220,64 @@ function SecurityDashboard() {
 
         try {
             setLoading(true);
-            const response = await fetch(`${API_URL}/api/outpass/validate`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ outpassId: selectedId })
-            });
+
+            const response = await fetch(
+                `${API_URL}/api/outpass/validate`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        outpassId: selectedId
+                    })
+                }
+            );
+
             const data = await response.json();
 
-            if (!response.ok) throw new Error(data.message || "Unable to validate outpass.");
-            if (!data.outpass) throw new Error("Outpass details were not returned.");
-            if (data.outpass.status !== "approved") {
-                throw new Error(`This outpass is ${data.outpass.status}. Only approved outpasses can be displayed at the gate.`);
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Unable to validate outpass."
+                );
             }
-            if (!data.outpass.qrCode) throw new Error("QR code is not available for this outpass.");
+
+            if (!data.outpass) {
+                throw new Error(
+                    "Outpass details were not returned."
+                );
+            }
+
+            if (data.outpass.status !== "approved") {
+                throw new Error(
+                    `This outpass is ${data.outpass.status}. Only approved outpasses can be displayed at the gate.`
+                );
+            }
+
+            if (
+                !data.outpass.exitQrCode ||
+                !data.outpass.returnQrCode
+            ) {
+                throw new Error(
+                    "Exit and Return QR codes are not available for this outpass."
+                );
+            }
 
             setOutpass(data.outpass);
-            setSuccess("Outpass verified. QR code is ready for the student to scan.");
-            setTimeout(() => document.getElementById("verified-outpass-card")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+
+            setSuccess(
+                "Outpass verified. Separate Exit and Return QR codes are ready."
+            );
+
+            setTimeout(() => {
+                document
+                    .getElementById("verified-outpass-card")
+                    ?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+            }, 50);
         } catch (err) {
             console.error("Display QR error:", err);
             setError(err.message || "Unable to display QR.");
@@ -129,10 +288,12 @@ function SecurityDashboard() {
 
     const handleDisplayQR = () => {
         const cleanId = outpassId.trim();
+
         if (!cleanId) {
             setError("Please enter an Outpass ID.");
             return;
         }
+
         displayQR(cleanId);
     };
 
@@ -144,19 +305,37 @@ function SecurityDashboard() {
 
     const filteredOutpasses = useMemo(() => {
         const search = searchTerm.trim().toLowerCase();
-        if (!search) return approvedOutpasses;
-        return approvedOutpasses.filter((item) =>
-            (item.student?.name || "").toLowerCase().includes(search) ||
-            (item.outpassId || "").toLowerCase().includes(search)
+
+        if (!search) {
+            return approvedOutpasses;
+        }
+
+        return approvedOutpasses.filter(
+            (item) =>
+                (item.student?.name || "")
+                    .toLowerCase()
+                    .includes(search) ||
+                (item.outpassId || "")
+                    .toLowerCase()
+                    .includes(search)
         );
     }, [approvedOutpasses, searchTerm]);
 
-    const stats = useMemo(() => ({
-        approved: approvedOutpasses.length,
-        ready: approvedOutpasses.filter((x) => x.status === "approved").length,
-        outside: gateHistory.filter((x) => x.status === "outside").length,
-        returned: gateHistory.filter((x) => x.status === "returned").length
-    }), [approvedOutpasses, gateHistory]);
+    const stats = useMemo(
+        () => ({
+            approved: approvedOutpasses.length,
+            ready: approvedOutpasses.filter(
+                (x) => x.status === "approved"
+            ).length,
+            outside: gateHistory.filter(
+                (x) => x.status === "outside"
+            ).length,
+            returned: gateHistory.filter(
+                (x) => x.status === "returned"
+            ).length
+        }),
+        [approvedOutpasses, gateHistory]
+    );
 
     const recentHistory = gateHistory.slice(0, 3);
 
@@ -169,15 +348,45 @@ function SecurityDashboard() {
                     </div>
 
                     <nav className="security-nav">
-                        <a href="#top" className="security-nav-link active"><Icon name="grid"/> Dashboard</a>
-                        <a href="#verification" className="security-nav-link"><Icon name="qr"/> Gate Verification</a>
-                        <a href="#history" className="security-nav-link"><Icon name="clock"/> Outpass History</a>
-                        <a href="#profile" className="security-nav-link"><Icon name="user"/> Profile</a>
+                        <a
+                            href="#top"
+                            className="security-nav-link active"
+                        >
+                            <Icon name="grid" />
+                            Dashboard
+                        </a>
+
+                        <a
+                            href="#verification"
+                            className="security-nav-link"
+                        >
+                            <Icon name="qr" />
+                            Gate Verification
+                        </a>
+
+                        <a
+                            href="#history"
+                            className="security-nav-link"
+                        >
+                            <Icon name="clock" />
+                            Outpass History
+                        </a>
+
+                        <a
+                            href="#profile"
+                            className="security-nav-link"
+                        >
+                            <Icon name="user" />
+                            Profile
+                        </a>
                     </nav>
                 </div>
 
                 <div className="security-sidebar-bottom">
-                    <button onClick={handleLogout}><Icon name="logout"/> Logout</button>
+                    <button onClick={handleLogout}>
+                        <Icon name="logout" />
+                        Logout
+                    </button>
                 </div>
             </aside>
 
@@ -188,9 +397,10 @@ function SecurityDashboard() {
                     </div>
 
                     <button
-                        type="button"
                         className="security-top-profile"
-                        onClick={() => window.location.hash = "#profile"}
+                        onClick={() =>
+                            (window.location.hash = "#profile")
+                        }
                         aria-label="Open profile"
                     >
                         S
@@ -200,20 +410,43 @@ function SecurityDashboard() {
                 <div className="security-content">
                     <section className="security-hero">
                         <div>
-                            <p className="security-eyebrow">SECURITY PORTAL</p>
+                            <p className="security-eyebrow">
+                                SECURITY PORTAL
+                            </p>
+
                             <h1>Main Gate Verification</h1>
-                            <p>Verify approved outpasses and record student movement at the common main gate.</p>
+
+                            <p>
+                                Verify approved outpasses and record
+                                student movement at the common main gate.
+                            </p>
                         </div>
-                        <div className="security-live"><span/> Gate Active</div>
+
+                        <div className="security-live">
+                            <span />
+                            Gate Active
+                        </div>
                     </section>
 
-                    <section className="security-context-card" id="profile">
-                        <div className="security-context-icon"><Icon name="shield" size={22}/></div>
+                    <section
+                        className="security-context-card"
+                        id="profile"
+                    >
+                        <div className="security-context-icon">
+                            <Icon name="shield" size={22} />
+                        </div>
+
                         <div className="security-context-info">
                             <span>YOUR STATION</span>
+
                             <h2>Main Gate Security</h2>
-                            <p>Common verification point <b>•</b> All hostels</p>
+
+                            <p>
+                                Common verification point <b>•</b> All
+                                hostels
+                            </p>
                         </div>
+
                         <div className="security-context-status">
                             <span>STATUS</span>
                             <strong>Active</strong>
@@ -221,151 +454,674 @@ function SecurityDashboard() {
                     </section>
 
                     <section className="security-activity-card">
-                        <div className="security-activity-title">Gate Activity <span>(Current)</span></div>
+                        <div className="security-activity-title">
+                            Gate Activity <span>(Current)</span>
+                        </div>
+
                         <div className="security-stat-grid">
-                            <div className="security-stat blue"><div className="security-stat-icon"><Icon name="document" size={17}/></div><div><strong>{stats.approved}</strong><span>Approved Passes</span></div></div>
-                            <div className="security-stat yellow"><div className="security-stat-icon"><Icon name="qr" size={17}/></div><div><strong>{stats.ready}</strong><span>Ready to Verify</span></div></div>
-                            <div className="security-stat orange"><div className="security-stat-icon"><Icon name="clock" size={17}/></div><div><strong>{stats.outside}</strong><span>Outside</span></div></div>
-                            <div className="security-stat green"><div className="security-stat-icon"><Icon name="check" size={17}/></div><div><strong>{stats.returned}</strong><span>Returned</span></div></div>
+                            <div className="security-stat blue">
+                                <div className="security-stat-icon">
+                                    <Icon
+                                        name="document"
+                                        size={17}
+                                    />
+                                </div>
+
+                                <div>
+                                    <strong>{stats.approved}</strong>
+                                    <span>Approved Passes</span>
+                                </div>
+                            </div>
+
+                            <div className="security-stat yellow">
+                                <div className="security-stat-icon">
+                                    <Icon name="qr" size={17} />
+                                </div>
+
+                                <div>
+                                    <strong>{stats.ready}</strong>
+                                    <span>Ready to Verify</span>
+                                </div>
+                            </div>
+
+                            <div className="security-stat orange">
+                                <div className="security-stat-icon">
+                                    <Icon name="clock" size={17} />
+                                </div>
+
+                                <div>
+                                    <strong>{stats.outside}</strong>
+                                    <span>Outside</span>
+                                </div>
+                            </div>
+
+                            <div className="security-stat green">
+                                <div className="security-stat-icon">
+                                    <Icon name="check" size={17} />
+                                </div>
+
+                                <div>
+                                    <strong>{stats.returned}</strong>
+                                    <span>Returned</span>
+                                </div>
+                            </div>
                         </div>
                     </section>
 
-                    {error && <div className="security-alert error"><Icon name="info"/><span>{error}</span></div>}
-                    {success && <div className="security-alert success"><Icon name="check"/><span>{success}</span></div>}
+                    {error && (
+                        <div className="security-alert error">
+                            <Icon name="info" />
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    {success && (
+                        <div className="security-alert success">
+                            <Icon name="check" />
+                            <span>{success}</span>
+                        </div>
+                    )}
 
                     <section className="security-action-grid">
-                        <section className="security-panel verification-panel" id="verification">
+                        <section
+                            className="security-panel verification-panel"
+                            id="verification"
+                        >
                             <div className="security-panel-head">
                                 <div>
-                                    <p className="security-eyebrow">GATE VERIFICATION</p>
+                                    <p className="security-eyebrow">
+                                        GATE VERIFICATION
+                                    </p>
+
                                     <h2>Search Approved Outpass</h2>
-                                    <p>Find a student by name or Outpass ID, then display the QR.</p>
+
+                                    <p>
+                                        Find a student by name or Outpass
+                                        ID, then display the Exit and
+                                        Return QR codes.
+                                    </p>
                                 </div>
-                                <button className="security-refresh" onClick={fetchApprovedOutpasses} disabled={approvedLoading}>
-                                    <Icon name="refresh" size={15}/> {approvedLoading ? "Refreshing..." : "Refresh"}
+
+                                <button
+                                    className="security-refresh"
+                                    onClick={fetchApprovedOutpasses}
+                                    disabled={approvedLoading}
+                                >
+                                    <Icon
+                                        name="refresh"
+                                        size={15}
+                                    />
+
+                                    {approvedLoading
+                                        ? "Refreshing..."
+                                        : "Refresh"}
                                 </button>
                             </div>
 
                             <div className="security-search">
-                                <Icon name="search" size={17}/>
+                                <Icon name="search" size={17} />
+
                                 <input
                                     value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onChange={(e) =>
+                                        setSearchTerm(e.target.value)
+                                    }
                                     placeholder="Search student name or Outpass ID..."
                                 />
                             </div>
 
                             <div className="security-approved-list">
                                 {approvedLoading ? (
-                                    <div className="security-empty-small"><Icon name="clock"/><strong>Loading approved outpasses...</strong></div>
+                                    <div className="security-empty-small">
+                                        <Icon name="clock" />
+                                        <strong>
+                                            Loading approved outpasses...
+                                        </strong>
+                                    </div>
                                 ) : approvedOutpasses.length === 0 ? (
-                                    <div className="security-empty-small"><Icon name="document"/><strong>No approved outpasses</strong><span>Approved requests will appear here after warden approval.</span></div>
+                                    <div className="security-empty-small">
+                                        <Icon name="document" />
+                                        <strong>
+                                            No approved outpasses
+                                        </strong>
+
+                                        <span>
+                                            Approved requests will appear
+                                            here after warden approval.
+                                        </span>
+                                    </div>
                                 ) : filteredOutpasses.length === 0 ? (
-                                    <div className="security-empty-small"><Icon name="search"/><strong>No matching student</strong><span>Try another student name or Outpass ID.</span></div>
+                                    <div className="security-empty-small">
+                                        <Icon name="search" />
+
+                                        <strong>
+                                            No matching student
+                                        </strong>
+
+                                        <span>
+                                            Try another student name or
+                                            Outpass ID.
+                                        </span>
+                                    </div>
                                 ) : (
-                                    filteredOutpasses.slice(0, 6).map((item) => (
-                                        <div className="security-approved-item" key={item._id}>
-                                            <div className="security-approved-student">
-                                                <div className="security-student-avatar">{(item.student?.name || "S").charAt(0).toUpperCase()}</div>
-                                                <div>
-                                                    <h3>{item.student?.name || "Unknown Student"}</h3>
-                                                    <p>{item.student?.course || "-"} • Room {item.student?.roomNumber || "-"}</p>
-                                                    <span>{item.hostel?.name || "-"} • {item.outpassId}</span>
+                                    filteredOutpasses
+                                        .slice(0, 6)
+                                        .map((item) => (
+                                            <div
+                                                className="security-approved-item"
+                                                key={item._id}
+                                            >
+                                                <div className="security-approved-student">
+                                                    <div className="security-student-avatar">
+                                                        {(
+                                                            item.student
+                                                                ?.name ||
+                                                            "S"
+                                                        )
+                                                            .charAt(0)
+                                                            .toUpperCase()}
+                                                    </div>
+
+                                                    <div>
+                                                        <h3>
+                                                            {item.student
+                                                                ?.name ||
+                                                                "Unknown Student"}
+                                                        </h3>
+
+                                                        <p>
+                                                            {item.student
+                                                                ?.course ||
+                                                                "-"}{" "}
+                                                            • Room{" "}
+                                                            {item.student
+                                                                ?.roomNumber ||
+                                                                "-"}
+                                                        </p>
+
+                                                        <span>
+                                                            {item.hostel
+                                                                ?.name ||
+                                                                "-"}{" "}
+                                                            •{" "}
+                                                            {
+                                                                item.outpassId
+                                                            }
+                                                        </span>
+                                                    </div>
                                                 </div>
+
+                                                <div className="security-approved-meta">
+                                                    <div>
+                                                        <span>DATE</span>
+                                                        <strong>
+                                                            {formatDate(
+                                                                item.dateRequestedFor
+                                                            )}
+                                                        </strong>
+                                                    </div>
+
+                                                    <div>
+                                                        <span>LEAVING</span>
+                                                        <strong>
+                                                            {formatTime(
+                                                                item.timeOfLeaving
+                                                            )}
+                                                        </strong>
+                                                    </div>
+
+                                                    <div>
+                                                        <span>RETURN</span>
+                                                        <strong>
+                                                            {formatTime(
+                                                                item.expectedInTime
+                                                            )}
+                                                        </strong>
+                                                    </div>
+                                                </div>
+
+                                                <button
+                                                    className="security-view-button"
+                                                    onClick={() =>
+                                                        displayQR(
+                                                            item.outpassId
+                                                        )
+                                                    }
+                                                    disabled={loading}
+                                                >
+                                                    {loading &&
+                                                    outpassId ===
+                                                        item.outpassId
+                                                        ? "Loading..."
+                                                        : "Display QR"}
+
+                                                    <Icon
+                                                        name="arrow"
+                                                        size={14}
+                                                    />
+                                                </button>
                                             </div>
-                                            <div className="security-approved-meta">
-                                                <div><span>DATE</span><strong>{formatDate(item.dateRequestedFor)}</strong></div>
-                                                <div><span>LEAVING</span><strong>{formatTime(item.timeOfLeaving)}</strong></div>
-                                                <div><span>RETURN</span><strong>{formatTime(item.expectedInTime)}</strong></div>
-                                            </div>
-                                            <button className="security-view-button" onClick={() => displayQR(item.outpassId)} disabled={loading}>
-                                                {loading && outpassId === item.outpassId ? "Loading..." : "Display QR"}
-                                                <Icon name="arrow" size={14}/>
-                                            </button>
-                                        </div>
-                                    ))
+                                        ))
                                 )}
                             </div>
                         </section>
-
                     </section>
 
                     {outpass && (
-                        <section id="verified-outpass-card" className="security-verified-card">
+                        <section
+                            id="verified-outpass-card"
+                            className="security-verified-card"
+                        >
                             <div className="security-verified-head">
                                 <div>
-                                    <p className="security-eyebrow">APPROVED OUTPASS</p>
+                                    <p className="security-eyebrow">
+                                        APPROVED OUTPASS
+                                    </p>
+
                                     <h2>{outpass.outpassId}</h2>
                                 </div>
+
                                 <span>✓ APPROVED</span>
                             </div>
 
                             <div className="security-verified-student">
-                                <div className="security-student-avatar large">{(outpass.student?.name || "S").charAt(0).toUpperCase()}</div>
+                                <div className="security-student-avatar large">
+                                    {(
+                                        outpass.student?.name || "S"
+                                    )
+                                        .charAt(0)
+                                        .toUpperCase()}
+                                </div>
+
                                 <div>
                                     <span>STUDENT</span>
-                                    <h3>{outpass.student?.name || "Unknown Student"}</h3>
-                                    <p>ID: {outpass.student?.studentId || "-"} • {outpass.student?.course || "-"}</p>
+
+                                    <h3>
+                                        {outpass.student?.name ||
+                                            "Unknown Student"}
+                                    </h3>
+
+                                    <p>
+                                        ID:{" "}
+                                        {outpass.student?.studentId ||
+                                            "-"}{" "}
+                                        •{" "}
+                                        {outpass.student?.course ||
+                                            "-"}
+                                    </p>
                                 </div>
                             </div>
 
                             <div className="security-detail-grid">
-                                <div><span>PLACE OF VISIT</span><strong>{outpass.placeOfVisit || "-"}</strong></div>
-                                <div><span>REASON</span><strong>{outpass.reason || "-"}</strong></div>
-                                <div><span>DATE</span><strong>{formatDate(outpass.dateRequestedFor)}</strong></div>
-                                <div><span>LEAVING</span><strong>{formatTime(outpass.timeOfLeaving)}</strong></div>
-                                <div><span>EXPECTED IN</span><strong>{formatTime(outpass.expectedInTime)}</strong></div>
-                                <div><span>HOSTEL</span><strong>{outpass.hostel?.name || "-"}</strong></div>
-                            </div>
-
-                            <div className="security-qr-area">
                                 <div>
-                                    <p className="security-eyebrow">MAIN GATE QR</p>
-                                    <h2>Student Scan Here</h2>
-                                    <span>Display this QR and ask the student to scan it.</span>
+                                    <span>PLACE OF VISIT</span>
+                                    <strong>
+                                        {outpass.placeOfVisit || "-"}
+                                    </strong>
                                 </div>
-                                <div className="security-qr-wrap">
-                                    {outpass.qrCode ? <img src={outpass.qrCode} alt="Main Gate QR Code"/> : <strong>QR code unavailable</strong>}
+
+                                <div>
+                                    <span>REASON</span>
+                                    <strong>
+                                        {outpass.reason || "-"}
+                                    </strong>
                                 </div>
-                                <div className="security-scan-note"><Icon name="qr" size={17}/><div><strong>Student Action</strong><span>Scan the QR → confirm the action on the phone.</span></div></div>
+
+                                <div>
+                                    <span>DATE</span>
+                                    <strong>
+                                        {formatDate(
+                                            outpass.dateRequestedFor
+                                        )}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>LEAVING</span>
+                                    <strong>
+                                        {formatTime(
+                                            outpass.timeOfLeaving
+                                        )}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>EXPECTED IN</span>
+                                    <strong>
+                                        {formatTime(
+                                            outpass.expectedInTime
+                                        )}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>HOSTEL</span>
+                                    <strong>
+                                        {outpass.hostel?.name || "-"}
+                                    </strong>
+                                </div>
+
+                                {outpass.passType ===
+                                    "long_duration" && (
+                                    <div>
+                                        <span>RETURN DATE</span>
+                                        <strong>
+                                            {formatDate(
+                                                outpass.returnDate
+                                            )}
+                                        </strong>
+                                    </div>
+                                )}
                             </div>
 
-                            <div className="security-verified-flow">
-                                <div className="active"><b>1</b><div><strong>Search & Display</strong><span>Security displays the approved QR.</span></div></div>
-                                <i/>
-                                <div><b>2</b><div><strong>Student Scans</strong><span>Student scans the displayed QR.</span></div></div>
-                                <i/>
-                                <div><b>3</b><div><strong>Confirm</strong><span>Exit or Return is recorded.</span></div></div>
+                            {/* =====================================================
+                                SEPARATE EXIT AND RETURN QR CODES
+                               ===================================================== */}
+
+                            <div
+                                className="security-qr-area"
+                                style={{
+                                    display: "grid",
+                                    gridTemplateColumns:
+                                        "repeat(auto-fit, minmax(260px, 1fr))",
+                                    gap: "24px",
+                                    alignItems: "stretch"
+                                }}
+                            >
+                                {/* EXIT QR */}
+                                <div
+                                    style={{
+                                        border:
+                                            "1px solid rgba(0,0,0,0.08)",
+                                        borderRadius: "16px",
+                                        padding: "24px",
+                                        textAlign: "center",
+                                        background: "#ffffff"
+                                    }}
+                                >
+                                    <p className="security-eyebrow">
+                                        EXIT QR
+                                    </p>
+
+                                    <h2>Student Leaving</h2>
+
+                                    <span>
+                                        Use this QR when the student is
+                                        leaving the campus.
+                                    </span>
+
+                                    <div
+                                        className="security-qr-wrap"
+                                        style={{
+                                            margin:
+                                                "20px auto",
+                                            width: "fit-content"
+                                        }}
+                                    >
+                                        {outpass.exitQrCode ? (
+                                            <img
+                                                src={
+                                                    outpass.exitQrCode
+                                                }
+                                                alt="Exit QR Code"
+                                            />
+                                        ) : (
+                                            <strong>
+                                                Exit QR unavailable
+                                            </strong>
+                                        )}
+                                    </div>
+
+                                    <div className="security-scan-note">
+                                        <Icon
+                                            name="qr"
+                                            size={17}
+                                        />
+
+                                        <div>
+                                            <strong>
+                                                Exit Action
+                                            </strong>
+
+                                            <span>
+                                                Student scans this QR →
+                                                confirms Exit.
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* RETURN QR */}
+                                <div
+                                    style={{
+                                        border:
+                                            "1px solid rgba(0,0,0,0.08)",
+                                        borderRadius: "16px",
+                                        padding: "24px",
+                                        textAlign: "center",
+                                        background: "#ffffff"
+                                    }}
+                                >
+                                    <p className="security-eyebrow">
+                                        RETURN QR
+                                    </p>
+
+                                    <h2>Student Returning</h2>
+
+                                    <span>
+                                        Use this QR when the student
+                                        returns to the campus.
+                                    </span>
+
+                                    <div
+                                        className="security-qr-wrap"
+                                        style={{
+                                            margin:
+                                                "20px auto",
+                                            width: "fit-content"
+                                        }}
+                                    >
+                                        {outpass.returnQrCode ? (
+                                            <img
+                                                src={
+                                                    outpass.returnQrCode
+                                                }
+                                                alt="Return QR Code"
+                                            />
+                                        ) : (
+                                            <strong>
+                                                Return QR unavailable
+                                            </strong>
+                                        )}
+                                    </div>
+
+                                    <div className="security-scan-note">
+                                        <Icon
+                                            name="qr"
+                                            size={17}
+                                        />
+
+                                        <div>
+                                            <strong>
+                                                Return Action
+                                            </strong>
+
+                                            <span>
+                                                Student scans this QR →
+                                                confirms Return.
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                className="security-verified-flow"
+                                style={{
+                                    marginTop: "24px"
+                                }}
+                            >
+                                <div className="active">
+                                    <b>1</b>
+
+                                    <div>
+                                        <strong>
+                                            Security Displays QR
+                                        </strong>
+
+                                        <span>
+                                            Display the appropriate QR
+                                            at the main gate.
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <i />
+
+                                <div>
+                                    <b>2</b>
+
+                                    <div>
+                                        <strong>
+                                            Student Scans
+                                        </strong>
+
+                                        <span>
+                                            Student scans the Exit or
+                                            Return QR.
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <i />
+
+                                <div>
+                                    <b>3</b>
+
+                                    <div>
+                                        <strong>
+                                            Confirm
+                                        </strong>
+
+                                        <span>
+                                            The corresponding action is
+                                            recorded automatically.
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </section>
                     )}
 
-                    <section className="security-history-card" id="history">
+                    <section
+                        className="security-history-card"
+                        id="history"
+                    >
                         <div className="security-panel-head">
                             <div>
-                                <p className="security-eyebrow">GATE RECORDS</p>
+                                <p className="security-eyebrow">
+                                    GATE RECORDS
+                                </p>
+
                                 <h2>Gate History</h2>
-                                <p>Recent student exit and return activity across the main gate.</p>
+
+                                <p>
+                                    Recent student exit and return
+                                    activity across the main gate.
+                                </p>
                             </div>
-                            <button className="security-refresh" onClick={fetchGateHistory} disabled={historyLoading}>
-                                <Icon name="refresh" size={15}/> {historyLoading ? "Loading..." : "Refresh"}
+
+                            <button
+                                className="security-refresh"
+                                onClick={fetchGateHistory}
+                                disabled={historyLoading}
+                            >
+                                <Icon name="refresh" size={15} />
+
+                                {historyLoading
+                                    ? "Loading..."
+                                    : "Refresh"}
                             </button>
                         </div>
 
-                        {gateHistory.length === 0 && !historyLoading ? (
-                            <div className="security-empty-history"><Icon name="document" size={21}/><strong>No gate records yet</strong><span>Exit and return records will appear here after students use their QR outpass.</span></div>
+                        {gateHistory.length === 0 &&
+                        !historyLoading ? (
+                            <div className="security-empty-history">
+                                <Icon name="document" size={21} />
+
+                                <strong>
+                                    No gate records yet
+                                </strong>
+
+                                <span>
+                                    Exit and return records will appear
+                                    here after students use their QR
+                                    outpass.
+                                </span>
+                            </div>
                         ) : (
                             <div className="security-history-table-wrap">
                                 <table className="security-history-table">
-                                    <thead><tr><th>Student</th><th>Outpass ID</th><th>Out Time</th><th>In Time</th><th>Status</th></tr></thead>
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>Outpass ID</th>
+                                            <th>Out Time</th>
+                                            <th>In Time</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+
                                     <tbody>
                                         {gateHistory.map((log) => (
                                             <tr key={log._id}>
-                                                <td><strong>{log.student?.name || "-"}</strong><span>{log.student?.studentId || "-"}</span></td>
-                                                <td>{log.outpass?.outpassId || "-"}</td>
-                                                <td>{formatDateTime(log.outTime)}</td>
-                                                <td>{formatDateTime(log.inTime)}</td>
-                                                <td><span className={`security-history-status ${log.status === "returned" ? "returned" : "outside"}`}>{log.status === "returned" ? "✓ Returned" : "Outside"}</span></td>
+                                                <td>
+                                                    <strong>
+                                                        {log.student
+                                                            ?.name ||
+                                                            "-"}
+                                                    </strong>
+
+                                                    <span>
+                                                        {log.student
+                                                            ?.studentId ||
+                                                            "-"}
+                                                    </span>
+                                                </td>
+
+                                                <td>
+                                                    {log.outpass
+                                                        ?.outpassId ||
+                                                        "-"}
+                                                </td>
+
+                                                <td>
+                                                    {formatDateTime(
+                                                        log.outTime
+                                                    )}
+                                                </td>
+
+                                                <td>
+                                                    {formatDateTime(
+                                                        log.inTime
+                                                    )}
+                                                </td>
+
+                                                <td>
+                                                    <span
+                                                        className={`security-history-status ${
+                                                            log.status ===
+                                                            "returned"
+                                                                ? "returned"
+                                                                : "outside"
+                                                        }`}
+                                                    >
+                                                        {log.status ===
+                                                        "returned"
+                                                            ? "✓ Returned"
+                                                            : "Outside"}
+                                                    </span>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -376,34 +1132,51 @@ function SecurityDashboard() {
 
                     {!outpass && (
                         <section className="security-empty-dashboard">
-                            <div><Icon name="qr" size={22}/></div>
-                            <h3>Ready for gate verification</h3>
-                            <p>Search an approved outpass above to display its QR code.</p>
+                            <div>
+                                <Icon name="qr" size={22} />
+                            </div>
+
+                            <h3>
+                                Ready for gate verification
+                            </h3>
+
+                            <p>
+                                Search an approved outpass above to
+                                display its Exit and Return QR codes.
+                            </p>
                         </section>
                     )}
 
-                    <div className="security-footer-note"><Icon name="shield" size={14}/><span>E-Outpass securely records main-gate verification and student entry/exit activity.</span></div>
+                    <div className="security-footer-note">
+                        <Icon name="shield" size={14} />
+
+                        <span>
+                            E-Outpass securely records main-gate
+                            verification and student entry/exit
+                            activity.
+                        </span>
+                    </div>
                 </div>
             </main>
 
             <nav className="security-mobile-nav">
                 <a href="#top" className="active">
-                    <Icon name="grid" size={19}/>
+                    <Icon name="grid" size={19} />
                     <span>Home</span>
                 </a>
 
                 <a href="#verification">
-                    <Icon name="qr" size={19}/>
+                    <Icon name="qr" size={19} />
                     <span>Verify</span>
                 </a>
 
                 <a href="#history">
-                    <Icon name="clock" size={19}/>
+                    <Icon name="clock" size={19} />
                     <span>History</span>
                 </a>
 
                 <a href="#profile">
-                    <Icon name="user" size={19}/>
+                    <Icon name="user" size={19} />
                     <span>Profile</span>
                 </a>
 
@@ -412,7 +1185,7 @@ function SecurityDashboard() {
                     onClick={handleLogout}
                     aria-label="Logout"
                 >
-                    <Icon name="logout" size={19}/>
+                    <Icon name="logout" size={19} />
                     <span>Logout</span>
                 </button>
             </nav>
