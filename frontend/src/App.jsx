@@ -23,21 +23,22 @@ function App() {
 
 
     // ==========================================
-    // QR GATE PAGE
-    // ==========================================
-    //
-    // IMPORTANT:
-    // This check MUST happen before the
-    // login/user-role checks.
-    //
-    // Anyone who scans the QR should be able
-    // to open the gate confirmation page.
-    //
+    // CURRENT PATH
     // ==========================================
 
     const currentPath =
         window.location.pathname;
 
+
+    // ==========================================
+    // QR GATE PAGE
+    // ==========================================
+    //
+    // This must be checked before login/user
+    // role checks because a QR scan should be
+    // able to open the gate page directly.
+    //
+    // ==========================================
 
     if (
         currentPath.startsWith("/gate/")
@@ -66,10 +67,9 @@ function App() {
     // ==========================================
 
     if (user.role === "parent") {
-        if (currentPath === "/request-outpass") {
-            return <RequestOutpass />;
-        }
-        return <ParentDashboard />;
+        return (
+            <ParentDashboard />
+        );
     }
 
 
@@ -104,12 +104,22 @@ function App() {
             <StudentDashboard />
         );
     }
-    
-    // ==========================================   
+
+
+    // ==========================================
     // HOD
+    // CLASS ADVISOR
+    // ==========================================
+    //
+    // Both HOD and Class Advisor use the
+    // academic approval dashboard.
+    //
     // ==========================================
 
-    if (user.role === "hod") {
+    if (
+        user.role === "hod" ||
+        user.role === "classAdvisor"
+    ) {
         return (
             <HODDashboard />
         );

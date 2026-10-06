@@ -1,14 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
+
 import "./HODDashboard.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-/* =========================================================
-   ICONS
-========================================================= */
+
+// =========================================================
+// ICONS
+// =========================================================
 
 const Icon = ({ name, size = 20 }) => {
+
     const shapes = {
+
         grid: (
             <>
                 <rect x="4" y="4" width="6" height="6" rx="1" />
@@ -94,50 +98,105 @@ const Icon = ({ name, size = 20 }) => {
 };
 
 
-/* =========================================================
-   HOD DASHBOARD
-========================================================= */
+// =========================================================
+// HOD / CLASS ADVISOR DASHBOARD
+// =========================================================
 
 function HODDashboard() {
 
     const [outpasses, setOutpasses] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [actionLoading, setActionLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
 
-    /* REJECTION MODAL */
-    const [showRejectModal, setShowRejectModal] = useState(false);
-    const [selectedOutpass, setSelectedOutpass] = useState(null);
-    const [rejectionReason, setRejectionReason] = useState("");
+    const [loading, setLoading] =
+        useState(true);
 
-    const token = localStorage.getItem("token");
+    const [actionLoading, setActionLoading] =
+        useState(false);
+
+    const [error, setError] =
+        useState("");
+
+    const [message, setMessage] =
+        useState("");
 
 
-    /* =====================================================
-       FETCH PENDING ACADEMIC REQUESTS
-    ===================================================== */
+    // =====================================================
+    // REJECTION MODAL
+    // =====================================================
+
+    const [showRejectModal, setShowRejectModal] =
+        useState(false);
+
+    const [selectedOutpass, setSelectedOutpass] =
+        useState(null);
+
+    const [rejectionReason, setRejectionReason] =
+        useState("");
+
+
+    const token =
+        localStorage.getItem("token");
+
+
+    // =====================================================
+    // USER / ROLE
+    // =====================================================
+
+    const currentUser = useMemo(() => {
+
+        try {
+
+            return JSON.parse(
+                localStorage.getItem("user") || "null"
+            );
+
+        } catch {
+
+            return null;
+        }
+
+    }, []);
+
+
+    const isClassAdvisor =
+        currentUser?.role === "classAdvisor";
+
+
+    const portalTitle =
+        isClassAdvisor
+            ? "CLASS ADVISOR PORTAL"
+            : "HOD PORTAL";
+
+
+    // =====================================================
+    // FETCH PENDING ACADEMIC REQUESTS
+    // =====================================================
 
     const fetchPendingOutpasses = async () => {
 
         try {
 
             setLoading(true);
+
             setError("");
 
-            const response = await fetch(
-                `${API_URL}/api/outpasses/academic-pending`,
-                {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
+            const response =
+                await fetch(
+                    `${API_URL}/api/outpass/academic-pending`,
+                    {
+                        method: "GET",
 
-            const data = await response.json();
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`
+                        }
+                    }
+                );
+
+            const data =
+                await response.json();
 
             if (!response.ok) {
+
                 throw new Error(
                     data.message ||
                     "Unable to fetch academic approval requests."
@@ -165,292 +224,333 @@ function HODDashboard() {
         } finally {
 
             setLoading(false);
-
         }
-
     };
 
 
-    /* =====================================================
-       INITIAL LOAD
-    ===================================================== */
+    // =====================================================
+    // INITIAL LOAD
+    // =====================================================
 
     useEffect(() => {
+
         fetchPendingOutpasses();
+
     }, []);
 
 
-    /* =====================================================
-       APPROVE
-    ===================================================== */
+    // =====================================================
+    // APPROVE
+    // =====================================================
 
-    const approveOutpass = async (outpassId) => {
+    const approveOutpass =
+        async (outpassId) => {
 
-        try {
+            try {
 
-            setActionLoading(true);
-            setError("");
-            setMessage("");
+                setActionLoading(true);
 
-            const response = await fetch(
-                `${API_URL}/api/outpasses/${encodeURIComponent(
-                    outpassId
-                )}/academic-approve`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
+                setError("");
+
+                setMessage("");
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/outpass/${encodeURIComponent(
+                            outpassId
+                        )}/academic-approve`,
+                        {
+                            method: "PATCH",
+
+                            headers: {
+                                Authorization:
+                                    `Bearer ${token}`,
+
+                                "Content-Type":
+                                    "application/json"
+                            }
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to approve the academic request."
+                    );
                 }
-            );
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message ||
-                    "Unable to approve the academic request."
+                setMessage(
+                    "Academic approval granted. The request has been sent to the warden."
                 );
+
+                await fetchPendingOutpasses();
+
+            } catch (err) {
+
+                console.error(
+                    "Approval error:",
+                    err
+                );
+
+                setError(
+                    err.message ||
+                    "Unable to approve the request."
+                );
+
+            } finally {
+
+                setActionLoading(false);
             }
+        };
 
-            setMessage(
-                "Academic approval granted. The request has been sent to the warden."
+
+    // =====================================================
+    // OPEN REJECTION MODAL
+    // =====================================================
+
+    const openRejectModal =
+        (outpass) => {
+
+            setSelectedOutpass(
+                outpass
             );
 
-            await fetchPendingOutpasses();
+            setRejectionReason("");
 
-        } catch (err) {
+            setShowRejectModal(true);
 
-            console.error(
-                "Approval error:",
-                err
-            );
-
-            setError(
-                err.message ||
-                "Unable to approve the request."
-            );
-
-        } finally {
-
-            setActionLoading(false);
-
-        }
-
-    };
-
-
-    /* =====================================================
-       OPEN REJECTION MODAL
-    ===================================================== */
-
-    const openRejectModal = (outpass) => {
-
-        setSelectedOutpass(outpass);
-        setRejectionReason("");
-        setShowRejectModal(true);
-
-        setError("");
-        setMessage("");
-
-    };
-
-
-    /* =====================================================
-       CLOSE REJECTION MODAL
-    ===================================================== */
-
-    const closeRejectModal = () => {
-
-        if (actionLoading) {
-            return;
-        }
-
-        setShowRejectModal(false);
-        setRejectionReason("");
-        setSelectedOutpass(null);
-
-    };
-
-
-    /* =====================================================
-       REJECT
-    ===================================================== */
-
-    const rejectOutpass = async () => {
-
-        if (!selectedOutpass) {
-            return;
-        }
-
-        if (!rejectionReason.trim()) {
-
-            setError(
-                "Please enter a rejection reason."
-            );
-
-            return;
-        }
-
-        try {
-
-            setActionLoading(true);
             setError("");
+
             setMessage("");
+        };
 
-            const response = await fetch(
-                `${API_URL}/api/outpasses/${encodeURIComponent(
-                    selectedOutpass.outpassId
-                )}/academic-reject`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    },
 
-                    body: JSON.stringify({
-                        rejectionReason:reason.trim()
-                    })
-                }
-            );
+    // =====================================================
+    // CLOSE REJECTION MODAL
+    // =====================================================
 
-            const data = await response.json();
+    const closeRejectModal =
+        () => {
 
-            if (!response.ok) {
-                throw new Error(
-                    data.message ||
-                    "Unable to reject the academic request."
-                );
+            if (actionLoading) {
+                return;
             }
-
-            setMessage(
-                "Academic approval rejected."
-            );
 
             setShowRejectModal(false);
+
             setRejectionReason("");
+
             setSelectedOutpass(null);
-
-            await fetchPendingOutpasses();
-
-        } catch (err) {
-
-            console.error(
-                "Rejection error:",
-                err
-            );
-
-            setError(
-                err.message ||
-                "Unable to reject the request."
-            );
-
-        } finally {
-
-            setActionLoading(false);
-
-        }
-
-    };
+        };
 
 
-    /* =====================================================
-       LOGOUT
-    ===================================================== */
+    // =====================================================
+    // REJECT
+    // =====================================================
+
+    const rejectOutpass =
+        async () => {
+
+            if (!selectedOutpass) {
+                return;
+            }
+
+            if (!rejectionReason.trim()) {
+
+                setError(
+                    "Please enter a rejection reason."
+                );
+
+                return;
+            }
+
+            try {
+
+                setActionLoading(true);
+
+                setError("");
+
+                setMessage("");
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/outpass/${encodeURIComponent(
+                            selectedOutpass.outpassId
+                        )}/academic-reject`,
+                        {
+                            method: "PATCH",
+
+                            headers: {
+                                Authorization:
+                                    `Bearer ${token}`,
+
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                rejectionReason:
+                                    rejectionReason.trim()
+                            })
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to reject the academic request."
+                    );
+                }
+
+                setMessage(
+                    "Academic approval rejected."
+                );
+
+                setShowRejectModal(false);
+
+                setRejectionReason("");
+
+                setSelectedOutpass(null);
+
+                await fetchPendingOutpasses();
+
+            } catch (err) {
+
+                console.error(
+                    "Rejection error:",
+                    err
+                );
+
+                setError(
+                    err.message ||
+                    "Unable to reject the request."
+                );
+
+            } finally {
+
+                setActionLoading(false);
+            }
+        };
+
+
+    // =====================================================
+    // LOGOUT
+    // =====================================================
 
     const handleLogout = () => {
 
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-
-        window.location.reload();
-
-    };
-
-
-    /* =====================================================
-       DATE FORMAT
-    ===================================================== */
-
-    const formatDate = (value) => {
-
-        if (!value) {
-            return "—";
-        }
-
-        const date = new Date(value);
-
-        if (Number.isNaN(date.getTime())) {
-            return "—";
-        }
-
-        return date.toLocaleDateString(
-            "en-IN",
-            {
-                day: "2-digit",
-                month: "short",
-                year: "numeric"
-            }
+        localStorage.removeItem(
+            "token"
         );
 
+        localStorage.removeItem(
+            "user"
+        );
+
+        window.location.reload();
     };
 
 
-    /* =====================================================
-       COUNTS
-    ===================================================== */
+    // =====================================================
+    // DATE FORMAT
+    // =====================================================
 
-    const pendingCount = outpasses.length;
+    const formatDate =
+        (value) => {
 
-    const awaitingCount = outpasses.filter(
-        (item) =>
-            item.academicApprovalStatus === "pending" ||
-            item.status === "academic_pending"
-    ).length;
+            if (!value) {
+                return "—";
+            }
 
+            const date =
+                new Date(value);
 
-    /* =====================================================
-       USER INITIAL
-    ===================================================== */
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+                return "—";
+            }
 
-    const hodInitial = useMemo(() => {
-
-        try {
-
-            const user = JSON.parse(
-                localStorage.getItem("user") || "null"
+            return date.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
             );
-
-            return (
-                user?.name ||
-                user?.email ||
-                "H"
-            )
-                .charAt(0)
-                .toUpperCase();
-
-        } catch {
-
-            return "H";
-
-        }
-
-    }, []);
+        };
 
 
-    /* =====================================================
-       UI
-    ===================================================== */
+    // =====================================================
+    // COUNTS
+    // =====================================================
+
+    const pendingCount =
+        outpasses.length;
+
+    const awaitingCount =
+        outpasses.filter(
+            (item) =>
+                item.academicApprovalStatus ===
+                    "pending" ||
+                item.status ===
+                    "academic_pending"
+        ).length;
+
+
+    // =====================================================
+    // USER INITIAL
+    // =====================================================
+
+    const hodInitial =
+        useMemo(() => {
+
+            try {
+
+                const user =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "user"
+                        ) || "null"
+                    );
+
+                return (
+                    user?.name ||
+                    user?.email ||
+                    "H"
+                )
+                    .charAt(0)
+                    .toUpperCase();
+
+            } catch {
+
+                return "H";
+            }
+
+        }, []);
+
+
+    // =====================================================
+    // UI
+    // =====================================================
 
     return (
 
         <div className="hod-page">
 
-
             {/* =================================================
-               SIDEBAR
+                SIDEBAR
             ================================================= */}
 
             <aside className="hod-sidebar">
@@ -504,7 +604,8 @@ function HODDashboard() {
                                         "academic-requests"
                                     )
                                     ?.scrollIntoView({
-                                        behavior: "smooth"
+                                        behavior:
+                                            "smooth"
                                     })
                             }
                         >
@@ -546,11 +647,10 @@ function HODDashboard() {
 
 
             {/* =================================================
-               MAIN
+                MAIN
             ================================================= */}
 
             <main className="hod-main">
-
 
                 {/* MOBILE TOPBAR */}
 
@@ -578,9 +678,8 @@ function HODDashboard() {
 
                 <div className="hod-content">
 
-
                     {/* =================================================
-                       HERO
+                        HERO
                     ================================================= */}
 
                     <section className="hod-hero">
@@ -588,7 +687,7 @@ function HODDashboard() {
                         <div>
 
                             <span className="hero-eyebrow">
-                                HOD PORTAL
+                                {portalTitle}
                             </span>
 
                             <h1>
@@ -606,7 +705,7 @@ function HODDashboard() {
 
 
                     {/* =================================================
-                       ALERTS
+                        ALERTS
                     ================================================= */}
 
                     {message && (
@@ -627,7 +726,6 @@ function HODDashboard() {
                             </span>
 
                         </div>
-
                     )}
 
 
@@ -649,12 +747,11 @@ function HODDashboard() {
                             </span>
 
                         </div>
-
                     )}
 
 
                     {/* =================================================
-                       ACTIVITY
+                        ACTIVITY
                     ================================================= */}
 
                     <section className="activity-section">
@@ -669,7 +766,6 @@ function HODDashboard() {
 
 
                         <div className="stats-grid">
-
 
                             {/* PENDING */}
 
@@ -792,7 +888,7 @@ function HODDashboard() {
 
 
                     {/* =================================================
-                       ACADEMIC REQUESTS
+                        ACADEMIC REQUESTS
                     ================================================= */}
 
                     <section
@@ -823,7 +919,9 @@ function HODDashboard() {
                             <button
                                 type="button"
                                 className="refresh-button"
-                                onClick={fetchPendingOutpasses}
+                                onClick={
+                                    fetchPendingOutpasses
+                                }
                                 disabled={loading}
                             >
 
@@ -840,7 +938,7 @@ function HODDashboard() {
 
 
                         {/* =================================================
-                           LOADING
+                            LOADING
                         ================================================= */}
 
                         {loading ? (
@@ -861,7 +959,6 @@ function HODDashboard() {
                             </div>
 
                         ) : outpasses.length === 0 ? (
-
 
                             /* =================================================
                                EMPTY
@@ -889,9 +986,7 @@ function HODDashboard() {
 
                             </div>
 
-
                         ) : (
-
 
                             /* =================================================
                                REQUESTS
@@ -906,7 +1001,6 @@ function HODDashboard() {
                                             key={outpass._id}
                                             className="academic-request-card"
                                         >
-
 
                                             {/* HEADER */}
 
@@ -958,7 +1052,6 @@ function HODDashboard() {
                                             {/* DETAILS */}
 
                                             <div className="request-details">
-
 
                                                 <div className="detail-item">
 
@@ -1109,7 +1202,6 @@ function HODDashboard() {
 
                                                 <div className="request-actions">
 
-
                                                     {/* REJECT */}
 
                                                     <button
@@ -1168,7 +1260,6 @@ function HODDashboard() {
                                 )}
 
                             </div>
-
                         )}
 
                     </section>
@@ -1179,7 +1270,7 @@ function HODDashboard() {
 
 
             {/* =================================================
-               MOBILE NAV
+                MOBILE NAV
             ================================================= */}
 
             <nav className="hod-mobile-nav">
@@ -1215,7 +1306,8 @@ function HODDashboard() {
                                 "academic-requests"
                             )
                             ?.scrollIntoView({
-                                behavior: "smooth"
+                                behavior:
+                                    "smooth"
                             })
                     }
                 >
@@ -1252,7 +1344,7 @@ function HODDashboard() {
 
 
             {/* =================================================
-               REJECTION MODAL
+                REJECTION MODAL
             ================================================= */}
 
             {showRejectModal && (
@@ -1367,7 +1459,6 @@ function HODDashboard() {
                     </div>
 
                 </div>
-
             )}
 
         </div>

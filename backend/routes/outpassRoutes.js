@@ -23,6 +23,10 @@ const {
 
     studentGateStatus,
     studentConfirmGateAction,
+
+    publicGateStatus,
+    publicGateConfirm,
+
     getGateHistory
 } = require("../controllers/outpassController");
 
@@ -169,6 +173,14 @@ router.get(
     validateOutpass
 );
 
+// Additional compatible route
+router.get(
+    "/:outpassId/validate",
+    protect,
+    authorize("security"),
+    validateOutpass
+);
+
 // Legacy route
 // Frontend sends outpassId in request body
 router.post(
@@ -264,7 +276,26 @@ router.post(
 
 
 // ======================================================
+// PUBLIC QR GATE ROUTES
+// NO LOGIN REQUIRED
+// ======================================================
+
+// QR scan checks whether the outpass can exit or return
+router.get(
+    "/public-gate-status/:outpassId",
+    publicGateStatus
+);
+
+// QR confirmation records exit / return
+router.post(
+    "/public-gate-confirm/:outpassId",
+    publicGateConfirm
+);
+
+
+// ======================================================
 // STUDENT GATE ROUTES
+// LOGIN REQUIRED
 // ======================================================
 
 // Current route

@@ -2033,35 +2033,254 @@ const getGateHistory =
     };
 
 // ======================================================
+// PUBLIC GATE STATUS - NO LOGIN REQUIRED
+// ======================================================
+
+const publicGateStatus = async (req, res) => {
+    try {
+        const { outpassId } = req.params;
+
+        if (!outpassId) {
+            return res.status(400).json({
+                message: "Outpass ID is required."
+            });
+        }
+
+        const outpass =
+            await Outpass.findOne({
+                outpassId
+            });
+
+        if (!outpass) {
+            return res.status(404).json({
+                message: "Outpass not found."
+            });
+        }
+
+        if (outpass.status !== "approved") {
+            return res.status(400).json({
+                message:
+                    `This outpass is not currently approved. Current status: ${outpass.status}.`
+            });
+        }
+
+        const activeGateLog =
+            await GateLog.findOne({
+                outpass: outpass._id,
+                outTime: {
+                    $ne: null
+                },
+                inTime: null
+            }).sort({
+                outTime: -1
+            });
+
+        let action = "exit";
+
+        if (activeGateLog) {
+            action = "return";
+        }
+
+        return res.status(200).json({
+            action,
+            outpassId: outpass.outpassId
+        });
+
+    } catch (error) {
+        console.error(
+            "Public gate status error:",
+            error
+        );
+
+        return res.status(500).json({
+            message:
+                "Server error while checking gate status."
+        });
+    }
+};
+
+
+// ======================================================
+// PUBLIC GATE CONFIRMATION - NO LOGIN REQUIRED
+// ======================================================
+
+const publicGateConfirm = async (req, res) => {
+    try {
+        const { outpassId } = req.params;
+        const { action } = req.body;
+
+        if (!outpassId) {
+            return res.status(400).json({
+                message: "Outpass ID is required."
+            });
+        }
+
+        if (
+            !action ||
+            !["exit", "return"].includes(action)
+        ) {
+            return res.status(400).json({
+                message:
+                    "Action must be either 'exit' or 'return'."
+            });
+        }
+
+        const outpass =
+            await Outpass.findOne({
+                outpassId
+            });
+
+        if (!outpass) {
+            return res.status(404).json({
+                message: "Outpass not found."
+            });
+        }
+
+        // --------------------------------------------------
+        // EXIT
+        // --------------------------------------------------
+
+        if (action === "exit") {
+
+            if (
+                outpass.status !==
+                "approved"
+            ) {
+                return res.status(400).json({
+                    message:
+                        `This outpass cannot be used for exit. Current status: ${outpass.status}.`
+                });
+            }
+
+            const existingLog =
+                await GateLog.findOne({
+                    outpass:
+                        outpass._id,
+                    outTime: {
+                        $ne: null
+                    },
+                    inTime: null
+                });
+
+            if (existingLog) {
+                return res.status(400).json({
+                    message:
+                        "This student has already exited and has not returned yet."
+                });
+            }
+
+            const gateLog =
+                await GateLog.create({
+                    outpass:
+                        outpass._id,
+
+                    student:
+                        outpass.student,
+
+                    hostel:
+                        outpass.hostel,
+
+                    outTime:
+                        new Date()
+                });
+
+            return res.status(200).json({
+                message:
+                    "Campus exit recorded successfully.",
+
+                action: "exit",
+
+                gateLog
+            });
+        }
+
+        // --------------------------------------------------
+        // RETURN
+        // --------------------------------------------------
+
+        if (action === "return") {
+
+            const gateLog =
+                await GateLog.findOne({
+                    outpass:
+                        outpass._id,
+
+                    outTime: {
+                        $ne: null
+                    },
+
+                    inTime: null
+                }).sort({
+                    outTime: -1
+                });
+
+            if (!gateLog) {
+                return res.status(400).json({
+                    message:
+                        "No active exit record was found for this outpass."
+                });
+            }
+
+            gateLog.inTime =
+                new Date();
+
+            await gateLog.save();
+
+            outpass.status =
+                "completed";
+
+            await outpass.save();
+
+            return res.status(200).json({
+                message:
+                    "Campus return recorded successfully.",
+
+                action: "return",
+
+                gateLog
+            });
+        }
+
+    } catch (error) {
+        console.error(
+            "Public gate confirmation error:",
+            error
+        );
+
+        return res.status(500).json({
+            message:
+                "Server error while confirming gate action."
+        });
+    }
+};
+
+// ======================================================
 // EXPORTS
 // ======================================================
 
 module.exports = {
-
-    // Parent
     requestOutpass,
     getMyStudent,
     getMyOutpasses,
 
-    // Warden
     getPendingOutpasses,
     getWardenOutpassHistory,
     approveOutpass,
     rejectOutpass,
 
-    // Academic
     getAcademicPendingOutpasses,
     approveAcademicOutpass,
     rejectAcademicOutpass,
 
-    // Security
     validateOutpass,
     getSecurityApprovedOutpasses,
     scanOut,
     scanIn,
 
-    // Gate
     studentGateStatus,
     studentConfirmGateAction,
+
+    publicGateStatus,
+    publicGateConfirm, 
     getGateHistory
 };
