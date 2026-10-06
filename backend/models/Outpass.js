@@ -1,197 +1,200 @@
-const mongoose = require("mongoose");
+// ======================================================
+// REJECT OUTPASS - ACADEMIC
+// HOD / CLASS ADVISOR
+// ======================================================
 
-const outpassSchema = new mongoose.Schema(
-    {
-        // ==========================================
-        // BASIC DETAILS
-        // ==========================================
+const rejectAcademicOutpass = async (req, res) => {
 
-        outpassId: {
-            type: String,
-            required: true,
-            unique: true
-        },
+    try {
 
-        student: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Student",
-            required: true
-        },
+        const { outpassId } = req.params;
 
-        parent: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true
-        },
+        const { rejectionReason } = req.body;
 
-        hostel: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Hostel",
-            required: true
-        },
+        const role = req.user.role;
 
-        placeOfVisit: {
-            type: String,
-            required: true,
-            trim: true
-        },
-
-        reason: {
-            type: String,
-            required: true,
-            trim: true
-        },
-
-        dateRequestedFor: {
-            type: Date,
-            required: true
-        },
-
-        timeOfLeaving: {
-            type: String,
-            required: true
-        },
-
-        expectedInTime: {
-            type: String,
-            required: true
-        },
 
         // ==========================================
-        // WEEKDAY / WEEKEND
+        // CHECK AUTHORITY
         // ==========================================
 
-        dayType: {
-            type: String,
-            enum: [
-                "weekday",
-                "weekend"
-            ],
-            default: null
-        },
+        if (
+            role !== "hod" &&
+            role !== "classAdvisor"
+        ) {
 
-        // ==========================================
-        // ACADEMIC APPROVAL
-        // ==========================================
-
-        academicApprovalRequired: {
-            type: Boolean,
-            default: false
-        },
-
-        // Role of the assigned authority
-        //
-        // classAdvisor = normal weekday flow
-        // hod          = fallback flow
-        //
-        academicApprovalBy: {
-            type: String,
-            enum: [
-                "classAdvisor",
-                "hod",
-                null
-            ],
-            default: null
-        },
-
-        // Actual User who is assigned
-        academicApprover: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            default: null
-        },
-
-        academicApprovalStatus: {
-            type: String,
-            enum: [
-                "not_required",
-                "pending",
-                "approved",
-                "rejected"
-            ],
-            default: "not_required"
-        },
-
-        academicApprovedBy: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            default: null
-        },
-
-        academicApprovedAt: {
-            type: Date,
-            default: null
-        },
-
-        academicRejectionReason: {
-            type: String,
-            default: ""
-        },
-
-        // ==========================================
-        // WARDEN APPROVAL
-        // ==========================================
-
-        wardenApprovalStatus: {
-            type: String,
-            enum: [
-                "pending",
-                "approved",
-                "rejected"
-            ],
-            default: "pending"
-        },
-
-        wardenApprovedBy: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            default: null
-        },
-
-        wardenApprovedAt: {
-            type: Date,
-            default: null
-        },
-
-        // ==========================================
-        // OVERALL STATUS
-        // ==========================================
-
-        status: {
-            type: String,
-            enum: [
-                "pending",
-                "academic_pending",
-                "warden_pending",
-                "approved",
-                "rejected",
-                "completed",
-                "expired"
-            ],
-            default: "pending"
-        },
-
-        rejectionReason: {
-            type: String,
-            default: ""
-        },
-
-        approvedAt: {
-            type: Date,
-            default: null
-        },
-
-        qrCode: {
-            type: String,
-            default: null
+            return res.status(403).json({
+                message:
+                    "Only HOD or Class Advisor can reject academic requests."
+            });
         }
-    },
-    {
-        timestamps: true
-    }
-);
 
-module.exports = mongoose.model(
-    "Outpass",
-    outpassSchema
-);
+
+        // ==========================================
+        // VALIDATE REJECTION REASON
+        // ==========================================
+
+        if (
+            !rejectionReason ||
+            !rejectionReason.trim()
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Rejection reason is required."
+            });
+        }
+
+
+        // ==========================================
+        // FIND REQUEST ASSIGNED TO THIS USER
+        // ==========================================
+
+        const outpass = await Outpass.findOne({
+
+            outpassId,
+
+            academicApprovalRequired:
+                true,
+
+            academicApprovalStatus:
+                "pending",
+
+            academicApprover:
+                req.user.userId
+
+        });
+
+
+        if (!outpass) {
+
+            return res.status(404).json({
+                message:
+                    "Academic approval request not found or not assigned to you."
+            });
+        }
+
+
+        // ==========================================
+        // REJECT ACADEMIC APPROVAL
+        // ==========================================
+
+        outpass.academicApprovalStatus =
+            "rejected";
+
+
+        // ==========================================
+        // RECORD WHO REJECTED
+        // ==========================================
+
+        outpass.academicRejectedBy =
+            req.user.userId;
+
+
+        // ==========================================
+        // RECORD WHEN REJECTED
+        // ==========================================
+
+        outpass.academicRejectedAt =
+            new Date();
+
+
+        // ==========================================
+        // STORE REJECTION REASON
+        // ==========================================
+
+        outpass.academicRejectionReason =
+            rejectionReason.trim();
+
+
+        // ==========================================
+        // OVERALL OUTPASS STATUS
+        // ==========================================
+
+        outpass.status =
+            "rejected";
+
+
+        // Store same reason in general field
+        // so parent/student can see it easily.
+
+        outpass.rejectionReason =
+            rejectionReason.trim();
+
+
+        // ==========================================
+        // CLEAR APPROVAL RECORD
+        // ==========================================
+
+        outpass.academicApprovedBy =
+            null;
+
+        outpass.academicApprovedAt =
+            null;
+
+
+        // ==========================================
+        // SAVE
+        // ==========================================
+
+        await outpass.save();
+
+
+        // ==========================================
+        // POPULATE RESPONSE
+        // ==========================================
+
+        const populatedOutpass =
+            await Outpass.findById(
+                outpass._id
+            )
+
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+
+                .populate(
+                    "hostel",
+                    "name type"
+                )
+
+                .populate(
+                    "academicApprover",
+                    "name email role"
+                )
+
+                .populate(
+                    "academicRejectedBy",
+                    "name email role"
+                );
+
+
+        // ==========================================
+        // RESPONSE
+        // ==========================================
+
+        return res.status(200).json({
+
+            message:
+                "Outpass rejected by academic authority.",
+
+            outpass:
+                populatedOutpass
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Academic rejection error:",
+            error
+        );
+
+        return res.status(500).json({
+
+            message:
+                "Server error while rejecting academic request."
+        });
+    }
+};

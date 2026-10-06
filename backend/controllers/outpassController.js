@@ -11,6 +11,7 @@ const QRCode = require("qrcode");
 // ======================================================
 
 const getDayType = (date) => {
+
     const dateObject = new Date(date);
 
     if (Number.isNaN(dateObject.getTime())) {
@@ -31,11 +32,11 @@ const getDayType = (date) => {
 //
 // WEEKDAY FLOW:
 //
-// 1. Student's Class Advisor is checked.
-// 2. If Class Advisor exists AND is available,
-//    request is assigned to Class Advisor.
+// 1. Check student's Class Advisor.
+// 2. If Class Advisor exists and is available,
+//    assign request to Class Advisor.
 // 3. If Class Advisor is unavailable,
-//    request is assigned to student's HOD.
+//    assign request to student's HOD.
 //
 // ======================================================
 
@@ -57,6 +58,7 @@ const determineAcademicApprover = async (student) => {
             classAdvisor &&
             classAdvisor.isAvailable === true
         ) {
+
             return {
                 role: "classAdvisor",
                 userId: classAdvisor._id
@@ -78,6 +80,7 @@ const determineAcademicApprover = async (student) => {
             });
 
         if (hod) {
+
             return {
                 role: "hod",
                 userId: hod._id
@@ -124,6 +127,7 @@ const requestOutpass = async (req, res) => {
             !timeOfLeaving ||
             !expectedInTime
         ) {
+
             return res.status(400).json({
                 message:
                     "All fields are required."
@@ -137,8 +141,13 @@ const requestOutpass = async (req, res) => {
 
         const student =
             await Student.findOne({
-                studentId: String(studentId),
-                parent: req.user.userId
+
+                studentId:
+                    String(studentId),
+
+                parent:
+                    req.user.userId
+
             })
                 .populate("hostel")
                 .populate("hod")
@@ -146,6 +155,7 @@ const requestOutpass = async (req, res) => {
 
 
         if (!student) {
+
             return res.status(404).json({
                 message:
                     "Student not found or not linked to this parent."
@@ -158,6 +168,7 @@ const requestOutpass = async (req, res) => {
         // ==========================================
 
         if (!student.hostel) {
+
             return res.status(400).json({
                 message:
                     "Student is not assigned to a hostel."
@@ -174,6 +185,7 @@ const requestOutpass = async (req, res) => {
 
 
         if (!dayType) {
+
             return res.status(400).json({
                 message:
                     "Invalid outpass date."
@@ -233,14 +245,11 @@ const requestOutpass = async (req, res) => {
             academicApprovalBy =
                 academicAssignment.role;
 
-
             academicApprover =
                 academicAssignment.userId;
 
-
             academicApprovalStatus =
                 "pending";
-
 
             initialStatus =
                 "academic_pending";
@@ -371,8 +380,10 @@ const getMyStudent = async (req, res) => {
 
         const student =
             await Student.findOne({
+
                 parent:
                     req.user.userId
+
             })
 
                 .populate(
@@ -392,6 +403,7 @@ const getMyStudent = async (req, res) => {
 
 
         if (!student) {
+
             return res.status(404).json({
                 message:
                     "No student is linked to this parent."
@@ -428,8 +440,10 @@ const getMyOutpasses = async (req, res) => {
 
         const outpasses =
             await Outpass.find({
+
                 parent:
                     req.user.userId
+
             })
 
                 .populate(
@@ -449,6 +463,11 @@ const getMyOutpasses = async (req, res) => {
 
                 .populate(
                     "academicApprovedBy",
+                    "name email role"
+                )
+
+                .populate(
+                    "academicRejectedBy",
                     "name email role"
                 )
 
@@ -495,12 +514,14 @@ const getPendingOutpasses = async (req, res) => {
 
         const hostel =
             await Hostel.findOne({
+
                 warden:
                     req.user.userId
             });
 
 
         if (!hostel) {
+
             return res.status(404).json({
                 message:
                     "No hostel is assigned to this warden."
@@ -536,6 +557,11 @@ const getPendingOutpasses = async (req, res) => {
 
                 .populate(
                     "academicApprovedBy",
+                    "name email role"
+                )
+
+                .populate(
+                    "academicRejectedBy",
                     "name email role"
                 )
 
@@ -581,12 +607,14 @@ const getWardenOutpassHistory =
 
             const hostel =
                 await Hostel.findOne({
+
                     warden:
                         req.user.userId
                 });
 
 
             if (!hostel) {
+
                 return res.status(404).json({
                     message:
                         "No hostel is assigned to this warden."
@@ -596,8 +624,10 @@ const getWardenOutpassHistory =
 
             const outpasses =
                 await Outpass.find({
+
                     hostel:
                         hostel._id
+
                 })
 
                     .populate(
@@ -622,6 +652,11 @@ const getWardenOutpassHistory =
 
                     .populate(
                         "academicApprovedBy",
+                        "name email role"
+                    )
+
+                    .populate(
+                        "academicRejectedBy",
                         "name email role"
                     )
 
@@ -666,12 +701,11 @@ const getWardenOutpassHistory =
 // HOD / CLASS ADVISOR
 // ======================================================
 //
-// IMPORTANT:
-//
 // The logged-in academic authority only sees requests
-// specifically assigned to that User account.
+// specifically assigned to that account.
 //
 // HOD will NOT see requests assigned to an available CA.
+//
 // ======================================================
 
 const getAcademicPendingOutpasses =
@@ -773,7 +807,6 @@ const approveAcademicOutpass =
                 outpassId
             } = req.params;
 
-
             const role =
                 req.user.role;
 
@@ -827,14 +860,17 @@ const approveAcademicOutpass =
             outpass.academicApprovalStatus =
                 "approved";
 
-
             outpass.academicApprovedBy =
                 req.user.userId;
-
 
             outpass.academicApprovedAt =
                 new Date();
 
+            outpass.academicRejectedBy =
+                null;
+
+            outpass.academicRejectedAt =
+                null;
 
             outpass.academicRejectionReason =
                 "";
@@ -846,7 +882,6 @@ const approveAcademicOutpass =
 
             outpass.status =
                 "warden_pending";
-
 
             outpass.wardenApprovalStatus =
                 "pending";
@@ -919,15 +954,17 @@ const rejectAcademicOutpass =
                 outpassId
             } = req.params;
 
-
             const {
                 rejectionReason
             } = req.body;
 
-
             const role =
                 req.user.role;
 
+
+            // ==========================================
+            // CHECK AUTHORITY
+            // ==========================================
 
             if (
                 role !== "hod" &&
@@ -940,6 +977,10 @@ const rejectAcademicOutpass =
                 });
             }
 
+
+            // ==========================================
+            // VALIDATE REASON
+            // ==========================================
 
             if (
                 !rejectionReason ||
@@ -990,22 +1031,33 @@ const rejectAcademicOutpass =
             outpass.academicApprovalStatus =
                 "rejected";
 
-
-            outpass.academicApprovedBy =
+            outpass.academicRejectedBy =
                 req.user.userId;
 
-
-            outpass.academicApprovedAt =
+            outpass.academicRejectedAt =
                 new Date();
-
 
             outpass.academicRejectionReason =
                 rejectionReason.trim();
 
 
+            // ==========================================
+            // CLEAR APPROVAL RECORD
+            // ==========================================
+
+            outpass.academicApprovedBy =
+                null;
+
+            outpass.academicApprovedAt =
+                null;
+
+
+            // ==========================================
+            // OVERALL STATUS
+            // ==========================================
+
             outpass.status =
                 "rejected";
-
 
             outpass.rejectionReason =
                 rejectionReason.trim();
@@ -1013,6 +1065,10 @@ const rejectAcademicOutpass =
 
             await outpass.save();
 
+
+            // ==========================================
+            // POPULATE RESPONSE
+            // ==========================================
 
             const populatedOutpass =
                 await Outpass.findById(
@@ -1035,7 +1091,7 @@ const rejectAcademicOutpass =
                     )
 
                     .populate(
-                        "academicApprovedBy",
+                        "academicRejectedBy",
                         "name email role"
                     );
 
@@ -1080,6 +1136,7 @@ const approveOutpass =
 
             const hostel =
                 await Hostel.findOne({
+
                     warden:
                         req.user.userId
                 });
@@ -1175,18 +1232,14 @@ const approveOutpass =
             outpass.wardenApprovalStatus =
                 "approved";
 
-
             outpass.wardenApprovedBy =
                 req.user.userId;
-
 
             outpass.wardenApprovedAt =
                 new Date();
 
-
             outpass.status =
                 "approved";
-
 
             outpass.approvedAt =
                 new Date();
@@ -1288,11 +1341,14 @@ const rejectOutpass =
                 outpassId
             } = req.params;
 
-
             const {
                 rejectionReason
             } = req.body;
 
+
+            // ==========================================
+            // VALIDATE REASON
+            // ==========================================
 
             if (
                 !rejectionReason ||
@@ -1306,8 +1362,13 @@ const rejectOutpass =
             }
 
 
+            // ==========================================
+            // FIND WARDEN HOSTEL
+            // ==========================================
+
             const hostel =
                 await Hostel.findOne({
+
                     warden:
                         req.user.userId
                 });
@@ -1321,6 +1382,10 @@ const rejectOutpass =
                 });
             }
 
+
+            // ==========================================
+            // FIND OUTPASS
+            // ==========================================
 
             const outpass =
                 await Outpass.findOne({
@@ -1342,6 +1407,10 @@ const rejectOutpass =
             }
 
 
+            // ==========================================
+            // CHECK STATUS
+            // ==========================================
+
             if (
                 outpass.status !==
                 "warden_pending"
@@ -1354,21 +1423,21 @@ const rejectOutpass =
             }
 
 
+            // ==========================================
+            // REJECT
+            // ==========================================
+
             outpass.status =
                 "rejected";
-
 
             outpass.rejectionReason =
                 rejectionReason.trim();
 
-
             outpass.wardenApprovalStatus =
                 "rejected";
 
-
             outpass.wardenApprovedBy =
                 req.user.userId;
-
 
             outpass.wardenApprovedAt =
                 new Date();
@@ -1376,6 +1445,10 @@ const rejectOutpass =
 
             await outpass.save();
 
+
+            // ==========================================
+            // POPULATE
+            // ==========================================
 
             const populatedOutpass =
                 await Outpass.findById(
@@ -1442,8 +1515,10 @@ const validateOutpass =
 
             const outpass =
                 await Outpass.findOne({
+
                     outpassId:
                         outpassId.trim()
+
                 })
 
                     .populate(
@@ -1557,8 +1632,10 @@ const getSecurityApprovedOutpasses =
 
             const outpasses =
                 await Outpass.find({
+
                     status:
                         "approved"
+
                 })
 
                     .populate(
@@ -1640,6 +1717,7 @@ const scanOut =
 
             const outpass =
                 await Outpass.findOne({
+
                     outpassId:
                         outpassId.trim()
                 });
@@ -1711,6 +1789,10 @@ const scanOut =
             }
 
 
+            // ==========================================
+            // CHECK EXISTING EXIT
+            // ==========================================
+
             const existingGateLog =
                 await GateLog.findOne({
 
@@ -1730,6 +1812,10 @@ const scanOut =
                 });
             }
 
+
+            // ==========================================
+            // CREATE GATE LOG
+            // ==========================================
 
             const gateLog =
                 await GateLog.create({
@@ -1821,6 +1907,7 @@ const scanIn =
 
             const outpass =
                 await Outpass.findOne({
+
                     outpassId:
                         outpassId.trim()
                 });
@@ -1864,9 +1951,12 @@ const scanIn =
             }
 
 
+            // ==========================================
+            // RECORD RETURN
+            // ==========================================
+
             gateLog.entryTime =
                 new Date();
-
 
             gateLog.status =
                 "returned";
@@ -1874,6 +1964,10 @@ const scanIn =
 
             await gateLog.save();
 
+
+            // ==========================================
+            // COMPLETE OUTPASS
+            // ==========================================
 
             outpass.status =
                 "completed";
@@ -1982,6 +2076,10 @@ const studentGateStatus =
             }
 
 
+            // ==========================================
+            // APPROVAL CHECK
+            // ==========================================
+
             if (
                 outpass.status === "pending" ||
                 outpass.status === "academic_pending" ||
@@ -2038,6 +2136,10 @@ const studentGateStatus =
                 });
             }
 
+
+            // ==========================================
+            // CHECK GATE LOG
+            // ==========================================
 
             const existingGateLog =
                 await GateLog.findOne({
@@ -2159,6 +2261,10 @@ const studentConfirmGateAction =
             }
 
 
+            // ==========================================
+            // APPROVAL CHECK
+            // ==========================================
+
             if (
                 outpass.status === "pending" ||
                 outpass.status === "academic_pending" ||
@@ -2216,6 +2322,10 @@ const studentConfirmGateAction =
             }
 
 
+            // ==========================================
+            // CHECK EXISTING GATE LOG
+            // ==========================================
+
             const existingGateLog =
                 await GateLog.findOne({
 
@@ -2228,7 +2338,7 @@ const studentConfirmGateAction =
 
 
             // ==========================================
-            // FIRST SCAN → EXIT
+            // FIRST ACTION → EXIT
             // ==========================================
 
             if (!existingGateLog) {
@@ -2290,7 +2400,7 @@ const studentConfirmGateAction =
 
 
             // ==========================================
-            // SECOND SCAN → RETURN
+            // SECOND ACTION → RETURN
             // ==========================================
 
             if (
@@ -2300,7 +2410,6 @@ const studentConfirmGateAction =
 
                 existingGateLog.entryTime =
                     new Date();
-
 
                 existingGateLog.status =
                     "returned";
@@ -2425,6 +2534,7 @@ const getGateHistory =
 
                 const hostel =
                     await Hostel.findOne({
+
                         warden:
                             req.user.userId
                     });
@@ -2441,8 +2551,10 @@ const getGateHistory =
 
                 const hostelOutpasses =
                     await Outpass.find({
+
                         hostel:
                             hostel._id
+
                     })
                         .select("_id");
 
@@ -2456,10 +2568,12 @@ const getGateHistory =
 
                 const gateLogs =
                     await GateLog.find({
+
                         outpass: {
                             $in:
                                 outpassIds
                         }
+
                     })
 
                         .populate(

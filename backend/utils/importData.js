@@ -195,9 +195,14 @@ const importData = async () => {
 
             const user =
                 await User.create({
+
                     name,
+
                     email,
-                    password: hashedPassword,
+
+                    password:
+                        hashedPassword,
+
                     role
                 });
 
@@ -266,9 +271,15 @@ const importData = async () => {
 
             const hostel =
                 await Hostel.create({
-                    name: hostelName,
-                    type: hostelType,
-                    warden: wardenId
+
+                    name:
+                        hostelName,
+
+                    type:
+                        hostelType,
+
+                    warden:
+                        wardenId
                 });
 
 
@@ -323,6 +334,17 @@ const importData = async () => {
             const studentEmail =
                 String(
                     studentData.studentemail
+                )
+                    .trim()
+                    .toLowerCase();
+
+            // ==================================
+            // STUDENT HOD EMAIL
+            // ==================================
+
+            const hodEmail =
+                String(
+                    studentData.hodemail
                 )
                     .trim()
                     .toLowerCase();
@@ -389,7 +411,7 @@ const importData = async () => {
 
 
             // ==================================
-            // FIND EXISTING STUDENT USER
+            // FIND STUDENT USER
             // ==================================
 
             const studentUserId =
@@ -412,6 +434,29 @@ const importData = async () => {
 
 
             // ==================================
+            // FIND STUDENT HOD
+            // ==================================
+
+            const hodId =
+                userMap[hodEmail];
+
+
+            if (!hodId) {
+
+                console.log(
+                    `HOD not found for ${studentName}: ${hodEmail}`
+                );
+
+            } else {
+
+                console.log(
+                    `HOD linked: ${hodEmail}`
+                );
+
+            }
+
+
+            // ==================================
             // CREATE STUDENT RECORD
             // ==================================
 
@@ -420,17 +465,33 @@ const importData = async () => {
 
                     studentId,
 
-                    name: studentName,
+                    name:
+                        studentName,
 
                     course,
 
                     roomNumber,
 
-                    hostel: hostelId,
+                    hostel:
+                        hostelId,
 
-                    parent: parentId,
+                    parent:
+                        parentId,
 
-                    user: studentUserId
+                    user:
+                        studentUserId,
+
+                    // ==================================
+                    // ACADEMIC AUTHORITIES
+                    // ==================================
+
+                    hod:
+                        hodId || null,
+
+                    // Class Advisor data is not
+                    // available yet.
+                    classAdvisor:
+                        null
                 });
 
 
@@ -445,6 +506,7 @@ const importData = async () => {
             console.log(
                 `Student password: ${DEFAULT_PASSWORD}`
             );
+
         }
 
 
@@ -482,6 +544,14 @@ const importData = async () => {
 
         console.log(
             "Student login accounts linked successfully."
+        );
+
+        console.log(
+            "Student HOD relationships linked successfully."
+        );
+
+        console.log(
+            "Class Advisor relationships left empty until actual CA data is available."
         );
 
         console.log(

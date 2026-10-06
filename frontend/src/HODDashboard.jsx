@@ -106,6 +106,11 @@ function HODDashboard() {
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
 
+    /* REJECTION MODAL */
+    const [showRejectModal, setShowRejectModal] = useState(false);
+    const [selectedOutpass, setSelectedOutpass] = useState(null);
+    const [rejectionReason, setRejectionReason] = useState("");
+
     const token = localStorage.getItem("token");
 
 
@@ -121,7 +126,7 @@ function HODDashboard() {
             setError("");
 
             const response = await fetch(
-                `${API_URL}/api/outpass/academic-pending`,
+                `${API_URL}/api/outpasses/academic-pending`,
                 {
                     method: "GET",
                     headers: {
@@ -188,7 +193,7 @@ function HODDashboard() {
             setMessage("");
 
             const response = await fetch(
-                `${API_URL}/api/outpass/${encodeURIComponent(
+                `${API_URL}/api/outpasses/${encodeURIComponent(
                     outpassId
                 )}/academic-approve`,
                 {
@@ -237,16 +242,54 @@ function HODDashboard() {
 
 
     /* =====================================================
+       OPEN REJECTION MODAL
+    ===================================================== */
+
+    const openRejectModal = (outpass) => {
+
+        setSelectedOutpass(outpass);
+        setRejectionReason("");
+        setShowRejectModal(true);
+
+        setError("");
+        setMessage("");
+
+    };
+
+
+    /* =====================================================
+       CLOSE REJECTION MODAL
+    ===================================================== */
+
+    const closeRejectModal = () => {
+
+        if (actionLoading) {
+            return;
+        }
+
+        setShowRejectModal(false);
+        setRejectionReason("");
+        setSelectedOutpass(null);
+
+    };
+
+
+    /* =====================================================
        REJECT
     ===================================================== */
 
-    const rejectOutpass = async (outpassId) => {
+    const rejectOutpass = async () => {
 
-        const reason = window.prompt(
-            "Enter rejection reason:"
-        );
+        if (!selectedOutpass) {
+            return;
+        }
 
-        if (!reason || !reason.trim()) {
+        if (!rejectionReason.trim()) {
+
+            setError(
+                "Please enter a rejection reason."
+            );
+
             return;
         }
 
@@ -257,8 +300,8 @@ function HODDashboard() {
             setMessage("");
 
             const response = await fetch(
-                `${API_URL}/api/outpass/${encodeURIComponent(
-                    outpassId
+                `${API_URL}/api/outpasses/${encodeURIComponent(
+                    selectedOutpass.outpassId
                 )}/academic-reject`,
                 {
                     method: "PATCH",
@@ -268,7 +311,7 @@ function HODDashboard() {
                     },
 
                     body: JSON.stringify({
-                        rejectionReason: reason.trim()
+                        rejectionReason:reason.trim()
                     })
                 }
             );
@@ -285,6 +328,10 @@ function HODDashboard() {
             setMessage(
                 "Academic approval rejected."
             );
+
+            setShowRejectModal(false);
+            setRejectionReason("");
+            setSelectedOutpass(null);
 
             await fetchPendingOutpasses();
 
@@ -1069,8 +1116,8 @@ function HODDashboard() {
                                                         type="button"
                                                         className="reject-button"
                                                         onClick={() =>
-                                                            rejectOutpass(
-                                                                outpass.outpassId
+                                                            openRejectModal(
+                                                                outpass
                                                             )
                                                         }
                                                         disabled={
@@ -1117,7 +1164,6 @@ function HODDashboard() {
                                             </div>
 
                                         </article>
-
                                     )
                                 )}
 
@@ -1204,8 +1250,127 @@ function HODDashboard() {
 
             </nav>
 
-        </div>
 
+            {/* =================================================
+               REJECTION MODAL
+            ================================================= */}
+
+            {showRejectModal && (
+
+                <div
+                    className="reject-modal-overlay"
+                    onClick={closeRejectModal}
+                >
+
+                    <div
+                        className="reject-modal"
+                        onClick={(event) =>
+                            event.stopPropagation()
+                        }
+                    >
+
+                        {/* MODAL HEADER */}
+
+                        <div className="modal-header">
+
+                            <div>
+
+                                <span>
+                                    REJECT OUTPASS
+                                </span>
+
+                                <h2>
+                                    Reject Request
+                                </h2>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                className="close-modal"
+                                onClick={closeRejectModal}
+                                disabled={actionLoading}
+                            >
+
+                                <Icon
+                                    name="close"
+                                    size={18}
+                                />
+
+                            </button>
+
+                        </div>
+
+
+                        {/* DESCRIPTION */}
+
+                        <p className="modal-description">
+                            Please provide a reason for rejecting
+                            this outpass request.
+                        </p>
+
+
+                        {/* LABEL */}
+
+                        <label className="modal-label">
+                            Rejection Reason
+                        </label>
+
+
+                        {/* TEXTAREA */}
+
+                        <textarea
+                            value={rejectionReason}
+                            onChange={(event) =>
+                                setRejectionReason(
+                                    event.target.value
+                                )
+                            }
+                            placeholder="Enter the reason..."
+                            autoFocus
+                        />
+
+
+                        {/* ACTIONS */}
+
+                        <div className="modal-actions">
+
+                            <button
+                                type="button"
+                                className="cancel-reject"
+                                onClick={closeRejectModal}
+                                disabled={actionLoading}
+                            >
+                                Cancel
+                            </button>
+
+
+                            <button
+                                type="button"
+                                className="confirm-reject"
+                                onClick={rejectOutpass}
+                                disabled={
+                                    actionLoading ||
+                                    !rejectionReason.trim()
+                                }
+                            >
+
+                                {actionLoading
+                                    ? "Rejecting..."
+                                    : "Reject Outpass"}
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            )}
+
+        </div>
     );
 }
 
