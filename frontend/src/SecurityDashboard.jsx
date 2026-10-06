@@ -357,14 +357,14 @@ function SecurityDashboard() {
                         ) : (
                             <div className="security-history-table-wrap">
                                 <table className="security-history-table">
-                                    <thead><tr><th>Student</th><th>Outpass ID</th><th>Exit Time</th><th>Entry Time</th><th>Status</th></tr></thead>
+                                    <thead><tr><th>Student</th><th>Outpass ID</th><th>Out Time</th><th>In Time</th><th>Status</th></tr></thead>
                                     <tbody>
                                         {gateHistory.map((log) => (
                                             <tr key={log._id}>
                                                 <td><strong>{log.student?.name || "-"}</strong><span>{log.student?.studentId || "-"}</span></td>
                                                 <td>{log.outpass?.outpassId || "-"}</td>
-                                                <td>{formatDateTime(log.exitTime)}</td>
-                                                <td>{formatDateTime(log.entryTime)}</td>
+                                                <td>{formatDateTime(log.outTime)}</td>
+                                                <td>{formatDateTime(log.inTime)}</td>
                                                 <td><span className={`security-history-status ${log.status === "returned" ? "returned" : "outside"}`}>{log.status === "returned" ? "✓ Returned" : "Outside"}</span></td>
                                             </tr>
                                         ))}
