@@ -681,6 +681,8 @@ const rejectAcademicOutpass = async (req, res) => {
 // APPROVE OUTPASS - WARDEN
 // ======================================================
 const approveOutpass = async (req, res) => {
+    console.log("🔥 APPROVE OUTPASS CONTROLLER HIT");
+    console.log("Outpass ID:", req.params.outpassId);
     try {
         const { outpassId } = req.params;
         // --------------------------------------------------
@@ -966,7 +968,7 @@ const validateOutpass = async (req, res) => {
         console.log("Outpass ID:", outpass.outpassId);
         console.log("Exit QR exists:", !!outpass.exitQrCode);
         console.log("Return QR exists:", !!outpass.returnQrCode);
-        
+
         return res.status(200).json({
             valid: true,
             message:
