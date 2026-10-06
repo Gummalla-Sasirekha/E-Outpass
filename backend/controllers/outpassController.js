@@ -1,1760 +1,1918 @@
-const Outpass = require("../models/Outpass");
-const Student = require("../models/Student");
-const Hostel = require("../models/Hostel");
-const GateLog = require("../models/GateLog");
-const User = require("../models/User");
-const QRCode = require("qrcode");
-// ======================================================
-// HELPER - DETERMINE DAY TYPE
-// ======================================================
-const getDayType = (date) => {
-    const dateObject = new Date(date);
-    if (Number.isNaN(dateObject.getTime())) {
-        return null;
-    }
-    const day = dateObject.getDay();
-    return day === 0 || day === 6
-        ? "weekend"
-        : "weekday";
-};
-// ======================================================
-// HELPER - DETERMINE ACADEMIC APPROVER
-// ======================================================
-const determineAcademicApprover = async (student) => {
-    // --------------------------------------------------
-    // 1. CLASS ADVISOR
-    // --------------------------------------------------
-    if (student.classAdvisor) {
-        const classAdvisor = await User.findOne({
-            _id: student.classAdvisor,
-            role: "classAdvisor"
-        });
-        if (
-            classAdvisor &&
-            classAdvisor.isAvailable === true
-        ) {
-            return {
-                role: "classAdvisor",
-                userId: classAdvisor._id
-            };
-        }
-    }
-    // --------------------------------------------------
-    // 2. HOD FALLBACK
-    // --------------------------------------------------
-    if (student.hod) {
-        const hod = await User.findOne({
-            _id: student.hod,
-            role: "hod"
-        });
-        if (hod) {
-            return {
-                role: "hod",
-                userId: hod._id
-            };
-        }
-    }
-    return null;
-};
-// ======================================================
-// REQUEST OUTPASS - PARENT
-// ======================================================
-const requestOutpass = async (req, res) => {
-    try {
-        const {
-            studentId,
-            passType = "day",
-            placeOfVisit,
-            reason,
-            dateRequestedFor,
-            returnDate,
-            timeOfLeaving,
-            expectedInTime
-        } = req.body;
-        // --------------------------------------------------
-        // VALIDATION
-        // --------------------------------------------------
-        if (
-            !studentId ||
-            !placeOfVisit ||
-            !reason ||
-            !dateRequestedFor ||
-            !timeOfLeaving ||
-            !expectedInTime
-        ) {
-            return res.status(400).json({
-                message: "All fields are required."
-            });
-        }
-        if (!["day", "long_duration"].includes(passType)) {
-            return res.status(400).json({
-                message: "Pass type must be either 'day' or 'long_duration'."
-            });
-        }
-        const leavingDateOnly = new Date(`${dateRequestedFor}T00:00:00`);
-        if (Number.isNaN(leavingDateOnly.getTime())) {
-            return res.status(400).json({
-                message: "Invalid outpass leaving date."
-            });
-        }
-        let finalReturnDate = dateRequestedFor;
-        if (passType === "long_duration") {
-            if (!returnDate) {
-                return res.status(400).json({
-                    message: "Return date is required for a long-duration pass."
-                });
-            }
-            const returnDateOnly = new Date(`${returnDate}T00:00:00`);
-            if (Number.isNaN(returnDateOnly.getTime())) {
-                return res.status(400).json({
-                    message: "Invalid return date."
-                });
-            }
-            if (returnDateOnly <= leavingDateOnly) {
-                return res.status(400).json({
-                    message: "Return date must be after the leaving date for a long-duration pass."
-                });
-            }
-            finalReturnDate = returnDate;
-        }
-        // Day outpass always returns on the same date.
-        if (passType === "day") {
-            finalReturnDate = dateRequestedFor;
-        }
-        // --------------------------------------------------
-        // FIND STUDENT
-        // --------------------------------------------------
-        const student = await Student.findOne({
-            studentId: String(studentId),
-            parent: req.user.userId
-        })
-            .populate("hostel")
-            .populate("hod")
-            .populate("classAdvisor");
-        if (!student) {
-            return res.status(404).json({
-                message: "Student not found or not linked to this parent."
-            });
-        }
-        if (!student.hostel) {
-            return res.status(400).json({
-                message: "Student is not assigned to a hostel."
-            });
-        }
-        // --------------------------------------------------
-        // DAY TYPE
-        // --------------------------------------------------
-        const dayType = getDayType(dateRequestedFor);
-        if (!dayType) {
-            return res.status(400).json({
-                message: "Invalid outpass date."
-            });
-        }
-        // --------------------------------------------------
-        // DEFAULT VALUES
-        // --------------------------------------------------
-        let academicApprovalRequired = false;
-        let academicApprovalBy = null;
-        let academicApprover = null;
-        let academicApprovalStatus = "not_required";
-        let initialStatus = "warden_pending";
-        // --------------------------------------------------
-        // WEEKDAY
-        // --------------------------------------------------
-        if (dayType === "weekday") {
-            academicApprovalRequired = true;
-            const academicAssignment = await determineAcademicApprover(student);
-            if (!academicAssignment) {
-                return res.status(400).json({
-                    message: "No Class Advisor or HOD is configured for this student."
-                });
-            }
-            academicApprovalBy = academicAssignment.role;
-            academicApprover = academicAssignment.userId;
-            academicApprovalStatus = "pending";
-            initialStatus = "academic_pending";
-        }
-        // --------------------------------------------------
-        // GENERATE OUTPASS ID
-        // --------------------------------------------------
-        const outpassId = `OP-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
-        // --------------------------------------------------
-        // CREATE OUTPASS
-        // --------------------------------------------------
-        const outpass = await Outpass.create({
-            outpassId,
-            student: student._id,
-            parent: req.user.userId,
-            hostel: student.hostel._id,
-            passType,
-            placeOfVisit: placeOfVisit.trim(),
-            reason: reason.trim(),
-            dateRequestedFor: leavingDateOnly,
-            returnDate: new Date(`${finalReturnDate}T00:00:00`),
-            timeOfLeaving,
-            expectedInTime,
-            dayType,
-            academicApprovalRequired,
-            academicApprovalBy,
-            academicApprover,
-            academicApprovalStatus,
-            wardenApprovalStatus: "pending",
-            status: initialStatus
-        });
-        // --------------------------------------------------
-        // RESPONSE
-        // --------------------------------------------------
-        const populatedOutpass = await Outpass.findById(outpass._id)
-            .populate("student", "studentId name course roomNumber")
-            .populate("parent", "name email")
-            .populate("hostel", "name type")
-            .populate("academicApprover", "name email role isAvailable");
-        return res.status(201).json({
-            message:
-                dayType === "weekend"
-                    ? "Weekend outpass request submitted to warden."
-                    : `Weekday outpass request submitted for ${
-                        academicApprovalBy === "classAdvisor"
-                            ? "Class Advisor"
-                            : "HOD"
-                    } approval.`,
-            outpass: populatedOutpass
-        });
-    } catch (error) {
-        console.error("Request outpass error:", error);
-        return res.status(500).json({
-            message: "Server error while requesting outpass."
-        });
-    }
-};
-// ======================================================
-// GET MY STUDENT - PARENT
-// ======================================================
-const getMyStudent = async (req, res) => {
-    try {
-        const student = await Student.findOne({
-            parent: req.user.userId
-        })
-            .populate(
-                "hostel",
-                "name type"
-            )
-            .populate(
-                "hod",
-                "name email role"
-            )
-            .populate(
-                "classAdvisor",
-                "name email role isAvailable"
-            );
-        if (!student) {
-            return res.status(404).json({
-                message:
-                    "No student is linked to this parent."
-            });
-        }
-        return res.status(200).json({
-            student
-        });
-    } catch (error) {
-        console.error(
-            "Get my student error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while fetching linked student."
-        });
-    }
-};
-// ======================================================
-// GET MY OUTPASSES - PARENT
-// ======================================================
-const getMyOutpasses = async (req, res) => {
-    try {
-        const outpasses = await Outpass.find({
-            parent: req.user.userId
-        })
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-            .populate(
-                "hostel",
-                "name type"
-            )
-            .populate(
-                "academicApprover",
-                "name email role"
-            )
-            .populate(
-                "academicApprovedBy",
-                "name email role"
-            )
-            .populate(
-                "academicRejectedBy",
-                "name email role"
-            )
-            .populate(
-                "wardenApprovedBy",
-                "name email role"
-            )
-            .sort({
-                createdAt: -1
-            });
-        return res.status(200).json({
-            count: outpasses.length,
-            outpasses
-        });
-    } catch (error) {
-        console.error(
-            "Get my outpasses error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while fetching outpasses."
-        });
-    }
-};
-// ======================================================
-// GET PENDING OUTPASSES - WARDEN
-// ======================================================
-const getPendingOutpasses = async (req, res) => {
-    try {
-        const hostel = await Hostel.findOne({
-            warden: req.user.userId
-        });
-        if (!hostel) {
-            return res.status(404).json({
-                message:
-                    "No hostel is assigned to this warden."
-            });
-        }
-        const outpasses = await Outpass.find({
-            hostel: hostel._id,
-            status: "warden_pending"
-        })
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-            .populate(
-                "parent",
-                "name email"
-            )
-            .populate(
-                "academicApprover",
-                "name email role"
-            )
-            .populate(
-                "academicApprovedBy",
-                "name email role"
-            )
-            .sort({
-                createdAt: -1
-            });
-        return res.status(200).json({
-            hostel: hostel.name,
-            count: outpasses.length,
-            outpasses
-        });
-    } catch (error) {
-        console.error(
-            "Get pending outpasses error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while fetching pending requests."
-        });
-    }
-};
-// ======================================================
-// GET WARDEN OUTPASS HISTORY
-// ======================================================
-const getWardenOutpassHistory = async (req, res) => {
-    try {
-        const hostel = await Hostel.findOne({
-            warden: req.user.userId
-        });
-        if (!hostel) {
-            return res.status(404).json({
-                message:
-                    "No hostel is assigned to this warden."
-            });
-        }
-        const outpasses = await Outpass.find({
-            hostel: hostel._id
-        })
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-            .populate(
-                "parent",
-                "name email"
-            )
-            .populate(
-                "hostel",
-                "name type"
-            )
-            .populate(
-                "academicApprover",
-                "name email role"
-            )
-            .populate(
-                "academicApprovedBy",
-                "name email role"
-            )
-            .populate(
-                "academicRejectedBy",
-                "name email role"
-            )
-            .populate(
-                "wardenApprovedBy",
-                "name email role"
-            )
-            .sort({
-                createdAt: -1
-            });
+import { useEffect, useMemo, useState } from "react";
+import "./SecurityDashboard.css";
 
-        return res.status(200).json({
-            hostel: hostel.name,
-            count: outpasses.length,
-            outpasses
-        });
-    } catch (error) {
-        console.error(
-            "Get warden outpass history error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while fetching warden outpass history."
-        });
-    }
-};
-// ======================================================
-// GET ACADEMIC PENDING OUTPASSES
-// HOD / CLASS ADVISOR
-// ======================================================
-const getAcademicPendingOutpasses = async (req, res) => {
-    try {
-        // --------------------------------------------------
-        // AUTHENTICATED USER
-        // --------------------------------------------------
-        if (!req.user || !req.user.userId) {
-            return res.status(401).json({
-                message:
-                    "Authentication information is missing."
-            });
-        }
-        const role = req.user.role;
-        // --------------------------------------------------
-        // ROLE CHECK
-        // --------------------------------------------------
-        if (
-            role !== "hod" &&
-            role !== "classAdvisor"
-        ) {
-            return res.status(403).json({
-                message:
-                    "Only HOD or Class Advisor can access academic approval requests."
-            });
-        }
-        // --------------------------------------------------
-        // FIND ONLY REQUESTS ASSIGNED TO THIS USER
-        // --------------------------------------------------
-        const query = {
-            academicApprovalRequired: true,
-            academicApprovalStatus: "pending",
-            academicApprover: req.user.userId
-        };
-        const outpasses = await Outpass.find(query)
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-            .populate(
-                "parent",
-                "name email"
-            )
-            .populate(
-                "hostel",
-                "name type"
-            )
-            .populate(
-                "academicApprover",
-                "name email role isAvailable"
-            )
-            .sort({
-                createdAt: -1
-            });
-        return res.status(200).json({
-            role,
-            count: outpasses.length,
-            outpasses
-        });
-    } catch (error) {
-        console.error(
-            "Get academic pending outpasses error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while fetching academic approval requests.",
-            error: error.message,
-            name: error.name
-        });
-    }
-};
-// ======================================================
-// APPROVE OUTPASS - ACADEMIC
-// HOD / CLASS ADVISOR
-// ======================================================
-const approveAcademicOutpass = async (req, res) => {
-    try {
-        const { outpassId } = req.params;
-        const role = req.user.role;
-        if (
-            role !== "hod" &&
-            role !== "classAdvisor"
-        ) {
-            return res.status(403).json({
-                message:
-                    "Only HOD or Class Advisor can approve academic requests."
-            });
-        }
-        const outpass = await Outpass.findOne({
-            outpassId,
-            academicApprovalRequired: true,
-            academicApprovalStatus: "pending",
-            academicApprover: req.user.userId
-        });
-        if (!outpass) {
-            return res.status(404).json({
-                message:
-                    "Academic approval request not found or not assigned to you."
-            });
-        }
-        // --------------------------------------------------
-        // APPROVE ACADEMIC STAGE
-        // --------------------------------------------------
-        outpass.academicApprovalStatus = "approved";
-        outpass.academicApprovedBy = req.user.userId;
-        outpass.academicApprovedAt = new Date();
-        outpass.academicRejectedBy = null;
-        outpass.academicRejectedAt = null;
-        outpass.academicRejectionReason = "";
-        // --------------------------------------------------
-        // SEND TO WARDEN
-        // --------------------------------------------------
-        outpass.status = "warden_pending";
-        outpass.wardenApprovalStatus = "pending";
-        await outpass.save();
-        const populatedOutpass = await Outpass.findById(outpass._id)
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-            .populate(
-                "parent",
-                "name email"
-            )
-            .populate(
-                "hostel",
-                "name type"
-            )
-            .populate(
-                "academicApprover",
-                "name email role"
-            )
-            .populate(
-                "academicApprovedBy",
-                "name email role"
-            );
-        return res.status(200).json({
-            message:
-                "Academic approval granted. Outpass sent to warden.",
-            outpass:
-                populatedOutpass
-        });
-    } catch (error) {
-        console.error(
-            "Academic approval error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while approving academic request."
-        });
-    }
-};
-// ======================================================
-// REJECT OUTPASS - ACADEMIC
-// HOD / CLASS ADVISOR
-// ======================================================
-const rejectAcademicOutpass = async (req, res) => {
-    try {
-        const { outpassId } = req.params;
-        const { rejectionReason } = req.body;
-        const role = req.user.role;
-        if (
-            role !== "hod" &&
-            role !== "classAdvisor"
-        ) {
-            return res.status(403).json({
-                message:
-                    "Only HOD or Class Advisor can reject academic requests."
-            });
-        }
-        if (
-            !rejectionReason ||
-            !rejectionReason.trim()
-        ) {
-            return res.status(400).json({
-                message:
-                    "Rejection reason is required."
-            });
-        }
-        const outpass = await Outpass.findOne({
-            outpassId,
-            academicApprovalRequired: true,
-            academicApprovalStatus: "pending",
-            academicApprover: req.user.userId
-        });
-        if (!outpass) {
-            return res.status(404).json({
-                message:
-                    "Academic approval request not found or not assigned to you."
-            });
-        }
-        outpass.academicApprovalStatus = "rejected";
-        outpass.academicRejectedBy = req.user.userId;
-        outpass.academicRejectedAt = new Date();
-        outpass.academicRejectionReason = rejectionReason.trim();
-        outpass.academicApprovedBy = null;
-        outpass.academicApprovedAt = null;
-        outpass.status = "rejected";
-        outpass.rejectionReason = rejectionReason.trim();
-        await outpass.save();
-        const populatedOutpass = await Outpass.findById(outpass._id)
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-            .populate(
-                "parent",
-                "name email"
-            )
-            .populate(
-                "hostel",
-                "name type"
-            )
-            .populate(
-                "academicApprover",
-                "name email role"
-            )
-            .populate(
-                "academicRejectedBy",
-                "name email role"
-            );
-        return res.status(200).json({
-            message:
-                "Outpass rejected by academic authority.",
-            outpass:
-                populatedOutpass
-        });
-    } catch (error) {
-        console.error(
-            "Academic rejection error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while rejecting academic request."
-        });
-    }
-};
-// ======================================================
-// APPROVE OUTPASS - WARDEN
-// ======================================================
-const approveOutpass = async (req, res) => {
-    console.log("🔥 APPROVE OUTPASS CONTROLLER HIT");
-    console.log("Outpass ID:", req.params.outpassId);
-    try {
-        const { outpassId } = req.params;
-        // --------------------------------------------------
-        // FIND WARDEN HOSTEL
-        // --------------------------------------------------
-        const hostel = await Hostel.findOne({
-            warden: req.user.userId
-        });
-        if (!hostel) {
-            return res.status(404).json({
-                message:
-                    "No hostel is assigned to this warden."
-            });
-        }
-        // --------------------------------------------------
-        // FIND OUTPASS
-        // --------------------------------------------------
-        const outpass = await Outpass.findOne({
-            outpassId,
-            hostel: hostel._id
-        });
-        if (!outpass) {
-            return res.status(404).json({
-                message:
-                    "Outpass not found in your hostel."
-            });
-        }
-        // --------------------------------------------------
-        // MUST BE WARDEN PENDING
-        // --------------------------------------------------
-        if (outpass.status !== "warden_pending") {
-            return res.status(400).json({
-                message:
-                    `Outpass is currently ${outpass.status}. It cannot be approved by the warden yet.`
-            });
-        }
-        // --------------------------------------------------
-        // WEEKDAY ACADEMIC CHECK
-        // --------------------------------------------------
-        if (
-            outpass.dayType === "weekday" &&
-            outpass.academicApprovalRequired
-        ) {
-            if (
-                outpass.academicApprovalStatus !==
-                "approved"
-            ) {
-                return res.status(400).json({
-                    message:
-                        "Academic approval is required before warden approval."
-                });
-            }
-        }
-        // --------------------------------------------------
-        // WEEKEND SAFETY CHECK
-        // --------------------------------------------------
-        if (
-            outpass.dayType === "weekend" &&
-            outpass.academicApprovalRequired
-        ) {
-            return res.status(400).json({
-                message:
-                    "Weekend requests should not require academic approval."
-            });
-        }
-        // --------------------------------------------------
-        // WARDEN APPROVAL
-        // --------------------------------------------------
-        outpass.wardenApprovalStatus = "approved";
-        outpass.wardenApprovedBy = req.user.userId;
-        outpass.wardenApprovedAt = new Date();
-        outpass.status = "approved";
-        outpass.approvedAt = new Date();
-        // --------------------------------------------------
-        // QR CODE
-        // --------------------------------------------------
-        const frontendUrl =
-            process.env.FRONTEND_URL ||
-            "http://192.168.1.33:5173";
-        const exitGateUrl =
-            `${frontendUrl}/gate/exit/${encodeURIComponent(
-                outpass.outpassId
-            )}`;
-            const returnGateUrl =
-            `${frontendUrl}/gate/return/${encodeURIComponent(
-                outpass.outpassId
-            )}`;
-        outpass.exitQrCode =
-            await QRCode.toDataURL(exitGateUrl);
-        outpass.returnQrCode =
-            await QRCode.toDataURL(returnGateUrl);
-            console.log("EXIT QR:", !!outpass.exitQrCode);
-            console.log("RETURN QR:", !!outpass.returnQrCode);
-        await outpass.save();
-        const populatedOutpass =
-            await Outpass.findById(outpass._id)
-                .populate(
-                    "student",
-                    "studentId name course roomNumber"
-                )
-                .populate(
-                    "parent",
-                    "name email"
-                )
-                .populate(
-                    "hostel",
-                    "name type"
-                )
-                .populate(
-                    "academicApprover",
-                    "name email role"
-                )
-                .populate(
-                    "academicApprovedBy",
-                    "name email role"
-                )
-                .populate(
-                    "wardenApprovedBy",
-                    "name email role"
-                );
-        return res.status(200).json({
-            message:
-                "Outpass approved successfully.",
-            outpass:
-                populatedOutpass
-        });
-    } catch (error) {
-        console.error(
-            "Approve outpass error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while approving outpass."
-        });
-    }
-};
-// ======================================================
-// REJECT OUTPASS - WARDEN
-// ======================================================
-const rejectOutpass = async (req, res) => {
-    try {
-        const { outpassId } = req.params;
-        const { rejectionReason } = req.body;
-        if (
-            !rejectionReason ||
-            !rejectionReason.trim()
-        ) {
-            return res.status(400).json({
-                message:
-                    "Rejection reason is required."
-            });
-        }
-        const hostel = await Hostel.findOne({
-            warden: req.user.userId
-        });
-        if (!hostel) {
-            return res.status(404).json({
-                message:
-                    "No hostel is assigned to this warden."
-            });
-        }
-        const outpass = await Outpass.findOne({
-            outpassId,
-            hostel: hostel._id
-        });
+const API_URL = import.meta.env.VITE_API_URL;
 
-        if (!outpass) {
-            return res.status(404).json({
-                message:
-                    "Outpass not found in your hostel."
-            });
-        }
-        if (outpass.status !== "warden_pending") {
-            return res.status(400).json({
-                message:
-                    `Outpass is currently ${outpass.status}. It cannot be rejected by the warden at this stage.`
-            });
-        }
-        if (
-            outpass.dayType === "weekday" &&
-            outpass.academicApprovalRequired &&
-            outpass.academicApprovalStatus !==
-                "approved"
-        ) {
-            return res.status(400).json({
-                message:
-                    "Academic approval must be completed before warden action."
-            });
-        }
-        outpass.status = "rejected";
-        outpass.rejectionReason =
-            rejectionReason.trim();
-        outpass.wardenApprovalStatus = "rejected";
-        outpass.wardenApprovedBy = null;
-        outpass.wardenApprovedAt = null;
-        await outpass.save();
-        const populatedOutpass =
-            await Outpass.findById(outpass._id)
-                .populate(
-                    "student",
-                    "studentId name course roomNumber"
-                )
-                .populate(
-                    "parent",
-                    "name email"
-                )
-                .populate(
-                    "hostel",
-                    "name type"
-                )
-                .populate(
-                    "academicApprover",
-                    "name email role"
-                )
-                .populate(
-                    "academicApprovedBy",
-                    "name email role"
-                );
-        return res.status(200).json({
-            message:
-                "Outpass rejected by warden.",
-            outpass:
-                populatedOutpass
-        });
-    } catch (error) {
-        console.error(
-            "Reject outpass error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while rejecting outpass."
-        });
-    }
-};
-// ======================================================
-// VALIDATE OUTPASS - SECURITY
-// ======================================================
-const validateOutpass = async (req, res) => {
-    try {
-        const { outpassId } = req.params;
-        const outpass = await Outpass.findOne({
-            outpassId
-        })
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-            .populate(
-                "parent",
-                "name email"
-            )
-            .populate(
-                "hostel",
-                "name type"
-            )
-            .populate(
-                "academicApprovedBy",
-                "name email role"
-            )
-            .populate(
-                "wardenApprovedBy",
-                "name email role"
-            );
-        if (!outpass) {
-            return res.status(404).json({
-                valid: false,
-                message:
-                    "Outpass not found."
-            });
-        }
-        if (outpass.status !== "approved") {
-            return res.status(400).json({
-                valid: false,
-                message:
-                    `This outpass is not valid for gate entry. Current status: ${outpass.status}.`,
-                outpass
-            });
-        }
+function Icon({ name, size = 18 }) {
+    const common = {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: "currentColor",
+        strokeWidth: 1.8,
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+    };
 
-        console.log("VALIDATE OUTPASS QR CHECK:");
-        console.log("Outpass ID:", outpass.outpassId);
-        console.log("Exit QR exists:", !!outpass.exitQrCode);
-        console.log("Return QR exists:", !!outpass.returnQrCode);
+    const paths = {
+        grid: (
+            <>
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+            </>
+        ),
+        document: (
+            <>
+                <path d="M6 3h8l4 4v14H6z" />
+                <path d="M14 3v5h5" />
+                <path d="M9 13h6M9 17h5" />
+            </>
+        ),
+        user: (
+            <>
+                <circle cx="12" cy="8" r="3" />
+                <path d="M5 21c.6-4.2 2.8-6 7-6s6.4 1.8 7 6" />
+            </>
+        ),
+        logout: (
+            <>
+                <path d="M10 17l5-5-5-5" />
+                <path d="M15 12H3" />
+                <path d="M21 3v18" />
+            </>
+        ),
+        shield: (
+            <>
+                <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z" />
+                <path d="m9 12 2 2 4-4" />
+            </>
+        ),
+        search: (
+            <>
+                <circle cx="11" cy="11" r="6" />
+                <path d="m16 16 4 4" />
+            </>
+        ),
+        qr: (
+            <>
+                <rect x="3" y="3" width="6" height="6" />
+                <rect x="15" y="3" width="6" height="6" />
+                <rect x="3" y="15" width="6" height="6" />
+                <path d="M15 15h3v3h-3zM18 18h3v3h-3zM15 21h3M21 15v3" />
+            </>
+        ),
+        clock: (
+            <>
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+            </>
+        ),
+        check: (
+            <>
+                <circle cx="12" cy="12" r="9" />
+                <path d="m8 12 2.5 2.5L16 9" />
+            </>
+        ),
+        refresh: (
+            <>
+                <path d="M20 11a8 8 0 0 0-14-5L4 8" />
+                <path d="M4 4v4h4" />
+                <path d="M4 13a8 8 0 0 0 14 5l2-2" />
+                <path d="M20 20v-4h-4" />
+            </>
+        ),
+        arrow: (
+            <>
+                <path d="M5 12h13" />
+                <path d="m13 6 6 6-6 6" />
+            </>
+        ),
+        info: (
+            <>
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 10v6M12 7h.01" />
+            </>
+        )
+    };
 
-        return res.status(200).json({
-            valid: true,
-            message:
-                "Outpass is valid.",
-            outpass
+    return <svg {...common}>{paths[name] || paths.document}</svg>;
+}
+
+function SecurityDashboard() {
+    const [outpassId, setOutpassId] = useState("");
+    const [outpass, setOutpass] = useState(null);
+
+    const [loading, setLoading] = useState(false);
+    const [approvedOutpasses, setApprovedOutpasses] = useState([]);
+    const [approvedLoading, setApprovedLoading] = useState(false);
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+
+    const [gateHistory, setGateHistory] = useState([]);
+    const [historyLoading, setHistoryLoading] = useState(false);
+
+    const token = localStorage.getItem("token");
+
+    const formatDate = (date) => {
+        if (!date) return "-";
+
+        return new Date(date).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
         });
-    } catch (error) {
-        console.error(
-            "Validate outpass error:",
-            error
-        );
-        return res.status(500).json({
-            valid: false,
-            message:
-                "Server error while validating outpass."
+    };
+
+    const formatDateTime = (date) => {
+        if (!date) return "-";
+
+        return new Date(date).toLocaleString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
         });
-    }
-};
-// ======================================================
-// GET APPROVED OUTPASSES - SECURITY
-// ======================================================
-const getSecurityApprovedOutpasses =
-    async (req, res) => {
+    };
+
+    const formatTime = (time) => time || "-";
+
+    // ======================================================
+    // FETCH APPROVED OUTPASSES
+    // ======================================================
+
+    const fetchApprovedOutpasses = async () => {
         try {
-            const outpasses =
-                await Outpass.find({
-                    status: "approved"
-                })
-                    .populate(
-                        "student",
-                        "studentId name course roomNumber"
-                    )
-                    .populate(
-                        "parent",
-                        "name email"
-                    )
-                    .populate(
-                        "hostel",
-                        "name type"
-                    )
-                    .sort({
-                        approvedAt: -1
-                    });
-            return res.status(200).json({
-                count: outpasses.length,
-                outpasses
-            });
-        } catch (error) {
-            console.error(
-                "Get security approved outpasses error:",
-                error
+            setApprovedLoading(true);
+
+            const response = await fetch(
+                `${API_URL}/api/outpass/security-approved`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             );
-            return res.status(500).json({
-                message:
-                    "Server error while fetching approved outpasses."
-            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Unable to fetch approved outpasses."
+                );
+            }
+
+            setApprovedOutpasses(data.outpasses || []);
+        } catch (err) {
+            console.error("Approved outpasses error:", err);
+            setError(
+                err.message ||
+                "Unable to load approved outpasses."
+            );
+        } finally {
+            setApprovedLoading(false);
         }
     };
-// ======================================================
-// SCAN OUT - SECURITY
-// ======================================================
-const scanOut = async (req, res) => {
-    try {
-        const { outpassId } = req.params;
-        const outpass = await Outpass.findOne({
-            outpassId
-        })
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-            .populate(
-                "hostel",
-                "name type"
-            );
-        if (!outpass) {
-            return res.status(404).json({
-                message:
-                    "Outpass not found."
-            });
-        }
-        if (outpass.status !== "approved") {
-            return res.status(400).json({
-                message:
-                    "Only approved outpasses can be used for gate exit."
-            });
-        }
-        const existingLog =
-            await GateLog.findOne({
-                outpass: outpass._id,
-                outTime: {
-                    $ne: null
-                },
-                inTime: null
-            });
-        if (existingLog) {
-            return res.status(400).json({
-                message:
-                    "Student has already exited and has not yet returned."
-            });
-        }
-        const gateLog =
-            await GateLog.create({
-                outpass:
-                    outpass._id,
-                student:
-                    outpass.student._id,
-                hostel:
-                    outpass.hostel._id,
-                outTime:
-                    new Date(),
-                outScannedBy:
-                    req.user.userId
-            });
-        const populatedLog =
-            await GateLog.findById(
-                gateLog._id
-            )
-                .populate(
-                    "student",
-                    "studentId name course roomNumber"
-                )
-                .populate(
-                    "hostel",
-                    "name type"
-                )
-                .populate(
-                    "outpass",
-                    "outpassId passType placeOfVisit reason dateRequestedFor returnDate timeOfLeaving expectedInTime status"
-                )
-                .populate(
-                    "outScannedBy",
-                    "name email role"
-                );
-        return res.status(200).json({
-            message:
-                "Student exit recorded successfully.",
-            gateLog:
-                populatedLog
-        });
-    } catch (error) {
-        console.error(
-            "Scan out error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while recording student exit."
-        });
-    }
-};
-// ======================================================
-// SCAN IN - SECURITY
-// ======================================================
-const scanIn = async (req, res) => {
-    try {
-        const { outpassId } = req.params;
-        const outpass = await Outpass.findOne({
-            outpassId
-        });
-        if (!outpass) {
-            return res.status(404).json({
-                message:
-                    "Outpass not found."
-            });
-        }
-        const gateLog =
-            await GateLog.findOne({
-                outpass:
-                    outpass._id,
-                outTime: {
-                    $ne: null
-                },
-                inTime: null
-            }).sort({
-                outTime: -1
-            });
-        if (!gateLog) {
-            return res.status(400).json({
-                message:
-                    "No active exit record found for this outpass."
-            });
-        }
-        gateLog.inTime =
-            new Date();
-        gateLog.inScannedBy =
-            req.user.userId;
-        await gateLog.save();
-        outpass.status =
-            "completed";
-        await outpass.save();
-        const populatedLog =
-            await GateLog.findById(
-                gateLog._id
-            )
-                .populate(
-                    "student",
-                    "studentId name course roomNumber"
-                )
-                .populate(
-                    "hostel",
-                    "name type"
-                )
-                .populate(
-                    "outpass",
-                    "outpassId passType placeOfVisit reason dateRequestedFor returnDate timeOfLeaving expectedInTime status"
-                )
-                .populate(
-                    "outScannedBy",
-                    "name email role"
-                )
-                .populate(
-                    "inScannedBy",
-                    "name email role"
-                );
-        return res.status(200).json({
-            message:
-                "Student return recorded successfully.",
-            gateLog:
-                populatedLog
-        });
-    } catch (error) {
-        console.error(
-            "Scan in error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while recording student return."
-        });
-    }
-};
-// ======================================================
-// STUDENT GATE STATUS
-// ======================================================
-const studentGateStatus = async (req, res) => {
-    try {
-        const { outpassId } = req.params;
-        const outpass = await Outpass.findOne({
-            outpassId
-        })
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-            .populate(
-                "hostel",
-                "name type"
-            );
-        if (!outpass) {
-            return res.status(404).json({
-                message:
-                    "Outpass not found."
-            });
-        }
-        const gateLog =
-            await GateLog.findOne({
-                outpass: outpass._id
-            })
-                .sort({
-                    createdAt: -1
-                })
-                .populate(
-                    "outScannedBy",
-                    "name email role"
-                )
-                .populate(
-                    "inScannedBy",
-                    "name email role"
-                );
-        let gateStatus = "not_exited";
-        if (gateLog) {
-            if (
-                gateLog.outTime &&
-                !gateLog.inTime
-            ) {
-                gateStatus = "outside";
-            }
-            if (
-                gateLog.outTime &&
-                gateLog.inTime
-            ) {
-                gateStatus = "returned";
-            }
-        }
-        return res.status(200).json({
-            outpassId:
-                outpass.outpassId,
-            outpassStatus:
-                outpass.status,
-            gateStatus,
-            gateLog:
-                gateLog || null
-        });
-    } catch (error) {
-        console.error(
-            "Student gate status error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while fetching gate status."
-        });
-    }
-};
-// ======================================================
-// STUDENT CONFIRM GATE ACTION
-// ======================================================
-const studentConfirmGateAction =
-    async (req, res) => {
+
+    // ======================================================
+    // FETCH GATE HISTORY
+    // ======================================================
+
+    const fetchGateHistory = async () => {
         try {
-            const { outpassId } = req.params;
-            const { action } = req.body;
-            if (
-                !action ||
-                !["out", "in"].includes(action)
-            ) {
-                return res.status(400).json({
-                    message:
-                        "Action must be either 'out' or 'in'."
-                });
-            }
-            const student =
-                await Student.findOne({
-                    user: req.user.userId
-                });
-            if (!student) {
-                return res.status(404).json({
-                    message:
-                        "Student profile not found."
-                });
-            }
-            const outpass =
-                await Outpass.findOne({
-                    outpassId,
-                    student: student._id
-                });
-            if (!outpass) {
-                return res.status(404).json({
-                    message:
-                        "Outpass not found for this student."
-                });
-            }
-            // --------------------------------------------------
-            // OUT
-            // --------------------------------------------------
-            if (action === "out") {
-                if (
-                    outpass.status !==
-                    "approved"
-                ) {
-                    return res.status(400).json({
-                        message:
-                            "Only approved outpasses can be used for exit."
-                    });
+            setHistoryLoading(true);
+
+            const response = await fetch(
+                `${API_URL}/api/outpass/gate-history`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-                const existingLog =
-                    await GateLog.findOne({
-                        outpass:
-                            outpass._id,
-                        outTime: {
-                            $ne: null
-                        },
-                        inTime: null
-                    });
-                if (existingLog) {
-                    return res.status(400).json({
-                        message:
-                            "You have already exited and have not returned yet."
-                    });
-                }
-                const gateLog =
-                    await GateLog.create({
-                        outpass:
-                            outpass._id,
-                        student:
-                            student._id,
-                        hostel:
-                            outpass.hostel,
-                        outTime:
-                            new Date(),
-                        outScannedBy:
-                            req.user.userId
-                    });
-                return res.status(200).json({
-                    message:
-                        "Gate exit confirmed successfully.",
-                    gateLog
-                });
-            }
-            // IN
-            if (action === "in") {
-                const gateLog =
-                    await GateLog.findOne({
-                        outpass:
-                            outpass._id,
-                        outTime: {
-                            $ne: null
-                        },
-                        inTime: null
-                    }).sort({
-                        outTime: -1
-                    });
-                if (!gateLog) {
-                    return res.status(400).json({
-                        message:
-                            "No active gate exit record found."
-                    });
-                }
-                gateLog.inTime =
-                    new Date();
-                gateLog.inScannedBy =
-                    req.user.userId;
-                await gateLog.save();
-                outpass.status =
-                    "completed";
-                await outpass.save();
-                return res.status(200).json({
-                    message:
-                        "Gate return confirmed successfully.",
-                    gateLog
-                });
-            }
-        } catch (error) {
-            console.error(
-                "Student gate confirmation error:",
-                error
             );
-            return res.status(500).json({
-                message:
-                    "Server error while confirming gate action."
-            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Unable to fetch gate history."
+                );
+            }
+
+            setGateHistory(data.gateLogs || []);
+        } catch (err) {
+            console.error("Gate history error:", err);
+
+            setError(
+                err.message ||
+                "Unable to load gate history."
+            );
+        } finally {
+            setHistoryLoading(false);
         }
     };
-// ======================================================
-// GET GATE HISTORY
-// ======================================================
-const getGateHistory = async (req, res) => {
-    try {
-        const query = {};
-        if (req.user.role === "student") {
-            const student = await Student.findOne({
-                user: req.user.userId
-            });
-            if (!student) {
-                return res.status(404).json({
-                    message:
-                        "Student profile not found."
-                });
-            }
-            query.student = student._id;
-        }
-        if (req.user.role === "parent") {
-            const students = await Student.find({
-                parent: req.user.userId
-            }).select("_id");
-            query.student = {
-                $in: students.map(
-                    student => student._id
-                )
-            };
-        }
-        if (req.user.role === "warden") {
-            const hostel = await Hostel.findOne({
-                warden: req.user.userId
-            });
-            if (!hostel) {
-                return res.status(404).json({
-                    message:
-                        "No hostel is assigned to this warden."
-                });
-            }
-            query.hostel = hostel._id;
-        }
-        // Public QR scans do not have a logged-in Security user,
-        // so Security must not be filtered by scanner fields.
-        const gateLogs =
-            await GateLog.find(query)
-                .populate(
-                    "student",
-                    "studentId name course roomNumber"
-                )
-                .populate(
-                    "hostel",
-                    "name type"
-                )
-                .populate(
-                    "outpass",
-                    "outpassId passType placeOfVisit reason dateRequestedFor returnDate timeOfLeaving expectedInTime status"
-                )
-                .populate(
-                    "outScannedBy",
-                    "name email role"
-                )
-                .populate(
-                    "inScannedBy",
-                    "name email role"
-                )
-                .sort({
-                    createdAt: -1
-                });
-        return res.status(200).json({
-            count: gateLogs.length,
-            gateLogs
-        });
-    } catch (error) {
-        console.error(
-            "Get gate history error:",
-            error
-        );
-        return res.status(500).json({
-            message:
-                "Server error while fetching gate history."
-        });
-    }
-};
 
-// ======================================================
-// PUBLIC GATE STATUS - QR
-// ======================================================
-const publicGateStatus = async (req, res) => {
-    try {
-        const { outpassId, qrAction } = req.params;
+    // ======================================================
+    // INITIAL LOAD
+    // ======================================================
 
-        if (!outpassId) {
-            return res.status(400).json({
-                message: "Outpass ID is required."
-            });
+    useEffect(() => {
+        fetchApprovedOutpasses();
+        fetchGateHistory();
+    }, []);
+
+    // ======================================================
+    // AUTOMATIC GATE STATUS REFRESH
+    // ======================================================
+
+    useEffect(() => {
+        if (!outpass) return;
+
+        const interval = setInterval(() => {
+            fetchGateHistory();
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, [outpass]);
+
+    // ======================================================
+    // GET CURRENT GATE STATE
+    // ======================================================
+
+    const getGateState = (selectedOutpass) => {
+        if (!selectedOutpass) {
+            return "ready";
         }
 
-        if (
-            !qrAction ||
-            !["exit", "return"].includes(qrAction)
-        ) {
-            return res.status(400).json({
-                message: "Invalid QR action."
-            });
-        }
-
-        const outpass = await Outpass.findOne({
-            outpassId
-        });
-
-        if (!outpass) {
-            return res.status(404).json({
-                message: "Outpass not found."
-            });
-        }
-
-        if (outpass.status !== "approved") {
-            return res.status(400).json({
-                message:
-                    `This outpass is not currently approved. Current status: ${outpass.status}.`
-            });
-        }
-
-        const activeGateLog =
-            await GateLog.findOne({
-                outpass: outpass._id,
-                outTime: {
-                    $ne: null
-                },
-                inTime: null
-            }).sort({
-                outTime: -1
-            });
-
-        // --------------------------------------------------
-        // EXIT QR
-        // --------------------------------------------------
-
-        if (qrAction === "exit") {
-            if (activeGateLog) {
-                return res.status(400).json({
-                    message:
-                        "This exit QR cannot be used because the student is already outside."
-                });
-            }
-
-            return res.status(200).json({
-                action: "exit",
-                outpassId: outpass.outpassId
-            });
-        }
-
-        // --------------------------------------------------
-        // RETURN QR
-        // --------------------------------------------------
-
-        if (qrAction === "return") {
-            if (!activeGateLog) {
-                return res.status(400).json({
-                    message:
-                        "This return QR cannot be used because the student has not exited yet."
-                });
-            }
-
-            return res.status(200).json({
-                action: "return",
-                outpassId: outpass.outpassId
-            });
-        }
-    } catch (error) {
-        console.error(
-            "Public gate status error:",
-            error
+        const log = gateHistory.find(
+            (item) =>
+                item.outpass?.outpassId ===
+                selectedOutpass.outpassId
         );
 
-        return res.status(500).json({
-            message:
-                "Server error while checking gate status."
-        });
-    }
-};
-
-
-// ======================================================
-// PUBLIC GATE CONFIRM - QR
-// ======================================================
-const publicGateConfirm = async (req, res) => {
-    try {
-        const {
-            outpassId,
-            qrAction
-        } = req.params;
-
-        if (!outpassId) {
-            return res.status(400).json({
-                message:
-                    "Outpass ID is required."
-            });
+        if (!log) {
+            return "exit";
         }
 
-        if (
-            !qrAction ||
-            !["exit", "return"].includes(qrAction)
-        ) {
-            return res.status(400).json({
-                message:
-                    "Invalid QR action."
-            });
+        if (log.status === "outside") {
+            return "return";
         }
 
-        const outpass =
-            await Outpass.findOne({
-                outpassId
-            });
-
-        if (!outpass) {
-            return res.status(404).json({
-                message:
-                    "Outpass not found."
-            });
+        if (log.status === "returned") {
+            return "completed";
         }
 
-        if (outpass.status !== "approved") {
-            return res.status(400).json({
-                message:
-                    `This outpass cannot be used. Current status: ${outpass.status}.`
-            });
-        }
+        return "exit";
+    };
 
-        // ==================================================
-        // EXIT QR
-        // ==================================================
+    // ======================================================
+    // DISPLAY QR
+    // ======================================================
 
-        if (qrAction === "exit") {
-            const existingLog =
-                await GateLog.findOne({
-                    outpass: outpass._id,
-                    outTime: {
-                        $ne: null
+    const displayQR = async (selectedId) => {
+        setOutpassId(selectedId);
+        setError("");
+        setSuccess("");
+        setOutpass(null);
+
+        try {
+            setLoading(true);
+
+            await fetchGateHistory();
+
+            const response = await fetch(
+                `${API_URL}/api/outpass/validate`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
                     },
-                    inTime: null
-                });
+                    body: JSON.stringify({
+                        outpassId: selectedId
+                    })
+                }
+            );
 
-            if (existingLog) {
-                return res.status(400).json({
-                    message:
-                        "This exit QR has already been used. The student is currently outside."
-                });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Unable to validate outpass."
+                );
             }
 
-            const gateLog =
-                await GateLog.create({
-                    outpass:
-                        outpass._id,
-                    student:
-                        outpass.student,
-                    hostel:
-                        outpass.hostel,
-                    outTime:
-                        new Date(),
-                    status:
+            if (!data.outpass) {
+                throw new Error(
+                    "Outpass details were not returned."
+                );
+            }
+
+            if (
+                data.outpass.status !== "approved"
+            ) {
+                throw new Error(
+                    `This outpass is ${data.outpass.status}.`
+                );
+            }
+
+            const currentLog = gateHistory.find(
+                (item) =>
+                    item.outpass?.outpassId ===
+                    selectedId
+            );
+
+            if (
+                currentLog?.status === "returned"
+            ) {
+                throw new Error(
+                    "This outpass has already been completed. No QR code is available."
+                );
+            }
+
+            if (
+                currentLog?.status === "outside"
+            ) {
+                if (!data.outpass.returnQrCode) {
+                    throw new Error(
+                        "Return QR code is not available for this outpass."
+                    );
+                }
+            } else {
+                if (!data.outpass.exitQrCode) {
+                    throw new Error(
+                        "Exit QR code is not available for this outpass."
+                    );
+                }
+            }
+
+            setOutpass(data.outpass);
+
+            if (currentLog?.status === "outside") {
+                setSuccess(
+                    "Student has exited. Return QR is ready."
+                );
+            } else {
+                setSuccess(
+                    "Outpass verified. Exit QR is ready."
+                );
+            }
+
+            setTimeout(() => {
+                document
+                    .getElementById(
+                        "verified-outpass-card"
+                    )
+                    ?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+            }, 50);
+        } catch (err) {
+            console.error(
+                "Display QR error:",
+                err
+            );
+
+            setError(
+                err.message ||
+                "Unable to display QR."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // ======================================================
+    // MANUAL DISPLAY
+    // ======================================================
+
+    const handleDisplayQR = () => {
+        const cleanId = outpassId.trim();
+
+        if (!cleanId) {
+            setError(
+                "Please enter an Outpass ID."
+            );
+            return;
+        }
+
+        displayQR(cleanId);
+    };
+
+    // ======================================================
+    // LOGOUT
+    // ======================================================
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        window.location.reload();
+    };
+
+    // ======================================================
+    // FILTER
+    // ======================================================
+
+    const filteredOutpasses = useMemo(() => {
+        const search =
+            searchTerm.trim().toLowerCase();
+
+        if (!search) {
+            return approvedOutpasses;
+        }
+
+        return approvedOutpasses.filter(
+            (item) =>
+                (
+                    item.student?.name || ""
+                )
+                    .toLowerCase()
+                    .includes(search) ||
+                (
+                    item.outpassId || ""
+                )
+                    .toLowerCase()
+                    .includes(search)
+        );
+    }, [
+        approvedOutpasses,
+        searchTerm
+    ]);
+
+    // ======================================================
+    // STATS
+    // ======================================================
+
+    const stats = useMemo(
+        () => ({
+            approved:
+                approvedOutpasses.length,
+
+            ready:
+                approvedOutpasses.filter(
+                    (item) =>
+                        item.status ===
+                        "approved"
+                ).length,
+
+            outside:
+                gateHistory.filter(
+                    (item) =>
+                        item.status ===
                         "outside"
-                });
+                ).length,
 
-            return res.status(200).json({
-                message:
-                    "Campus exit recorded successfully.",
-                action:
-                    "exit",
-                gateLog
-            });
-        }
+            returned:
+                gateHistory.filter(
+                    (item) =>
+                        item.status ===
+                        "returned"
+                ).length
+        }),
+        [
+            approvedOutpasses,
+            gateHistory
+        ]
+    );
 
-        // ==================================================
-        // RETURN QR
-        // ==================================================
+    const currentGateState =
+        getGateState(outpass);
 
-        if (qrAction === "return") {
-            const gateLog =
-                await GateLog.findOne({
-                    outpass:
-                        outpass._id,
-                    outTime: {
-                        $ne: null
-                    },
-                    inTime: null
-                }).sort({
-                    outTime: -1
-                });
+    // ======================================================
+    // RENDER
+    // ======================================================
 
-            if (!gateLog) {
-                return res.status(400).json({
-                    message:
-                        "This return QR cannot be used because there is no active exit record."
-                });
-            }
+    return (
+        <div className="security-page">
 
-            gateLog.inTime =
-                new Date();
+            {/* ==================================================
+                SIDEBAR
+            ================================================== */}
 
-            gateLog.status =
-                "returned";
+            <aside className="security-sidebar">
 
-            await gateLog.save();
+                <div>
+                    <div className="security-brand">
+                        <strong>
+                            E Outpass
+                        </strong>
+                    </div>
 
-            outpass.status =
-                "completed";
+                    <nav className="security-nav">
 
-            await outpass.save();
+                        <a
+                            href="#top"
+                            className="security-nav-link active"
+                        >
+                            <Icon name="grid" />
+                            Dashboard
+                        </a>
 
-            return res.status(200).json({
-                message:
-                    "Campus return recorded successfully.",
-                action:
-                    "return",
-                gateLog
-            });
-        }
-    } catch (error) {
-        console.error(
-            "Public gate confirmation error:",
-            error
-        );
+                        <a
+                            href="#verification"
+                            className="security-nav-link"
+                        >
+                            <Icon name="qr" />
+                            Gate Verification
+                        </a>
 
-        return res.status(500).json({
-            message:
-                "Server error while confirming gate action."
-        });
-    }
-};
+                        <a
+                            href="#history"
+                            className="security-nav-link"
+                        >
+                            <Icon name="clock" />
+                            Outpass History
+                        </a>
 
+                        <a
+                            href="#profile"
+                            className="security-nav-link"
+                        >
+                            <Icon name="user" />
+                            Profile
+                        </a>
 
-// ======================================================
-// EXPORTS
-// ======================================================
-module.exports = {
-    requestOutpass,
-    getMyStudent,
-    getMyOutpasses,
-    getPendingOutpasses,
-    getWardenOutpassHistory,
-    approveOutpass,
-    rejectOutpass,
-    getAcademicPendingOutpasses,
-    approveAcademicOutpass,
-    rejectAcademicOutpass,
-    validateOutpass,
-    getSecurityApprovedOutpasses,
-    scanOut,
-    scanIn,
-    studentGateStatus,
-    studentConfirmGateAction,
-    publicGateStatus,
-    publicGateConfirm,
-    getGateHistory
-};
+                    </nav>
+                </div>
+
+                <div className="security-sidebar-bottom">
+
+                    <button
+                        onClick={handleLogout}
+                    >
+                        <Icon name="logout" />
+                        Logout
+                    </button>
+
+                </div>
+
+            </aside>
+
+            {/* ==================================================
+                MAIN
+            ================================================== */}
+
+            <main
+                className="security-main"
+                id="top"
+            >
+
+                <header className="security-topbar">
+
+                    <div className="security-user">
+                        <span>S</span>
+                        <strong>
+                            Security
+                        </strong>
+                        <small>⌄</small>
+                    </div>
+
+                </header>
+
+                <div className="security-content">
+
+                    {/* ==================================================
+                        HERO
+                    ================================================== */}
+
+                    <section className="security-hero">
+
+                        <div>
+                            <p className="security-eyebrow">
+                                SECURITY PORTAL
+                            </p>
+
+                            <h1>
+                                Main Gate Verification
+                            </h1>
+
+                            <p>
+                                Verify approved outpasses and
+                                record student movement at the
+                                common main gate.
+                            </p>
+                        </div>
+
+                        <div className="security-live">
+                            <span />
+                            Gate Active
+                        </div>
+
+                    </section>
+
+                    {/* ==================================================
+                        STATION
+                    ================================================== */}
+
+                    <section
+                        className="security-context-card"
+                        id="profile"
+                    >
+
+                        <div className="security-context-icon">
+                            <Icon
+                                name="shield"
+                                size={22}
+                            />
+                        </div>
+
+                        <div className="security-context-info">
+
+                            <span>
+                                YOUR STATION
+                            </span>
+
+                            <h2>
+                                Main Gate Security
+                            </h2>
+
+                            <p>
+                                Common verification point
+                                <b> • </b>
+                                All hostels
+                            </p>
+
+                        </div>
+
+                        <div className="security-context-status">
+
+                            <span>
+                                STATUS
+                            </span>
+
+                            <strong>
+                                Active
+                            </strong>
+
+                        </div>
+
+                    </section>
+
+                    {/* ==================================================
+                        STATS
+                    ================================================== */}
+
+                    <section className="security-activity-card">
+
+                        <div className="security-activity-title">
+                            Gate Activity
+                            <span>
+                                (Current)
+                            </span>
+                        </div>
+
+                        <div className="security-stat-grid">
+
+                            <div className="security-stat blue">
+
+                                <div className="security-stat-icon">
+                                    <Icon
+                                        name="document"
+                                        size={17}
+                                    />
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        {stats.approved}
+                                    </strong>
+
+                                    <span>
+                                        Approved Passes
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div className="security-stat yellow">
+
+                                <div className="security-stat-icon">
+                                    <Icon
+                                        name="qr"
+                                        size={17}
+                                    />
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        {stats.ready}
+                                    </strong>
+
+                                    <span>
+                                        Ready to Verify
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div className="security-stat orange">
+
+                                <div className="security-stat-icon">
+                                    <Icon
+                                        name="clock"
+                                        size={17}
+                                    />
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        {stats.outside}
+                                    </strong>
+
+                                    <span>
+                                        Outside
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div className="security-stat green">
+
+                                <div className="security-stat-icon">
+                                    <Icon
+                                        name="check"
+                                        size={17}
+                                    />
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        {stats.returned}
+                                    </strong>
+
+                                    <span>
+                                        Returned
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    {/* ==================================================
+                        ALERTS
+                    ================================================== */}
+
+                    {error && (
+                        <div className="security-alert error">
+
+                            <Icon name="info" />
+
+                            <span>
+                                {error}
+                            </span>
+
+                        </div>
+                    )}
+
+                    {success && (
+                        <div className="security-alert success">
+
+                            <Icon name="check" />
+
+                            <span>
+                                {success}
+                            </span>
+
+                        </div>
+                    )}
+
+                    {/* ==================================================
+                        SEARCH + GUIDE
+                    ================================================== */}
+
+                    <section className="security-action-grid">
+
+                        <section
+                            className="security-panel verification-panel"
+                            id="verification"
+                        >
+
+                            <div className="security-panel-head">
+
+                                <div>
+
+                                    <p className="security-eyebrow">
+                                        GATE VERIFICATION
+                                    </p>
+
+                                    <h2>
+                                        Search Approved Outpass
+                                    </h2>
+
+                                    <p>
+                                        Find a student by name
+                                        or Outpass ID, then
+                                        display the appropriate QR.
+                                    </p>
+
+                                </div>
+
+                                <button
+                                    className="security-refresh"
+                                    onClick={
+                                        fetchApprovedOutpasses
+                                    }
+                                    disabled={
+                                        approvedLoading
+                                    }
+                                >
+                                    <Icon
+                                        name="refresh"
+                                        size={15}
+                                    />
+
+                                    {approvedLoading
+                                        ? "Refreshing..."
+                                        : "Refresh"}
+                                </button>
+
+                            </div>
+
+                            <div className="security-search">
+
+                                <Icon
+                                    name="search"
+                                    size={17}
+                                />
+
+                                <input
+                                    value={searchTerm}
+                                    onChange={(e) =>
+                                        setSearchTerm(
+                                            e.target.value
+                                        )
+                                    }
+                                    placeholder="Search student name or Outpass ID..."
+                                />
+
+                            </div>
+
+                            <div className="security-approved-list">
+
+                                {approvedLoading ? (
+
+                                    <div className="security-empty-small">
+
+                                        <Icon name="clock" />
+
+                                        <strong>
+                                            Loading approved
+                                            outpasses...
+                                        </strong>
+
+                                    </div>
+
+                                ) : approvedOutpasses.length === 0 ? (
+
+                                    <div className="security-empty-small">
+
+                                        <Icon name="document" />
+
+                                        <strong>
+                                            No approved outpasses
+                                        </strong>
+
+                                        <span>
+                                            Approved requests will
+                                            appear here after
+                                            warden approval.
+                                        </span>
+
+                                    </div>
+
+                                ) : filteredOutpasses.length === 0 ? (
+
+                                    <div className="security-empty-small">
+
+                                        <Icon name="search" />
+
+                                        <strong>
+                                            No matching student
+                                        </strong>
+
+                                        <span>
+                                            Try another student
+                                            name or Outpass ID.
+                                        </span>
+
+                                    </div>
+
+                                ) : (
+
+                                    filteredOutpasses
+                                        .slice(0, 6)
+                                        .map((item) => (
+
+                                            <div
+                                                className="security-approved-item"
+                                                key={item._id}
+                                            >
+
+                                                <div className="security-approved-student">
+
+                                                    <div className="security-student-avatar">
+                                                        {(
+                                                            item.student?.name ||
+                                                            "S"
+                                                        )
+                                                            .charAt(0)
+                                                            .toUpperCase()}
+                                                    </div>
+
+                                                    <div>
+
+                                                        <h3>
+                                                            {item.student?.name ||
+                                                                "Unknown Student"}
+                                                        </h3>
+
+                                                        <p>
+                                                            {item.student?.course ||
+                                                                "-"}
+                                                            {" • "}
+                                                            Room{" "}
+                                                            {item.student
+                                                                ?.roomNumber ||
+                                                                "-"}
+                                                        </p>
+
+                                                        <span>
+                                                            {item.hostel?.name ||
+                                                                "-"}
+                                                            {" • "}
+                                                            {item.outpassId}
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                                <div className="security-approved-meta">
+
+                                                    <div>
+                                                        <span>
+                                                            DATE
+                                                        </span>
+
+                                                        <strong>
+                                                            {formatDate(
+                                                                item.dateRequestedFor
+                                                            )}
+                                                        </strong>
+                                                    </div>
+
+                                                    <div>
+                                                        <span>
+                                                            LEAVING
+                                                        </span>
+
+                                                        <strong>
+                                                            {formatTime(
+                                                                item.timeOfLeaving
+                                                            )}
+                                                        </strong>
+                                                    </div>
+
+                                                    <div>
+                                                        <span>
+                                                            RETURN
+                                                        </span>
+
+                                                        <strong>
+                                                            {formatTime(
+                                                                item.expectedInTime
+                                                            )}
+                                                        </strong>
+                                                    </div>
+
+                                                </div>
+
+                                                <button
+                                                    className="security-view-button"
+                                                    onClick={() =>
+                                                        displayQR(
+                                                            item.outpassId
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        loading
+                                                    }
+                                                >
+
+                                                    {loading &&
+                                                    outpassId ===
+                                                        item.outpassId
+                                                        ? "Loading..."
+                                                        : "Display QR"}
+
+                                                    <Icon
+                                                        name="arrow"
+                                                        size={14}
+                                                    />
+
+                                                </button>
+
+                                            </div>
+
+                                        ))
+                                )}
+
+                            </div>
+
+                        </section>
+
+                        {/* ==================================================
+                            GUIDE
+                        ================================================== */}
+
+                        <section
+                            className="security-panel quick-panel"
+                            id="gate-guide"
+                        >
+
+                            <div className="security-panel-head">
+
+                                <div>
+
+                                    <p className="security-eyebrow">
+                                        GATE GUIDE
+                                    </p>
+
+                                    <h2>
+                                        Verification Flow
+                                    </h2>
+
+                                    <p>
+                                        Exit and return are
+                                        handled separately.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <div className="security-flow-list">
+
+                                <div>
+                                    <span>1</span>
+
+                                    <div>
+                                        <strong>
+                                            Search
+                                        </strong>
+
+                                        <small>
+                                            Find the approved
+                                            student pass.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span>2</span>
+
+                                    <div>
+                                        <strong>
+                                            Display Exit QR
+                                        </strong>
+
+                                        <small>
+                                            Show the exit QR
+                                            before the student
+                                            leaves.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span>3</span>
+
+                                    <div>
+                                        <strong>
+                                            Student Scans
+                                        </strong>
+
+                                        <small>
+                                            The student scans
+                                            and confirms OUT.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span>4</span>
+
+                                    <div>
+                                        <strong>
+                                            Return QR
+                                        </strong>
+
+                                        <small>
+                                            Return QR appears
+                                            only after OUT.
+                                        </small>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                    </section>
+
+                    {/* ==================================================
+                        MANUAL SEARCH
+                    ================================================== */}
+
+                    <section className="security-manual-card">
+
+                        <div className="security-manual-head">
+
+                            <div>
+
+                                <p className="security-eyebrow">
+                                    MANUAL VERIFICATION
+                                </p>
+
+                                <h2>
+                                    Display by Outpass ID
+                                </h2>
+
+                                <p>
+                                    Use this when you already
+                                    know the approved Outpass ID.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div className="security-manual-row">
+
+                            <input
+                                value={outpassId}
+                                onChange={(e) =>
+                                    setOutpassId(
+                                        e.target.value
+                                    )
+                                }
+                                onKeyDown={(e) => {
+                                    if (
+                                        e.key === "Enter"
+                                    ) {
+                                        handleDisplayQR();
+                                    }
+                                }}
+                                placeholder="Example: OP-1789044128762-464"
+                            />
+
+                            <button
+                                onClick={
+                                    handleDisplayQR
+                                }
+                                disabled={loading}
+                            >
+
+                                <Icon
+                                    name="qr"
+                                    size={15}
+                                />
+
+                                {loading
+                                    ? "Verifying..."
+                                    : "Display QR"}
+
+                            </button>
+
+                        </div>
+
+                    </section>
+
+                    {/* ==================================================
+                        VERIFIED OUTPASS
+                    ================================================== */}
+
+                    {outpass && (
+                        <section
+                            id="verified-outpass-card"
+                            className="security-verified-card"
+                        >
+
+                            <div className="security-verified-head">
+
+                                <div>
+
+                                    <p className="security-eyebrow">
+                                        APPROVED OUTPASS
+                                    </p>
+
+                                    <h2>
+                                        {outpass.outpassId}
+                                    </h2>
+
+                                </div>
+
+                                <span>
+                                    ✓ APPROVED
+                                </span>
+
+                            </div>
+
+                            <div className="security-verified-student">
+
+                                <div className="security-student-avatar large">
+
+                                    {(
+                                        outpass.student?.name ||
+                                        "S"
+                                    )
+                                        .charAt(0)
+                                        .toUpperCase()}
+
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        STUDENT
+                                    </span>
+
+                                    <h3>
+                                        {outpass.student?.name ||
+                                            "Unknown Student"}
+                                    </h3>
+
+                                    <p>
+                                        ID:{" "}
+                                        {outpass.student
+                                            ?.studentId ||
+                                            "-"}
+                                        {" • "}
+                                        {outpass.student
+                                            ?.course ||
+                                            "-"}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <div className="security-detail-grid">
+
+                                <div>
+                                    <span>
+                                        PLACE OF VISIT
+                                    </span>
+
+                                    <strong>
+                                        {outpass.placeOfVisit ||
+                                            "-"}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        REASON
+                                    </span>
+
+                                    <strong>
+                                        {outpass.reason ||
+                                            "-"}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        DATE
+                                    </span>
+
+                                    <strong>
+                                        {formatDate(
+                                            outpass.dateRequestedFor
+                                        )}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        LEAVING
+                                    </span>
+
+                                    <strong>
+                                        {formatTime(
+                                            outpass.timeOfLeaving
+                                        )}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        EXPECTED IN
+                                    </span>
+
+                                    <strong>
+                                        {formatTime(
+                                            outpass.expectedInTime
+                                        )}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        HOSTEL
+                                    </span>
+
+                                    <strong>
+                                        {outpass.hostel?.name ||
+                                            "-"}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            {/* ==================================================
+                                GATE STATE: EXIT
+                            ================================================== */}
+
+                            {currentGateState === "exit" && (
+
+                                <div className="security-qr-area">
+
+                                    <div>
+
+                                        <p className="security-eyebrow">
+                                            EXIT QR
+                                        </p>
+
+                                        <h2>
+                                            Student Leaving
+                                        </h2>
+
+                                        <span>
+                                            Use this QR when
+                                            the student is
+                                            leaving campus.
+                                        </span>
+
+                                    </div>
+
+                                    <div className="security-qr-wrap">
+
+                                        {outpass.exitQrCode ? (
+
+                                            <img
+                                                src={
+                                                    outpass.exitQrCode
+                                                }
+                                                alt="Exit QR Code"
+                                            />
+
+                                        ) : (
+
+                                            <strong>
+                                                Exit QR unavailable
+                                            </strong>
+
+                                        )}
+
+                                    </div>
+
+                                    <div className="security-scan-note">
+
+                                        <Icon
+                                            name="qr"
+                                            size={17}
+                                        />
+
+                                        <div>
+
+                                            <strong>
+                                                Student Action
+                                            </strong>
+
+                                            <span>
+                                                Scan the Exit QR
+                                                to record departure.
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                            {/* ==================================================
+                                GATE STATE: RETURN
+                            ================================================== */}
+
+                            {currentGateState === "return" && (
+
+                                <div className="security-qr-area">
+
+                                    <div>
+
+                                        <p className="security-eyebrow">
+                                            RETURN QR
+                                        </p>
+
+                                        <h2>
+                                            Student Returning
+                                        </h2>
+
+                                        <span>
+                                            Use this QR when
+                                            the student returns
+                                            to campus.
+                                        </span>
+
+                                    </div>
+
+                                    <div className="security-qr-wrap">
+
+                                        {outpass.returnQrCode ? (
+
+                                            <img
+                                                src={
+                                                    outpass.returnQrCode
+                                                }
+                                                alt="Return QR Code"
+                                            />
+
+                                        ) : (
+
+                                            <strong>
+                                                Return QR unavailable
+                                            </strong>
+
+                                        )}
+
+                                    </div>
+
+                                    <div className="security-scan-note">
+
+                                        <Icon
+                                            name="qr"
+                                            size={17}
+                                        />
+
+                                        <div>
+
+                                            <strong>
+                                                Student Action
+                                            </strong>
+
+                                            <span>
+                                                Scan the Return QR
+                                                to record entry.
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                            {/* ==================================================
+                                GATE STATE: COMPLETED
+                            ================================================== */}
+
+                            {currentGateState === "completed" && (
+
+                                <div className="security-qr-area">
+
+                                    <div>
+
+                                        <p className="security-eyebrow">
+                                            OUTPASS COMPLETED
+                                        </p>
+
+                                        <h2>
+                                            Student Has Returned
+                                        </h2>
+
+                                        <span>
+                                            This outpass has
+                                            completed both
+                                            exit and return.
+                                        </span>
+
+                                    </div>
+
+                                    <div className="security-scan-note">
+
+                                        <Icon
+                                            name="check"
+                                            size={17}
+                                        />
+
+                                        <div>
+
+                                            <strong>
+                                                Gate Process Complete
+                                            </strong>
+
+                                            <span>
+                                                Exit and return
+                                                have both been
+                                                recorded.
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                            {/* ==================================================
+                                FLOW INDICATOR
+                            ================================================== */}
+
+                            <div className="security-verified-flow">
+
+                                <div
+                                    className={
+                                        currentGateState ===
+                                        "exit"
+                                            ? "active"
+                                            : ""
+                                    }
+                                >
+                                    <b>1</b>
+
+                                    <div>
+                                        <strong>
+                                            Exit
+                                        </strong>
+
+                                        <span>
+                                            Student leaves
+                                            campus.
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <i />
+
+                                <div
+                                    className={
+                                        currentGateState ===
+                                        "return"
+                                            ? "active"
+                                            : ""
+                                    }
+                                >
+                                    <b>2</b>
+
+                                    <div>
+                                        <strong>
+                                            Return
+                                        </strong>
+
+                                        <span>
+                                            Student returns
+                                            to campus.
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <i />
+
+                                <div
+                                    className={
+                                        currentGateState ===
+                                        "completed"
+                                            ? "active"
+                                            : ""
+                                    }
+                                >
+                                    <b>3</b>
+
+                                    <div>
+                                        <strong>
+                                            Completed
+                                        </strong>
+
+                                        <span>
+                                            Outpass process
+                                            finished.
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </section>
+                    )}
+
+                    {/* ==================================================
+                        GATE HISTORY
+                    ================================================== */}
+
+                    <section
+                        className="security-history-card"
+                        id="history"
+                    >
+
+                        <div className="security-panel-head">
+
+                            <div>
+
+                                <p className="security-eyebrow">
+                                    GATE RECORDS
+                                </p>
+
+                                <h2>
+                                    Gate History
+                                </h2>
+
+                                <p>
+                                    Recent student exit and
+                                    return activity across
+                                    the main gate.
+                                </p>
+
+                            </div>
+
+                            <button
+                                className="security-refresh"
+                                onClick={
+                                    fetchGateHistory
+                                }
+                                disabled={
+                                    historyLoading
+                                }
+                            >
+
+                                <Icon
+                                    name="refresh"
+                                    size={15}
+                                />
+
+                                {historyLoading
+                                    ? "Loading..."
+                                    : "Refresh"}
+
+                            </button>
+
+                        </div>
+
+                        {gateHistory.length === 0 &&
+                        !historyLoading ? (
+
+                            <div className="security-empty-history">
+
+                                <Icon
+                                    name="document"
+                                    size={21}
+                                />
+
+                                <strong>
+                                    No gate records yet
+                                </strong>
+
+                                <span>
+                                    Exit and return
+                                    records will appear
+                                    here after students
+                                    use their QR outpass.
+                                </span>
+
+                            </div>
+
+                        ) : (
+
+                            <div className="security-history-table-wrap">
+
+                                <table className="security-history-table">
+
+                                    <thead>
+
+                                        <tr>
+                                            <th>
+                                                Student
+                                            </th>
+
+                                            <th>
+                                                Outpass ID
+                                            </th>
+
+                                            <th>
+                                                Exit Time
+                                            </th>
+
+                                            <th>
+                                                Entry Time
+                                            </th>
+
+                                            <th>
+                                                Status
+                                            </th>
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        {gateHistory.map(
+                                            (log) => (
+
+                                                <tr
+                                                    key={
+                                                        log._id
+                                                    }
+                                                >
+
+                                                    <td>
+
+                                                        <strong>
+                                                            {log
+                                                                .student
+                                                                ?.name ||
+                                                                "-"}
+                                                        </strong>
+
+                                                        <span>
+                                                            {log
+                                                                .student
+                                                                ?.studentId ||
+                                                                "-"}
+                                                        </span>
+
+                                                    </td>
+
+                                                    <td>
+                                                        {log
+                                                            .outpass
+                                                            ?.outpassId ||
+                                                            "-"}
+                                                    </td>
+
+                                                    <td>
+                                                        {formatDateTime(
+                                                            log.outTime
+                                                        )}
+                                                    </td>
+
+                                                    <td>
+                                                        {formatDateTime(
+                                                            log.inTime
+                                                        )}
+                                                    </td>
+
+                                                    <td>
+
+                                                        <span
+                                                            className={`security-history-status ${
+                                                                log.status ===
+                                                                "returned"
+                                                                    ? "returned"
+                                                                    : "outside"
+                                                            }`}
+                                                        >
+
+                                                            {log.status ===
+                                                            "returned"
+                                                                ? "✓ Returned"
+                                                                : "Outside"}
+
+                                                        </span>
+
+                                                    </td>
+
+                                                </tr>
+
+                                            )
+                                        )}
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        )}
+
+                    </section>
+
+                    {/* ==================================================
+                        EMPTY STATE
+                    ================================================== */}
+
+                    {!outpass && (
+
+                        <section className="security-empty-dashboard">
+
+                            <div>
+                                <Icon
+                                    name="qr"
+                                    size={22}
+                                />
+                            </div>
+
+                            <h3>
+                                Ready for gate verification
+                            </h3>
+
+                            <p>
+                                Search an approved outpass
+                                above to display its Exit QR.
+                            </p>
+
+                        </section>
+
+                    )}
+
+                    <div className="security-footer-note">
+
+                        <Icon
+                            name="shield"
+                            size={14}
+                        />
+
+                        <span>
+                            E-Outpass securely records
+                            main-gate verification and
+                            student entry/exit activity.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+            {/* ==================================================
+                MOBILE NAV
+            ================================================== */}
+
+            <nav className="security-mobile-nav">
+
+                <a
+                    href="#top"
+                    className="active"
+                >
+                    <Icon
+                        name="grid"
+                        size={19}
+                    />
+                    <span>
+                        Home
+                    </span>
+                </a>
+
+                <a href="#verification">
+                    <Icon
+                        name="qr"
+                        size={19}
+                    />
+                    <span>
+                        Verify
+                    </span>
+                </a>
+
+                <a href="#history">
+                    <Icon
+                        name="clock"
+                        size={19}
+                    />
+                    <span>
+                        History
+                    </span>
+                </a>
+
+                <a href="#profile">
+                    <Icon
+                        name="user"
+                        size={19}
+                    />
+                    <span>
+                        Profile
+                    </span>
+                </a>
+
+            </nav>
+
+        </div>
+    );
+}
+
+export default SecurityDashboard;
