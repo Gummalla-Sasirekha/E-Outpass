@@ -32,6 +32,20 @@ const userSchema = new mongoose.Schema(
                 "classAdvisor"
             ],
             required: true
+        },
+
+        // ==========================================
+        // AVAILABILITY
+        // ==========================================
+        //
+        // Mainly used for Class Advisors.
+        //
+        // true  → available to receive approvals
+        // false → unavailable, so HOD becomes fallback
+        //
+        isAvailable: {
+            type: Boolean,
+            default: true
         }
     },
     {
@@ -39,4 +53,7 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model(
+    "User",
+    userSchema
+);

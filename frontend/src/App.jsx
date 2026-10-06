@@ -7,6 +7,7 @@ import WardenDashboard from "./WardenDashboard";
 import SecurityDashboard from "./SecurityDashboard";
 import StudentDashboard from "./StudentDashboard";
 import GateConfirmation from "./GateConfirmation";
+import HODDashboard from "./HODDashboard";
 
 function App() {
 
@@ -101,6 +102,16 @@ function App() {
     if (user.role === "student") {
         return (
             <StudentDashboard />
+        );
+    }
+    
+    // ==========================================   
+    // HOD
+    // ==========================================
+
+    if (user.role === "hod") {
+        return (
+            <HODDashboard />
         );
     }
 

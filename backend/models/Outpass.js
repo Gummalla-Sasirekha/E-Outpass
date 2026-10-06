@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const outpassSchema = new mongoose.Schema(
     {
+        // ==========================================
+        // BASIC DETAILS
+        // ==========================================
+
         outpassId: {
             type: String,
             required: true,
@@ -53,28 +57,47 @@ const outpassSchema = new mongoose.Schema(
             required: true
         },
 
-        // ==============================
+        // ==========================================
         // WEEKDAY / WEEKEND
-        // ==============================
+        // ==========================================
 
         dayType: {
             type: String,
-            enum: ["weekday", "weekend"],
+            enum: [
+                "weekday",
+                "weekend"
+            ],
             default: null
         },
 
-        // ==============================
+        // ==========================================
         // ACADEMIC APPROVAL
-        // ==============================
+        // ==========================================
 
         academicApprovalRequired: {
             type: Boolean,
             default: false
         },
 
+        // Role of the assigned authority
+        //
+        // classAdvisor = normal weekday flow
+        // hod          = fallback flow
+        //
         academicApprovalBy: {
             type: String,
-            enum: ["classAdvisor", "hod", null],
+            enum: [
+                "classAdvisor",
+                "hod",
+                null
+            ],
+            default: null
+        },
+
+        // Actual User who is assigned
+        academicApprover: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
             default: null
         },
 
@@ -105,9 +128,9 @@ const outpassSchema = new mongoose.Schema(
             default: ""
         },
 
-        // ==============================
+        // ==========================================
         // WARDEN APPROVAL
-        // ==============================
+        // ==========================================
 
         wardenApprovalStatus: {
             type: String,
@@ -130,9 +153,9 @@ const outpassSchema = new mongoose.Schema(
             default: null
         },
 
-        // ==============================
+        // ==========================================
         // OVERALL STATUS
-        // ==============================
+        // ==========================================
 
         status: {
             type: String,
@@ -168,4 +191,7 @@ const outpassSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("Outpass", outpassSchema);
+module.exports = mongoose.model(
+    "Outpass",
+    outpassSchema
+);

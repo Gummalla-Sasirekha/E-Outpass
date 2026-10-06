@@ -27,7 +27,6 @@ const {
     getAcademicPendingOutpasses,
     approveAcademicOutpass,
     rejectAcademicOutpass,
-    hodTakeOverAcademicApproval,
 
 
     // ==========================================
@@ -96,71 +95,81 @@ router.get(
 // ACADEMIC APPROVAL ROUTES
 // HOD / CLASS ADVISOR
 // ======================================================
+//
+// WEEKDAY FLOW:
+//
+// Parent
+//    ↓
+// Class Advisor
+//    ↓
+// Warden
+//
+// If Class Advisor is unavailable:
+//
+// Parent
+//    ↓
+// HOD
+//    ↓
+// Warden
+//
+// The controller decides the actual assignment.
+// These routes only allow the assigned academic
+// authority to act.
+// ======================================================
 
 
-// Get pending academic approval requests
-//
-// Class Advisor:
-//     Gets requests assigned to classAdvisor
-//
-// HOD:
-//     Gets requests assigned to hod
-//
+// Get academic requests assigned to the
+// currently logged-in HOD / Class Advisor
 router.get(
     "/academic-pending",
     protect,
-    authorize("hod", "classAdvisor"),
+    authorize(
+        "hod",
+        "classAdvisor"
+    ),
     getAcademicPendingOutpasses
 );
 
 
-// Approve weekday outpass academically
-//
-// HOD / Class Advisor
-//
+// Approve assigned academic request
 router.patch(
     "/:outpassId/academic-approve",
     protect,
-    authorize("hod", "classAdvisor"),
+    authorize(
+        "hod",
+        "classAdvisor"
+    ),
     approveAcademicOutpass
 );
 
 
-// Reject weekday outpass academically
-//
-// HOD / Class Advisor
-//
+// Reject assigned academic request
 router.patch(
     "/:outpassId/academic-reject",
     protect,
-    authorize("hod", "classAdvisor"),
+    authorize(
+        "hod",
+        "classAdvisor"
+    ),
     rejectAcademicOutpass
-);
-
-
-// HOD fallback
-//
-// Used when Class Advisor accounts are unavailable.
-//
-router.patch(
-    "/:outpassId/hod-takeover",
-    protect,
-    authorize("hod"),
-    hodTakeOverAcademicApproval
 );
 
 
 // ======================================================
 // WARDEN ROUTES
 // ======================================================
+//
+// Warden receives:
+//
+// 1. Weekend requests directly
+//
+// 2. Weekday requests only AFTER
+//    academic approval
+//
+// ======================================================
 
 
 // Get requests waiting for warden approval
-//
-// Includes:
-//     Weekend requests
-//     Weekday requests after academic approval
-//
 router.get(
     "/pending",
     protect,
@@ -169,7 +178,8 @@ router.get(
 );
 
 
-// Get complete outpass history for warden's hostel
+// Get complete outpass history
+// for warden's hostel
 router.get(
     "/warden-history",
     protect,
@@ -204,13 +214,15 @@ router.patch(
 //
 // WARDEN → Only their hostel records
 //
-// Filtering is handled by the controller.
-//
+// ======================================================
 
 router.get(
     "/gate-history",
     protect,
-    authorize("security", "warden"),
+    authorize(
+        "security",
+        "warden"
+    ),
     getGateHistory
 );
 
@@ -260,9 +272,7 @@ router.post(
 // QR GATE ROUTES
 // ======================================================
 //
-// These routes are intentionally PUBLIC.
-//
-// Student scans the QR.
+// These routes are PUBLIC.
 //
 // First scan:
 //     Confirm Exit → OUT
@@ -271,7 +281,7 @@ router.post(
 //     Confirm Return → IN
 //
 // No student login required.
-//
+// ======================================================
 
 router.post(
     "/student-status",

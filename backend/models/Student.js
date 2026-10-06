@@ -39,12 +39,37 @@ const studentSchema = new mongoose.Schema(
             required: true
         },
 
-        // Student's login account
+        // ==========================================
+        // STUDENT LOGIN
+        // ==========================================
+
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
             unique: true
+        },
+
+        // ==========================================
+        // ACADEMIC AUTHORITIES
+        // ==========================================
+
+        // Student's HOD
+        hod: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null
+        },
+
+        // Student's Class Advisor
+        //
+        // This can remain null until the actual
+        // Class Advisor data is available.
+        //
+        classAdvisor: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null
         }
     },
     {
@@ -52,4 +77,7 @@ const studentSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("Student", studentSchema);
+module.exports = mongoose.model(
+    "Student",
+    studentSchema
+);
