@@ -53,9 +53,98 @@ const outpassSchema = new mongoose.Schema(
             required: true
         },
 
+        // ==============================
+        // WEEKDAY / WEEKEND
+        // ==============================
+
+        dayType: {
+            type: String,
+            enum: ["weekday", "weekend"],
+            default: null
+        },
+
+        // ==============================
+        // ACADEMIC APPROVAL
+        // ==============================
+
+        academicApprovalRequired: {
+            type: Boolean,
+            default: false
+        },
+
+        academicApprovalBy: {
+            type: String,
+            enum: ["classAdvisor", "hod", null],
+            default: null
+        },
+
+        academicApprovalStatus: {
+            type: String,
+            enum: [
+                "not_required",
+                "pending",
+                "approved",
+                "rejected"
+            ],
+            default: "not_required"
+        },
+
+        academicApprovedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null
+        },
+
+        academicApprovedAt: {
+            type: Date,
+            default: null
+        },
+
+        academicRejectionReason: {
+            type: String,
+            default: ""
+        },
+
+        // ==============================
+        // WARDEN APPROVAL
+        // ==============================
+
+        wardenApprovalStatus: {
+            type: String,
+            enum: [
+                "pending",
+                "approved",
+                "rejected"
+            ],
+            default: "pending"
+        },
+
+        wardenApprovedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: null
+        },
+
+        wardenApprovedAt: {
+            type: Date,
+            default: null
+        },
+
+        // ==============================
+        // OVERALL STATUS
+        // ==============================
+
         status: {
             type: String,
-            enum: ["pending", "approved", "rejected", "completed", "expired"],
+            enum: [
+                "pending",
+                "academic_pending",
+                "warden_pending",
+                "approved",
+                "rejected",
+                "completed",
+                "expired"
+            ],
             default: "pending"
         },
 

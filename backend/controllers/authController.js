@@ -15,7 +15,15 @@ const registerUser = async (req, res) => {
         }
 
         // Check if role is valid
-        if (!["parent", "warden", "security"].includes(role)) {
+        if (
+            ![
+                "parent",
+                "warden",
+                "security",
+                "hod",
+                "classAdvisor"
+            ].includes(role)
+        ) {
             return res.status(400).json({
                 message: "Invalid role"
             });
@@ -119,6 +127,7 @@ const loginUser = async (req, res) => {
         });
     }
 };
+
 
 module.exports = {
     registerUser,

@@ -1,14 +1,38 @@
 const express = require("express");
 
 const {
+    // ==========================================
+    // PARENT
+    // ==========================================
+
     requestOutpass,
     getMyStudent,
     getMyOutpasses,
+
+
+    // ==========================================
+    // WARDEN
+    // ==========================================
 
     getPendingOutpasses,
     getWardenOutpassHistory,
     approveOutpass,
     rejectOutpass,
+
+
+    // ==========================================
+    // ACADEMIC
+    // ==========================================
+
+    getAcademicPendingOutpasses,
+    approveAcademicOutpass,
+    rejectAcademicOutpass,
+    hodTakeOverAcademicApproval,
+
+
+    // ==========================================
+    // SECURITY
+    // ==========================================
 
     validateOutpass,
     getSecurityApprovedOutpasses,
@@ -16,21 +40,30 @@ const {
     scanIn,
     getGateHistory,
 
+
+    // ==========================================
+    // QR GATE
+    // ==========================================
+
     studentGateStatus,
     studentConfirmGateAction
+
 } = require("../controllers/outpassController");
+
 
 const {
     protect,
     authorize
 } = require("../middleware/authMiddleware");
 
+
 const router = express.Router();
 
 
-// ==========================================
+// ======================================================
 // PARENT ROUTES
-// ==========================================
+// ======================================================
+
 
 // Request a new outpass
 router.post(
@@ -59,11 +92,75 @@ router.get(
 );
 
 
-// ==========================================
-// WARDEN ROUTES
-// ==========================================
+// ======================================================
+// ACADEMIC APPROVAL ROUTES
+// HOD / CLASS ADVISOR
+// ======================================================
 
-// Get pending requests for warden's hostel
+
+// Get pending academic approval requests
+//
+// Class Advisor:
+//     Gets requests assigned to classAdvisor
+//
+// HOD:
+//     Gets requests assigned to hod
+//
+router.get(
+    "/academic-pending",
+    protect,
+    authorize("hod", "classAdvisor"),
+    getAcademicPendingOutpasses
+);
+
+
+// Approve weekday outpass academically
+//
+// HOD / Class Advisor
+//
+router.patch(
+    "/:outpassId/academic-approve",
+    protect,
+    authorize("hod", "classAdvisor"),
+    approveAcademicOutpass
+);
+
+
+// Reject weekday outpass academically
+//
+// HOD / Class Advisor
+//
+router.patch(
+    "/:outpassId/academic-reject",
+    protect,
+    authorize("hod", "classAdvisor"),
+    rejectAcademicOutpass
+);
+
+
+// HOD fallback
+//
+// Used when Class Advisor accounts are unavailable.
+//
+router.patch(
+    "/:outpassId/hod-takeover",
+    protect,
+    authorize("hod"),
+    hodTakeOverAcademicApproval
+);
+
+
+// ======================================================
+// WARDEN ROUTES
+// ======================================================
+
+
+// Get requests waiting for warden approval
+//
+// Includes:
+//     Weekend requests
+//     Weekday requests after academic approval
+//
 router.get(
     "/pending",
     protect,
@@ -72,8 +169,7 @@ router.get(
 );
 
 
-// Get all outpasses for warden's hostel
-// Used for Pending / Approved / Rejected / Completed
+// Get complete outpass history for warden's hostel
 router.get(
     "/warden-history",
     protect,
@@ -82,7 +178,7 @@ router.get(
 );
 
 
-// Approve an outpass
+// Approve outpass
 router.patch(
     "/:outpassId/approve",
     protect,
@@ -91,7 +187,7 @@ router.patch(
 );
 
 
-// Reject an outpass
+// Reject outpass
 router.patch(
     "/:outpassId/reject",
     protect,
@@ -100,15 +196,16 @@ router.patch(
 );
 
 
-// ==========================================
+// ======================================================
 // GATE HISTORY
-// ==========================================
+// ======================================================
 //
-// SECURITY → Can see ALL hostel gate records
-// WARDEN   → Can see ONLY their own hostel records
+// SECURITY → All hostel gate records
 //
-// The controller performs the hostel filtering.
-// ==========================================
+// WARDEN → Only their hostel records
+//
+// Filtering is handled by the controller.
+//
 
 router.get(
     "/gate-history",
@@ -118,18 +215,19 @@ router.get(
 );
 
 
-// ==========================================
+// ======================================================
 // SECURITY ROUTES
-// ==========================================
+// ======================================================
 
 
-// Get all approved outpasses for Security
+// Get all approved outpasses
 router.get(
     "/security-approved",
     protect,
     authorize("security"),
     getSecurityApprovedOutpasses
 );
+
 
 // Validate an outpass
 router.post(
@@ -158,38 +256,37 @@ router.post(
 );
 
 
-// ==========================================
+// ======================================================
 // QR GATE ROUTES
-// ==========================================
+// ======================================================
 //
-// Student does NOT need an account/login.
+// These routes are intentionally PUBLIC.
 //
-// The QR contains the unique Outpass ID.
+// Student scans the QR.
 //
 // First scan:
-//     Confirm Exit → records OUT
+//     Confirm Exit → OUT
 //
 // Second scan:
-//     Confirm Return → records IN
-// ==========================================
+//     Confirm Return → IN
+//
+// No student login required.
+//
 
-
-// Check whether the student should EXIT or RETURN
 router.post(
     "/student-status",
     studentGateStatus
 );
 
 
-// Confirm EXIT / RETURN
 router.post(
     "/student-confirm",
     studentConfirmGateAction
 );
 
 
-// ==========================================
+// ======================================================
 // EXPORT ROUTER
-// ==========================================
+// ======================================================
 
 module.exports = router;

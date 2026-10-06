@@ -27,7 +27,9 @@ const userSchema = new mongoose.Schema(
                 "parent",
                 "student",
                 "warden",
-                "security"
+                "security",
+                "hod",
+                "classAdvisor"
             ],
             required: true
         }

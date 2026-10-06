@@ -5,9 +5,54 @@ const GateLog = require("../models/GateLog");
 const User = require("../models/User");
 const QRCode = require("qrcode");
 
-// ==========================================
+
+// ======================================================
+// HELPER - DETERMINE DAY TYPE
+// ======================================================
+
+const getDayType = (date) => {
+    const dateObject = new Date(date);
+
+    if (Number.isNaN(dateObject.getTime())) {
+        return null;
+    }
+
+    const day = dateObject.getDay();
+
+    return day === 0 || day === 6
+        ? "weekend"
+        : "weekday";
+};
+
+
+// ======================================================
+// HELPER - DETERMINE ACADEMIC APPROVER
+// ======================================================
+//
+// Current situation:
+// - Class Advisor accounts are not available yet.
+// - Therefore, weekday requests currently go to HOD.
+// - Once Class Advisor accounts are added, weekday requests
+//   will be assigned to Class Advisor first.
+//
+// ======================================================
+
+const determineAcademicApprover = async () => {
+    const classAdvisor = await User.findOne({
+        role: "classAdvisor"
+    });
+
+    if (classAdvisor) {
+        return "classAdvisor";
+    }
+
+    return "hod";
+};
+
+
+// ======================================================
 // REQUEST OUTPASS - PARENT
-// ==========================================
+// ======================================================
 
 const requestOutpass = async (req, res) => {
     try {
@@ -33,6 +78,11 @@ const requestOutpass = async (req, res) => {
             });
         }
 
+
+        // ------------------------------------------
+        // FIND STUDENT LINKED TO THIS PARENT
+        // ------------------------------------------
+
         const student = await Student.findOne({
             studentId: String(studentId),
             parent: req.user.userId
@@ -45,6 +95,11 @@ const requestOutpass = async (req, res) => {
             });
         }
 
+
+        // ------------------------------------------
+        // CHECK HOSTEL
+        // ------------------------------------------
+
         if (!student.hostel) {
             return res.status(400).json({
                 message:
@@ -52,41 +107,98 @@ const requestOutpass = async (req, res) => {
             });
         }
 
+
+        // ------------------------------------------
+        // DETERMINE WEEKDAY / WEEKEND
+        // ------------------------------------------
+
+        const dayType = getDayType(dateRequestedFor);
+
+        if (!dayType) {
+            return res.status(400).json({
+                message: "Invalid outpass date."
+            });
+        }
+
+
+        // ------------------------------------------
+        // DETERMINE APPROVAL FLOW
+        // ------------------------------------------
+
+        let academicApprovalRequired = false;
+        let academicApprovalBy = null;
+        let academicApprovalStatus = "not_required";
+        let initialStatus = "warden_pending";
+
+
+        if (dayType === "weekday") {
+
+            academicApprovalRequired = true;
+
+            academicApprovalBy =
+                await determineAcademicApprover();
+
+            academicApprovalStatus = "pending";
+
+            initialStatus = "academic_pending";
+        }
+
+
+        // ------------------------------------------
+        // CREATE OUTPASS ID
+        // ------------------------------------------
+
         const outpassId =
             `OP-${Date.now()}-${Math.floor(
                 100 + Math.random() * 900
             )}`;
 
+
+        // ------------------------------------------
+        // CREATE OUTPASS
+        // ------------------------------------------
+
         const outpass = await Outpass.create({
             outpassId,
 
-            student:
-                student._id,
+            student: student._id,
 
-            parent:
-                req.user.userId,
+            parent: req.user.userId,
 
-            hostel:
-                student.hostel._id,
+            hostel: student.hostel._id,
 
             placeOfVisit,
 
             reason,
 
-            dateRequestedFor,
+            dateRequestedFor: new Date(
+                dateRequestedFor
+            ),
 
             timeOfLeaving,
 
             expectedInTime,
 
-            status:
-                "pending"
+            dayType,
+
+            academicApprovalRequired,
+
+            academicApprovalBy,
+
+            academicApprovalStatus,
+
+            status: initialStatus,
+
+            wardenApprovalStatus: "pending"
         });
 
+
+        // ------------------------------------------
+        // POPULATE RESPONSE
+        // ------------------------------------------
+
         const populatedOutpass =
-            await Outpass.findById(
-                outpass._id
-            )
+            await Outpass.findById(outpass._id)
                 .populate(
                     "student",
                     "studentId name course roomNumber"
@@ -96,15 +208,21 @@ const requestOutpass = async (req, res) => {
                     "name type"
                 );
 
+
         return res.status(201).json({
             message:
-                "Outpass request submitted successfully.",
+                dayType === "weekend"
+                    ? "Weekend outpass request submitted to warden."
+                    : `Weekday outpass request submitted for ${academicApprovalBy === "classAdvisor"
+                        ? "Class Advisor"
+                        : "HOD"
+                    } approval.`,
 
-            outpass:
-                populatedOutpass
+            outpass: populatedOutpass
         });
 
     } catch (error) {
+
         console.error(
             "Request outpass error:",
             error
@@ -118,21 +236,22 @@ const requestOutpass = async (req, res) => {
 };
 
 
-// ==========================================
+// ======================================================
 // GET MY STUDENT - PARENT
-// ==========================================
+// ======================================================
 
 const getMyStudent = async (req, res) => {
     try {
+
         const student =
             await Student.findOne({
-                parent:
-                    req.user.userId
+                parent: req.user.userId
             })
                 .populate(
                     "hostel",
                     "name type"
                 );
+
 
         if (!student) {
             return res.status(404).json({
@@ -141,11 +260,13 @@ const getMyStudent = async (req, res) => {
             });
         }
 
+
         return res.status(200).json({
             student
         });
 
     } catch (error) {
+
         console.error(
             "Get my student error:",
             error
@@ -159,16 +280,16 @@ const getMyStudent = async (req, res) => {
 };
 
 
-// ==========================================
+// ======================================================
 // GET MY OUTPASSES - PARENT
-// ==========================================
+// ======================================================
 
 const getMyOutpasses = async (req, res) => {
     try {
+
         const outpasses =
             await Outpass.find({
-                parent:
-                    req.user.userId
+                parent: req.user.userId
             })
                 .populate(
                     "student",
@@ -178,18 +299,26 @@ const getMyOutpasses = async (req, res) => {
                     "hostel",
                     "name type"
                 )
+                .populate(
+                    "academicApprovedBy",
+                    "name email role"
+                )
+                .populate(
+                    "wardenApprovedBy",
+                    "name email role"
+                )
                 .sort({
                     createdAt: -1
                 });
 
-        return res.status(200).json({
-            count:
-                outpasses.length,
 
+        return res.status(200).json({
+            count: outpasses.length,
             outpasses
         });
 
     } catch (error) {
+
         console.error(
             "Get my outpasses error:",
             error
@@ -203,17 +332,18 @@ const getMyOutpasses = async (req, res) => {
 };
 
 
-// ==========================================
+// ======================================================
 // GET PENDING OUTPASSES - WARDEN
-// ==========================================
+// ======================================================
 
 const getPendingOutpasses = async (req, res) => {
     try {
+
         const hostel =
             await Hostel.findOne({
-                warden:
-                    req.user.userId
+                warden: req.user.userId
             });
+
 
         if (!hostel) {
             return res.status(404).json({
@@ -222,13 +352,12 @@ const getPendingOutpasses = async (req, res) => {
             });
         }
 
+
         const outpasses =
             await Outpass.find({
-                hostel:
-                    hostel._id,
+                hostel: hostel._id,
 
-                status:
-                    "pending"
+                status: "warden_pending"
             })
                 .populate(
                     "student",
@@ -238,21 +367,25 @@ const getPendingOutpasses = async (req, res) => {
                     "parent",
                     "name email"
                 )
+                .populate(
+                    "academicApprovedBy",
+                    "name email role"
+                )
                 .sort({
                     createdAt: -1
                 });
 
-        return res.status(200).json({
-            hostel:
-                hostel.name,
 
-            count:
-                outpasses.length,
+        return res.status(200).json({
+            hostel: hostel.name,
+
+            count: outpasses.length,
 
             outpasses
         });
 
     } catch (error) {
+
         console.error(
             "Get pending outpasses error:",
             error
@@ -266,32 +399,18 @@ const getPendingOutpasses = async (req, res) => {
 };
 
 
-// ==========================================
+// ======================================================
 // GET WARDEN OUTPASS HISTORY
-// ==========================================
-//
-// Returns ALL outpasses belonging to the
-// logged-in warden's hostel.
-//
-// Used for:
-// Pending
-// Approved
-// Rejected
-// Completed
-// ==========================================
+// ======================================================
 
 const getWardenOutpassHistory = async (req, res) => {
     try {
 
-        // ==========================================
-        // FIND WARDEN'S HOSTEL
-        // ==========================================
-
         const hostel =
             await Hostel.findOne({
-                warden:
-                    req.user.userId
+                warden: req.user.userId
             });
+
 
         if (!hostel) {
             return res.status(404).json({
@@ -301,14 +420,9 @@ const getWardenOutpassHistory = async (req, res) => {
         }
 
 
-        // ==========================================
-        // GET ALL OUTPASSES FOR THIS HOSTEL
-        // ==========================================
-
         const outpasses =
             await Outpass.find({
-                hostel:
-                    hostel._id
+                hostel: hostel._id
             })
                 .populate(
                     "student",
@@ -322,21 +436,23 @@ const getWardenOutpassHistory = async (req, res) => {
                     "hostel",
                     "name type"
                 )
+                .populate(
+                    "academicApprovedBy",
+                    "name email role"
+                )
+                .populate(
+                    "wardenApprovedBy",
+                    "name email role"
+                )
                 .sort({
                     createdAt: -1
                 });
 
 
-        // ==========================================
-        // RETURN DATA
-        // ==========================================
-
         return res.status(200).json({
-            hostel:
-                hostel.name,
+            hostel: hostel.name,
 
-            count:
-                outpasses.length,
+            count: outpasses.length,
 
             outpasses
         });
@@ -356,90 +472,164 @@ const getWardenOutpassHistory = async (req, res) => {
 };
 
 
-// ==========================================
-// APPROVE OUTPASS - WARDEN
-// ==========================================
+// ======================================================
+// GET ACADEMIC PENDING OUTPASSES
+// HOD / CLASS ADVISOR
+// ======================================================
 
-const approveOutpass = async (req, res) => {
+const getAcademicPendingOutpasses = async (req, res) => {
     try {
+
+        const role = req.user.role;
+
+        if (
+            role !== "hod" &&
+            role !== "classAdvisor"
+        ) {
+            return res.status(403).json({
+                message:
+                    "Only HOD or Class Advisor can access academic approval requests."
+            });
+        }
+
+
+        const expectedApprover =
+            role === "hod"
+                ? "hod"
+                : "classAdvisor";
+
+
+        const outpasses =
+            await Outpass.find({
+                academicApprovalRequired: true,
+
+                academicApprovalStatus: "pending",
+
+                academicApprovalBy: expectedApprover
+            })
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "parent",
+                    "name email"
+                )
+                .populate(
+                    "hostel",
+                    "name type"
+                )
+                .sort({
+                    createdAt: -1
+                });
+
+
+        return res.status(200).json({
+            role,
+
+            count: outpasses.length,
+
+            outpasses
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Get academic pending outpasses error:",
+            error
+        );
+
+        return res.status(500).json({
+            message:
+                "Server error while fetching academic approval requests."
+        });
+    }
+};
+
+
+// ======================================================
+// APPROVE OUTPASS - ACADEMIC
+// HOD / CLASS ADVISOR
+// ======================================================
+
+const approveAcademicOutpass = async (req, res) => {
+    try {
+
         const {
             outpassId
         } = req.params;
 
-        const hostel =
-            await Hostel.findOne({
-                warden:
-                    req.user.userId
-            });
 
-        if (!hostel) {
-            return res.status(404).json({
+        const role = req.user.role;
+
+
+        if (
+            role !== "hod" &&
+            role !== "classAdvisor"
+        ) {
+            return res.status(403).json({
                 message:
-                    "No hostel is assigned to this warden."
+                    "Only HOD or Class Advisor can approve academic requests."
             });
         }
+
+
+        const expectedApprover =
+            role === "hod"
+                ? "hod"
+                : "classAdvisor";
+
 
         const outpass =
             await Outpass.findOne({
                 outpassId,
 
-                hostel:
-                    hostel._id
+                academicApprovalRequired: true,
+
+                academicApprovalStatus: "pending",
+
+                academicApprovalBy:
+                    expectedApprover
             });
+
 
         if (!outpass) {
             return res.status(404).json({
                 message:
-                    "Outpass not found in your hostel."
-            });
-        }
-
-        if (
-            outpass.status !==
-            "pending"
-        ) {
-            return res.status(400).json({
-                message:
-                    `Outpass is already ${outpass.status}.`
+                    "Academic approval request not found or not assigned to you."
             });
         }
 
 
-        // ==========================================
-        // APPROVE OUTPASS
-        // ==========================================
+        // ------------------------------------------
+        // ACADEMIC APPROVAL
+        // ------------------------------------------
 
-        outpass.status =
+        outpass.academicApprovalStatus =
             "approved";
 
-        outpass.approvedAt =
+        outpass.academicApprovedBy =
+            req.user.userId;
+
+        outpass.academicApprovedAt =
             new Date();
 
+        outpass.academicRejectionReason =
+            "";
 
-        // ==========================================
-        // CREATE PHONE-ACCESSIBLE QR
-        // ==========================================
+        // ------------------------------------------
+        // MOVE TO WARDEN
+        // ------------------------------------------
 
-        const frontendUrl =
-            process.env.FRONTEND_URL ||
-            "http://192.168.1.38:5173";
+        outpass.status =
+            "warden_pending";
 
-        const gateUrl =
-            `${frontendUrl}/gate/${encodeURIComponent(
-                outpass.outpassId
-            )}`;
+        outpass.wardenApprovalStatus =
+            "pending";
 
-        console.log(
-            "Generating Gate QR:",
-            gateUrl
-        );
-
-        outpass.qrCode =
-            await QRCode.toDataURL(
-                gateUrl
-            );
 
         await outpass.save();
+
 
         const populatedOutpass =
             await Outpass.findById(
@@ -452,7 +642,441 @@ const approveOutpass = async (req, res) => {
                 .populate(
                     "hostel",
                     "name type"
+                )
+                .populate(
+                    "academicApprovedBy",
+                    "name email role"
                 );
+
+
+        return res.status(200).json({
+            message:
+                "Academic approval granted. Outpass sent to warden.",
+
+            outpass:
+                populatedOutpass
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Academic approval error:",
+            error
+        );
+
+        return res.status(500).json({
+            message:
+                "Server error while approving academic request."
+        });
+    }
+};
+
+
+// ======================================================
+// REJECT OUTPASS - ACADEMIC
+// HOD / CLASS ADVISOR
+// ======================================================
+
+const rejectAcademicOutpass = async (req, res) => {
+    try {
+
+        const {
+            outpassId
+        } = req.params;
+
+
+        const {
+            rejectionReason
+        } = req.body;
+
+
+        const role = req.user.role;
+
+
+        if (
+            role !== "hod" &&
+            role !== "classAdvisor"
+        ) {
+            return res.status(403).json({
+                message:
+                    "Only HOD or Class Advisor can reject academic requests."
+            });
+        }
+
+
+        if (
+            !rejectionReason ||
+            !rejectionReason.trim()
+        ) {
+            return res.status(400).json({
+                message:
+                    "Rejection reason is required."
+            });
+        }
+
+
+        const expectedApprover =
+            role === "hod"
+                ? "hod"
+                : "classAdvisor";
+
+
+        const outpass =
+            await Outpass.findOne({
+                outpassId,
+
+                academicApprovalRequired: true,
+
+                academicApprovalStatus: "pending",
+
+                academicApprovalBy:
+                    expectedApprover
+            });
+
+
+        if (!outpass) {
+            return res.status(404).json({
+                message:
+                    "Academic approval request not found or not assigned to you."
+            });
+        }
+
+
+        // ------------------------------------------
+        // REJECT ACADEMIC REQUEST
+        // ------------------------------------------
+
+        outpass.academicApprovalStatus =
+            "rejected";
+
+        outpass.academicApprovedBy =
+            req.user.userId;
+
+        outpass.academicApprovedAt =
+            new Date();
+
+        outpass.academicRejectionReason =
+            rejectionReason.trim();
+
+
+        // Overall request rejected
+
+        outpass.status =
+            "rejected";
+
+        outpass.rejectionReason =
+            rejectionReason.trim();
+
+
+        await outpass.save();
+
+
+        const populatedOutpass =
+            await Outpass.findById(
+                outpass._id
+            )
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "hostel",
+                    "name type"
+                )
+                .populate(
+                    "academicApprovedBy",
+                    "name email role"
+                );
+
+
+        return res.status(200).json({
+            message:
+                "Outpass rejected by academic authority.",
+
+            outpass:
+                populatedOutpass
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Academic rejection error:",
+            error
+        );
+
+        return res.status(500).json({
+            message:
+                "Server error while rejecting academic request."
+        });
+    }
+};
+
+
+// ======================================================
+// HOD FALLBACK
+// ======================================================
+//
+// If Class Advisor accounts are not available,
+// HOD can take a pending weekday request.
+//
+// This is mainly for the current demo stage.
+// ======================================================
+
+const hodTakeOverAcademicApproval = async (req, res) => {
+    try {
+
+        if (req.user.role !== "hod") {
+            return res.status(403).json({
+                message:
+                    "Only HOD can take over academic approval."
+            });
+        }
+
+
+        const {
+            outpassId
+        } = req.params;
+
+
+        const outpass =
+            await Outpass.findOne({
+                outpassId,
+
+                dayType: "weekday",
+
+                academicApprovalRequired: true,
+
+                academicApprovalStatus: "pending"
+            });
+
+
+        if (!outpass) {
+            return res.status(404).json({
+                message:
+                    "No pending weekday academic request found."
+            });
+        }
+
+
+        // ------------------------------------------
+        // CHECK CLASS ADVISOR AVAILABILITY
+        // ------------------------------------------
+
+        const classAdvisor =
+            await User.findOne({
+                role: "classAdvisor"
+            });
+
+
+        if (classAdvisor) {
+            return res.status(400).json({
+                message:
+                    "A Class Advisor account is available. The request must go through the Class Advisor."
+            });
+        }
+
+
+        // ------------------------------------------
+        // ASSIGN TO HOD
+        // ------------------------------------------
+
+        outpass.academicApprovalBy =
+            "hod";
+
+
+        await outpass.save();
+
+
+        return res.status(200).json({
+            message:
+                "Request assigned to HOD for academic approval.",
+
+            outpass
+        });
+
+    } catch (error) {
+
+        console.error(
+            "HOD takeover error:",
+            error
+        );
+
+        return res.status(500).json({
+            message:
+                "Server error while assigning request to HOD."
+        });
+    }
+};
+
+
+// ======================================================
+// APPROVE OUTPASS - WARDEN
+// ======================================================
+
+const approveOutpass = async (req, res) => {
+    try {
+
+        const {
+            outpassId
+        } = req.params;
+
+
+        const hostel =
+            await Hostel.findOne({
+                warden: req.user.userId
+            });
+
+
+        if (!hostel) {
+            return res.status(404).json({
+                message:
+                    "No hostel is assigned to this warden."
+            });
+        }
+
+
+        const outpass =
+            await Outpass.findOne({
+                outpassId,
+
+                hostel: hostel._id
+            });
+
+
+        if (!outpass) {
+            return res.status(404).json({
+                message:
+                    "Outpass not found in your hostel."
+            });
+        }
+
+
+        // ------------------------------------------
+        // CHECK CURRENT APPROVAL STAGE
+        // ------------------------------------------
+
+        if (
+            outpass.status !==
+            "warden_pending"
+        ) {
+            return res.status(400).json({
+                message:
+                    `Outpass is currently ${outpass.status}. It cannot be approved by the warden yet.`
+            });
+        }
+
+
+        // ------------------------------------------
+        // WEEKDAY ACADEMIC CHECK
+        // ------------------------------------------
+
+        if (
+            outpass.dayType === "weekday" &&
+            outpass.academicApprovalRequired
+        ) {
+
+            if (
+                outpass.academicApprovalStatus !==
+                "approved"
+            ) {
+                return res.status(400).json({
+                    message:
+                        "Academic approval is required before warden approval."
+                });
+            }
+        }
+
+
+        // ------------------------------------------
+        // WEEKEND CHECK
+        // ------------------------------------------
+
+        if (
+            outpass.dayType === "weekend" &&
+            outpass.academicApprovalRequired
+        ) {
+            return res.status(400).json({
+                message:
+                    "Weekend requests should not require academic approval."
+            });
+        }
+
+
+        // ------------------------------------------
+        // WARDEN APPROVAL
+        // ------------------------------------------
+
+        outpass.wardenApprovalStatus =
+            "approved";
+
+        outpass.wardenApprovedBy =
+            req.user.userId;
+
+        outpass.wardenApprovedAt =
+            new Date();
+
+        outpass.status =
+            "approved";
+
+        outpass.approvedAt =
+            new Date();
+
+
+        // ------------------------------------------
+        // CREATE PHONE-ACCESSIBLE QR
+        // ------------------------------------------
+
+        const frontendUrl =
+            process.env.FRONTEND_URL ||
+            "http://192.168.1.38:5173";
+
+
+        const gateUrl =
+            `${frontendUrl}/gate/${encodeURIComponent(
+                outpass.outpassId
+            )}`;
+
+
+        console.log(
+            "Generating Gate QR:",
+            gateUrl
+        );
+
+
+        outpass.qrCode =
+            await QRCode.toDataURL(
+                gateUrl
+            );
+
+
+        await outpass.save();
+
+
+        // ------------------------------------------
+        // POPULATE RESPONSE
+        // ------------------------------------------
+
+        const populatedOutpass =
+            await Outpass.findById(
+                outpass._id
+            )
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "hostel",
+                    "name type"
+                )
+                .populate(
+                    "academicApprovedBy",
+                    "name email role"
+                )
+                .populate(
+                    "wardenApprovedBy",
+                    "name email role"
+                );
+
 
         return res.status(200).json({
             message:
@@ -463,6 +1087,7 @@ const approveOutpass = async (req, res) => {
         });
 
     } catch (error) {
+
         console.error(
             "Approve outpass error:",
             error
@@ -476,19 +1101,22 @@ const approveOutpass = async (req, res) => {
 };
 
 
-// ==========================================
+// ======================================================
 // REJECT OUTPASS - WARDEN
-// ==========================================
+// ======================================================
 
 const rejectOutpass = async (req, res) => {
     try {
+
         const {
             outpassId
         } = req.params;
 
+
         const {
             rejectionReason
         } = req.body;
+
 
         if (
             !rejectionReason ||
@@ -500,11 +1128,12 @@ const rejectOutpass = async (req, res) => {
             });
         }
 
+
         const hostel =
             await Hostel.findOne({
-                warden:
-                    req.user.userId
+                warden: req.user.userId
             });
+
 
         if (!hostel) {
             return res.status(404).json({
@@ -513,13 +1142,14 @@ const rejectOutpass = async (req, res) => {
             });
         }
 
+
         const outpass =
             await Outpass.findOne({
                 outpassId,
 
-                hostel:
-                    hostel._id
+                hostel: hostel._id
             });
+
 
         if (!outpass) {
             return res.status(404).json({
@@ -528,15 +1158,17 @@ const rejectOutpass = async (req, res) => {
             });
         }
 
+
         if (
             outpass.status !==
-            "pending"
+            "warden_pending"
         ) {
             return res.status(400).json({
                 message:
-                    `Outpass is already ${outpass.status}.`
+                    `Outpass is currently ${outpass.status}.`
             });
         }
+
 
         outpass.status =
             "rejected";
@@ -544,7 +1176,18 @@ const rejectOutpass = async (req, res) => {
         outpass.rejectionReason =
             rejectionReason.trim();
 
+        outpass.wardenApprovalStatus =
+            "rejected";
+
+        outpass.wardenApprovedBy =
+            req.user.userId;
+
+        outpass.wardenApprovedAt =
+            new Date();
+
+
         await outpass.save();
+
 
         const populatedOutpass =
             await Outpass.findById(
@@ -559,6 +1202,7 @@ const rejectOutpass = async (req, res) => {
                     "name type"
                 );
 
+
         return res.status(200).json({
             message:
                 "Outpass rejected successfully.",
@@ -568,6 +1212,7 @@ const rejectOutpass = async (req, res) => {
         });
 
     } catch (error) {
+
         console.error(
             "Reject outpass error:",
             error
@@ -581,15 +1226,17 @@ const rejectOutpass = async (req, res) => {
 };
 
 
-// ==========================================
+// ======================================================
 // VALIDATE OUTPASS - SECURITY
-// ==========================================
+// ======================================================
 
 const validateOutpass = async (req, res) => {
     try {
+
         const {
             outpassId
         } = req.body;
+
 
         if (!outpassId) {
             return res.status(400).json({
@@ -597,6 +1244,7 @@ const validateOutpass = async (req, res) => {
                     "Outpass ID is required."
             });
         }
+
 
         const outpass =
             await Outpass.findOne({
@@ -612,6 +1260,7 @@ const validateOutpass = async (req, res) => {
                     "name type"
                 );
 
+
         if (!outpass) {
             return res.status(404).json({
                 message:
@@ -619,15 +1268,21 @@ const validateOutpass = async (req, res) => {
             });
         }
 
+
         if (
             outpass.status ===
-            "pending"
+            "pending" ||
+            outpass.status ===
+            "academic_pending" ||
+            outpass.status ===
+            "warden_pending"
         ) {
             return res.status(400).json({
                 message:
                     "Outpass is still pending approval."
             });
         }
+
 
         if (
             outpass.status ===
@@ -639,6 +1294,7 @@ const validateOutpass = async (req, res) => {
             });
         }
 
+
         if (
             outpass.status ===
             "completed"
@@ -648,6 +1304,7 @@ const validateOutpass = async (req, res) => {
                     "Outpass has already been completed."
             });
         }
+
 
         if (
             outpass.status ===
@@ -659,6 +1316,7 @@ const validateOutpass = async (req, res) => {
             });
         }
 
+
         if (
             outpass.status !==
             "approved"
@@ -669,6 +1327,7 @@ const validateOutpass = async (req, res) => {
             });
         }
 
+
         return res.status(200).json({
             message:
                 "Outpass is valid.",
@@ -677,6 +1336,7 @@ const validateOutpass = async (req, res) => {
         });
 
     } catch (error) {
+
         console.error(
             "Validate outpass error:",
             error
@@ -689,61 +1349,75 @@ const validateOutpass = async (req, res) => {
     }
 };
 
-// ==========================================
+
+// ======================================================
 // SECURITY - GET APPROVED OUTPASSES
-// ==========================================
+// ======================================================
 
 const getSecurityApprovedOutpasses = async (req, res) => {
     try {
-        const outpasses = await Outpass.find({
-            status: "approved"
-        })
-            .populate(
-                "student",
-                "studentId name course roomNumber"
-            )
-            .populate(
-                "hostel",
-                "name type"
-            )
-            .populate(
-                "parent",
-                "name email"
-            )
-            .sort({
-                dateRequestedFor: 1,
-                timeOfLeaving: 1
-            });
 
-        res.status(200).json({
+        const outpasses =
+            await Outpass.find({
+                status: "approved"
+            })
+                .populate(
+                    "student",
+                    "studentId name course roomNumber"
+                )
+                .populate(
+                    "hostel",
+                    "name type"
+                )
+                .populate(
+                    "parent",
+                    "name email"
+                )
+                .sort({
+                    dateRequestedFor: 1,
+
+                    timeOfLeaving: 1
+                });
+
+
+        return res.status(200).json({
             success: true,
+
             count: outpasses.length,
+
             outpasses
         });
 
     } catch (error) {
+
         console.error(
             "Get security approved outpasses error:",
             error
         );
 
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: "Failed to fetch approved outpasses",
+
+            message:
+                "Failed to fetch approved outpasses",
+
             error: error.message
         });
     }
-}
+};
 
-// ==========================================
+
+// ======================================================
 // SCAN OUT - SECURITY
-// ==========================================
+// ======================================================
 
 const scanOut = async (req, res) => {
     try {
+
         const {
             outpassId
         } = req.body;
+
 
         if (!outpassId) {
             return res.status(400).json({
@@ -752,11 +1426,13 @@ const scanOut = async (req, res) => {
             });
         }
 
+
         const outpass =
             await Outpass.findOne({
                 outpassId:
                     outpassId.trim()
             });
+
 
         if (!outpass) {
             return res.status(404).json({
@@ -765,15 +1441,21 @@ const scanOut = async (req, res) => {
             });
         }
 
+
         if (
             outpass.status ===
-            "pending"
+            "pending" ||
+            outpass.status ===
+            "academic_pending" ||
+            outpass.status ===
+            "warden_pending"
         ) {
             return res.status(400).json({
                 message:
                     "Outpass is still pending approval."
             });
         }
+
 
         if (
             outpass.status ===
@@ -785,6 +1467,7 @@ const scanOut = async (req, res) => {
             });
         }
 
+
         if (
             outpass.status ===
             "completed"
@@ -794,6 +1477,7 @@ const scanOut = async (req, res) => {
                     "Outpass is completed. Student cannot exit."
             });
         }
+
 
         if (
             outpass.status ===
@@ -805,6 +1489,7 @@ const scanOut = async (req, res) => {
             });
         }
 
+
         if (
             outpass.status !==
             "approved"
@@ -815,14 +1500,14 @@ const scanOut = async (req, res) => {
             });
         }
 
+
         const existingGateLog =
             await GateLog.findOne({
-                outpass:
-                    outpass._id,
+                outpass: outpass._id,
 
-                status:
-                    "outside"
+                status: "outside"
             });
+
 
         if (existingGateLog) {
             return res.status(400).json({
@@ -831,8 +1516,10 @@ const scanOut = async (req, res) => {
             });
         }
 
+
         const gateLog =
             await GateLog.create({
+
                 outpass:
                     outpass._id,
 
@@ -849,6 +1536,7 @@ const scanOut = async (req, res) => {
                     "outside"
             });
 
+
         const populatedGateLog =
             await GateLog.findById(
                 gateLog._id
@@ -866,6 +1554,7 @@ const scanOut = async (req, res) => {
                     "name email"
                 );
 
+
         return res.status(200).json({
             message:
                 "Student exit recorded successfully.",
@@ -875,6 +1564,7 @@ const scanOut = async (req, res) => {
         });
 
     } catch (error) {
+
         console.error(
             "Scan OUT error:",
             error
@@ -888,15 +1578,17 @@ const scanOut = async (req, res) => {
 };
 
 
-// ==========================================
+// ======================================================
 // SCAN IN - SECURITY
-// ==========================================
+// ======================================================
 
 const scanIn = async (req, res) => {
     try {
+
         const {
             outpassId
         } = req.body;
+
 
         if (!outpassId) {
             return res.status(400).json({
@@ -905,11 +1597,13 @@ const scanIn = async (req, res) => {
             });
         }
 
+
         const outpass =
             await Outpass.findOne({
                 outpassId:
                     outpassId.trim()
             });
+
 
         if (!outpass) {
             return res.status(404).json({
@@ -918,14 +1612,14 @@ const scanIn = async (req, res) => {
             });
         }
 
+
         const gateLog =
             await GateLog.findOne({
-                outpass:
-                    outpass._id,
+                outpass: outpass._id,
 
-                status:
-                    "outside"
+                status: "outside"
             });
+
 
         if (!gateLog) {
             return res.status(400).json({
@@ -934,6 +1628,7 @@ const scanIn = async (req, res) => {
             });
         }
 
+
         if (gateLog.entryTime) {
             return res.status(400).json({
                 message:
@@ -941,20 +1636,27 @@ const scanIn = async (req, res) => {
             });
         }
 
+
         gateLog.entryTime =
             new Date();
 
         gateLog.status =
             "returned";
 
+
         await gateLog.save();
 
 
-        // Mark outpass completed
+        // ------------------------------------------
+        // MARK OUTPASS COMPLETED
+        // ------------------------------------------
+
         outpass.status =
             "completed";
 
+
         await outpass.save();
+
 
         const populatedGateLog =
             await GateLog.findById(
@@ -972,6 +1674,7 @@ const scanIn = async (req, res) => {
                     "security",
                     "name email"
                 );
+
 
         return res.status(200).json({
             message:
@@ -990,6 +1693,7 @@ const scanIn = async (req, res) => {
         });
 
     } catch (error) {
+
         console.error(
             "Scan IN error:",
             error
@@ -1003,20 +1707,17 @@ const scanIn = async (req, res) => {
 };
 
 
-// ==========================================
+// ======================================================
 // GET STUDENT GATE STATUS
-// ==========================================
-//
-// No active GateLog → EXIT
-// Active OUT GateLog → RETURN
-// Completed → blocked
-// ==========================================
+// ======================================================
 
 const studentGateStatus = async (req, res) => {
     try {
+
         const {
             outpassId
         } = req.body;
+
 
         if (!outpassId) {
             return res.status(400).json({
@@ -1025,12 +1726,6 @@ const studentGateStatus = async (req, res) => {
             });
         }
 
-
-        // ==========================================
-        // PUBLIC QR FLOW
-        // No student login required.
-        // The outpass ID comes from the QR code.
-        // ==========================================
 
         const outpass =
             await Outpass.findOne({
@@ -1042,6 +1737,7 @@ const studentGateStatus = async (req, res) => {
                     "studentId name course roomNumber"
                 );
 
+
         if (!outpass) {
             return res.status(404).json({
                 message:
@@ -1050,19 +1746,24 @@ const studentGateStatus = async (req, res) => {
         }
 
 
-        // ==========================================
+        // ------------------------------------------
         // STATUS CHECKS
-        // ==========================================
+        // ------------------------------------------
 
         if (
             outpass.status ===
-            "pending"
+            "pending" ||
+            outpass.status ===
+            "academic_pending" ||
+            outpass.status ===
+            "warden_pending"
         ) {
             return res.status(400).json({
                 message:
                     "This outpass is still pending approval."
             });
         }
+
 
         if (
             outpass.status ===
@@ -1074,6 +1775,7 @@ const studentGateStatus = async (req, res) => {
             });
         }
 
+
         if (
             outpass.status ===
             "expired"
@@ -1084,6 +1786,7 @@ const studentGateStatus = async (req, res) => {
             });
         }
 
+
         if (
             outpass.status ===
             "completed"
@@ -1093,6 +1796,7 @@ const studentGateStatus = async (req, res) => {
                     "This outpass has already been completed."
             });
         }
+
 
         if (
             outpass.status !==
@@ -1105,28 +1809,25 @@ const studentGateStatus = async (req, res) => {
         }
 
 
-        // ==========================================
+        // ------------------------------------------
         // CHECK ACTIVE OUT RECORD
-        // ==========================================
+        // ------------------------------------------
 
         const existingGateLog =
             await GateLog.findOne({
-                outpass:
-                    outpass._id,
+                outpass: outpass._id,
 
-                status:
-                    "outside"
+                status: "outside"
             });
 
 
-        // ==========================================
+        // ------------------------------------------
         // NO OUT YET → EXIT
-        // ==========================================
+        // ------------------------------------------
 
         if (!existingGateLog) {
             return res.status(200).json({
-                action:
-                    "exit",
+                action: "exit",
 
                 message:
                     "Student can confirm exit.",
@@ -1140,17 +1841,16 @@ const studentGateStatus = async (req, res) => {
         }
 
 
-        // ==========================================
+        // ------------------------------------------
         // ALREADY OUT → RETURN
-        // ==========================================
+        // ------------------------------------------
 
         if (
             existingGateLog.status ===
             "outside"
         ) {
             return res.status(200).json({
-                action:
-                    "return",
+                action: "return",
 
                 message:
                     "Student can confirm return.",
@@ -1163,12 +1863,14 @@ const studentGateStatus = async (req, res) => {
             });
         }
 
+
         return res.status(400).json({
             message:
                 "Invalid gate status."
         });
 
     } catch (error) {
+
         console.error(
             "Student gate status error:",
             error
@@ -1182,24 +1884,19 @@ const studentGateStatus = async (req, res) => {
 };
 
 
-// ==========================================
+// ======================================================
 // STUDENT CONFIRM GATE ACTION
-// ==========================================
-//
-// First scan:
-//      Confirm Exit → OUT
-//
-// Second scan:
-//      Confirm Return → IN
-// ==========================================
+// ======================================================
 
 const studentConfirmGateAction =
     async (req, res) => {
 
         try {
+
             const {
                 outpassId
             } = req.body;
+
 
             if (!outpassId) {
                 return res.status(400).json({
@@ -1209,16 +1906,12 @@ const studentConfirmGateAction =
             }
 
 
-            // ==========================================
-            // PUBLIC QR FLOW
-            // No student login required.
-            // ==========================================
-
             const outpass =
                 await Outpass.findOne({
                     outpassId:
                         outpassId.trim()
                 });
+
 
             if (!outpass) {
                 return res.status(404).json({
@@ -1228,19 +1921,24 @@ const studentConfirmGateAction =
             }
 
 
-            // ==========================================
+            // ------------------------------------------
             // STATUS CHECKS
-            // ==========================================
+            // ------------------------------------------
 
             if (
                 outpass.status ===
-                "pending"
+                "pending" ||
+                outpass.status ===
+                "academic_pending" ||
+                outpass.status ===
+                "warden_pending"
             ) {
                 return res.status(400).json({
                     message:
                         "This outpass is still pending approval."
                 });
             }
+
 
             if (
                 outpass.status ===
@@ -1252,6 +1950,7 @@ const studentConfirmGateAction =
                 });
             }
 
+
             if (
                 outpass.status ===
                 "expired"
@@ -1262,6 +1961,7 @@ const studentConfirmGateAction =
                 });
             }
 
+
             if (
                 outpass.status ===
                 "completed"
@@ -1271,6 +1971,7 @@ const studentConfirmGateAction =
                         "This outpass has already been completed."
                 });
             }
+
 
             if (
                 outpass.status !==
@@ -1283,33 +1984,29 @@ const studentConfirmGateAction =
             }
 
 
-            // ==========================================
+            // ------------------------------------------
             // CHECK CURRENT GATE STATE
-            // ==========================================
+            // ------------------------------------------
 
             const existingGateLog =
                 await GateLog.findOne({
-                    outpass:
-                        outpass._id,
+                    outpass: outpass._id,
 
-                    status:
-                        "outside"
+                    status: "outside"
                 });
 
 
-            // ==========================================
+            // ------------------------------------------
             // FIRST SCAN → EXIT
-            // ==========================================
+            // ------------------------------------------
 
             if (!existingGateLog) {
 
-                // Find common main-gate
-                // security account
                 const securityUser =
                     await User.findOne({
-                        role:
-                            "security"
+                        role: "security"
                     });
+
 
                 if (!securityUser) {
                     return res.status(500).json({
@@ -1318,8 +2015,10 @@ const studentConfirmGateAction =
                     });
                 }
 
+
                 const gateLog =
                     await GateLog.create({
+
                         outpass:
                             outpass._id,
 
@@ -1339,9 +2038,9 @@ const studentConfirmGateAction =
                             "outside"
                     });
 
+
                 return res.status(200).json({
-                    action:
-                        "exit",
+                    action: "exit",
 
                     message:
                         "Exit confirmed successfully.",
@@ -1355,9 +2054,9 @@ const studentConfirmGateAction =
             }
 
 
-            // ==========================================
+            // ------------------------------------------
             // SECOND SCAN → RETURN
-            // ==========================================
+            // ------------------------------------------
 
             if (
                 existingGateLog.status ===
@@ -1370,18 +2069,21 @@ const studentConfirmGateAction =
                 existingGateLog.status =
                     "returned";
 
+
                 await existingGateLog.save();
 
 
                 // Mark outpass completed
+
                 outpass.status =
                     "completed";
 
+
                 await outpass.save();
 
+
                 return res.status(200).json({
-                    action:
-                        "return",
+                    action: "return",
 
                     message:
                         "Return confirmed successfully.",
@@ -1397,12 +2099,14 @@ const studentConfirmGateAction =
                 });
             }
 
+
             return res.status(400).json({
                 message:
                     "Invalid gate status."
             });
 
         } catch (error) {
+
             console.error(
                 "Student gate confirmation error:",
                 error
@@ -1416,52 +2120,48 @@ const studentConfirmGateAction =
     };
 
 
-// ==========================================
+// ======================================================
 // GET GATE HISTORY
-// ==========================================
+// ======================================================
 //
 // SECURITY → ALL HOSTELS
-// WARDEN   → OWN HOSTEL ONLY
-// ==========================================
+// WARDEN  → OWN HOSTEL ONLY
+//
+// ======================================================
 
 const getGateHistory = async (req, res) => {
     try {
+
         const role =
             req.user.role;
 
 
         // ==========================================
         // SECURITY
-        // Common main gate
-        // Can see ALL records
         // ==========================================
 
         if (
-            role ===
-            "security"
+            role === "security"
         ) {
 
             const gateLogs =
                 await GateLog.find()
-
                     .populate(
                         "student",
                         "studentId name course roomNumber"
                     )
-
                     .populate(
                         "outpass",
                         "outpassId placeOfVisit reason dateRequestedFor hostel"
                     )
-
                     .populate(
                         "security",
                         "name email"
                     )
-
                     .sort({
                         createdAt: -1
                     });
+
 
             return res.status(200).json({
                 count:
@@ -1474,12 +2174,10 @@ const getGateHistory = async (req, res) => {
 
         // ==========================================
         // WARDEN
-        // Only their hostel
         // ==========================================
 
         if (
-            role ===
-            "warden"
+            role === "warden"
         ) {
 
             const hostel =
@@ -1487,6 +2185,7 @@ const getGateHistory = async (req, res) => {
                     warden:
                         req.user.userId
                 });
+
 
             if (!hostel) {
                 return res.status(404).json({
@@ -1496,14 +2195,17 @@ const getGateHistory = async (req, res) => {
             }
 
 
-            // Find outpasses belonging
-            // to this hostel
+            // ------------------------------------------
+            // FIND OUTPASSES FOR THIS HOSTEL
+            // ------------------------------------------
+
             const hostelOutpasses =
                 await Outpass.find({
                     hostel:
                         hostel._id
                 })
                     .select("_id");
+
 
             const outpassIds =
                 hostelOutpasses.map(
@@ -1512,8 +2214,10 @@ const getGateHistory = async (req, res) => {
                 );
 
 
-            // Find gate logs for
-            // those outpasses
+            // ------------------------------------------
+            // FIND GATE LOGS
+            // ------------------------------------------
+
             const gateLogs =
                 await GateLog.find({
                     outpass: {
@@ -1521,25 +2225,22 @@ const getGateHistory = async (req, res) => {
                             outpassIds
                     }
                 })
-
                     .populate(
                         "student",
                         "studentId name course roomNumber"
                     )
-
                     .populate(
                         "outpass",
                         "outpassId placeOfVisit reason dateRequestedFor"
                     )
-
                     .populate(
                         "security",
                         "name email"
                     )
-
                     .sort({
                         createdAt: -1
                     });
+
 
             return res.status(200).json({
                 hostel:
@@ -1563,6 +2264,7 @@ const getGateHistory = async (req, res) => {
         });
 
     } catch (error) {
+
         console.error(
             "Get gate history error:",
             error
@@ -1576,26 +2278,37 @@ const getGateHistory = async (req, res) => {
 };
 
 
-// ==========================================
+// ======================================================
 // EXPORTS
-// ==========================================
+// ======================================================
 
 module.exports = {
+
+    // Parent
     requestOutpass,
     getMyStudent,
     getMyOutpasses,
 
+    // Warden
     getPendingOutpasses,
     getWardenOutpassHistory,
     approveOutpass,
     rejectOutpass,
 
+    // Academic
+    getAcademicPendingOutpasses,
+    approveAcademicOutpass,
+    rejectAcademicOutpass,
+    hodTakeOverAcademicApproval,
+
+    // Security
     validateOutpass,
     getSecurityApprovedOutpasses,
     scanOut,
     scanIn,
-    getGateHistory,
 
+    // Gate
     studentGateStatus,
-    studentConfirmGateAction
+    studentConfirmGateAction,
+    getGateHistory
 };
