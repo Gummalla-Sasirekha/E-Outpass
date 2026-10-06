@@ -9,6 +9,26 @@ import StudentDashboard from "./StudentDashboard";
 import GateConfirmation from "./GateConfirmation";
 import HODDashboard from "./HODDashboard";
 
+function normalizeRole(role) {
+    const rawRole = String(role || "")
+        .trim()
+        .toLowerCase();
+
+    const roleMap = {
+        parent: "parent",
+        student: "student",
+        warden: "warden",
+        security: "security",
+        hod: "hod",
+
+        "classadvisor": "classAdvisor",
+        "class_advisor": "classAdvisor",
+        "class-advisor": "classAdvisor"
+    };
+
+    return roleMap[rawRole] || rawRole;
+}
+
 function App() {
 
     const [user, setUser] = useState(() => {
@@ -16,9 +36,31 @@ function App() {
         const savedUser =
             localStorage.getItem("user");
 
-        return savedUser
-            ? JSON.parse(savedUser)
-            : null;
+        if (!savedUser) {
+            return null;
+        }
+
+        try {
+            const parsedUser =
+                JSON.parse(savedUser);
+
+            return {
+                ...parsedUser,
+                role: normalizeRole(parsedUser.role)
+            };
+
+        } catch (error) {
+
+            console.error(
+                "Invalid saved user:",
+                error
+            );
+
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+
+            return null;
+        }
     });
 
 
@@ -32,12 +74,6 @@ function App() {
 
     // ==========================================
     // QR GATE PAGE
-    // ==========================================
-    //
-    // This must be checked before login/user
-    // role checks because a QR scan should be
-    // able to open the gate page directly.
-    //
     // ==========================================
 
     if (
@@ -56,7 +92,27 @@ function App() {
     if (!user) {
         return (
             <Login
-                onLogin={setUser}
+                onLogin={(loggedInUser) => {
+
+                    const normalizedUser = {
+                        ...loggedInUser,
+                        role: normalizeRole(
+                            loggedInUser.role
+                        )
+                    };
+
+                    console.log(
+                        "APP RECEIVED USER:",
+                        normalizedUser
+                    );
+
+                    console.log(
+                        "APP RECEIVED ROLE:",
+                        normalizedUser.role
+                    );
+
+                    setUser(normalizedUser);
+                }}
             />
         );
     }
@@ -110,11 +166,6 @@ function App() {
     // HOD
     // CLASS ADVISOR
     // ==========================================
-    //
-    // Both HOD and Class Advisor use the
-    // academic approval dashboard.
-    //
-    // ==========================================
 
     if (
         user.role === "hod" ||
@@ -138,7 +189,8 @@ function App() {
                 alignItems: "center",
                 justifyContent: "center",
                 flexDirection: "column",
-                fontFamily: "Arial, sans-serif"
+                fontFamily: "Arial, sans-serif",
+                gap: "10px"
             }}
         >
 
@@ -147,15 +199,25 @@ function App() {
             </h2>
 
             <p>
-                Role received: {user.role}
+                Role received:
+                {" "}
+                <strong>
+                    {String(user.role)}
+                </strong>
             </p>
 
             <button
                 onClick={() => {
 
-                    localStorage.clear();
+                    localStorage.removeItem(
+                        "token"
+                    );
 
-                    window.location.reload();
+                    localStorage.removeItem(
+                        "user"
+                    );
+
+                    setUser(null);
 
                 }}
                 style={{
@@ -173,6 +235,5 @@ function App() {
         </div>
     );
 }
-
 
 export default App;
