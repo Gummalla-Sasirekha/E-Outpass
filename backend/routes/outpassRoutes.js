@@ -1,70 +1,40 @@
 const express = require("express");
 
-const {
-    // ==========================================
-    // PARENT
-    // ==========================================
+const router = express.Router();
 
+const {
     requestOutpass,
     getMyStudent,
     getMyOutpasses,
-
-
-    // ==========================================
-    // WARDEN
-    // ==========================================
 
     getPendingOutpasses,
     getWardenOutpassHistory,
     approveOutpass,
     rejectOutpass,
 
-
-    // ==========================================
-    // ACADEMIC
-    // ==========================================
-
     getAcademicPendingOutpasses,
     approveAcademicOutpass,
     rejectAcademicOutpass,
-
-
-    // ==========================================
-    // SECURITY
-    // ==========================================
 
     validateOutpass,
     getSecurityApprovedOutpasses,
     scanOut,
     scanIn,
-    getGateHistory,
-
-
-    // ==========================================
-    // QR GATE
-    // ==========================================
 
     studentGateStatus,
-    studentConfirmGateAction
-
+    studentConfirmGateAction,
+    getGateHistory
 } = require("../controllers/outpassController");
-
 
 const {
     protect,
     authorize
 } = require("../middleware/authMiddleware");
 
-
-const router = express.Router();
-
-
 // ======================================================
-// PARENT ROUTES
+// PARENT
 // ======================================================
 
-
-// Request a new outpass
 router.post(
     "/request",
     protect,
@@ -72,8 +42,6 @@ router.post(
     requestOutpass
 );
 
-
-// Get the student linked to this parent
 router.get(
     "/my-student",
     protect,
@@ -81,8 +49,6 @@ router.get(
     getMyStudent
 );
 
-
-// Get all outpasses requested by this parent
 router.get(
     "/my",
     protect,
@@ -90,86 +56,10 @@ router.get(
     getMyOutpasses
 );
 
-
 // ======================================================
-// ACADEMIC APPROVAL ROUTES
-// HOD / CLASS ADVISOR
-// ======================================================
-//
-// WEEKDAY FLOW:
-//
-// Parent
-//    ↓
-// Class Advisor
-//    ↓
-// Warden
-//
-// If Class Advisor is unavailable:
-//
-// Parent
-//    ↓
-// HOD
-//    ↓
-// Warden
-//
-// The controller decides the actual assignment.
-// These routes only allow the assigned academic
-// authority to act.
+// WARDEN
 // ======================================================
 
-
-// Get academic requests assigned to the
-// currently logged-in HOD / Class Advisor
-router.get(
-    "/academic-pending",
-    protect,
-    authorize(
-        "hod",
-        "classAdvisor"
-    ),
-    getAcademicPendingOutpasses
-);
-
-
-// Approve assigned academic request
-router.patch(
-    "/:outpassId/academic-approve",
-    protect,
-    authorize(
-        "hod",
-        "classAdvisor"
-    ),
-    approveAcademicOutpass
-);
-
-
-// Reject assigned academic request
-router.patch(
-    "/:outpassId/academic-reject",
-    protect,
-    authorize(
-        "hod",
-        "classAdvisor"
-    ),
-    rejectAcademicOutpass
-);
-
-
-// ======================================================
-// WARDEN ROUTES
-// ======================================================
-//
-// Warden receives:
-//
-// 1. Weekend requests directly
-//
-// 2. Weekday requests only AFTER
-//    academic approval
-//
-// ======================================================
-
-
-// Get requests waiting for warden approval
 router.get(
     "/pending",
     protect,
@@ -177,18 +67,13 @@ router.get(
     getPendingOutpasses
 );
 
-
-// Get complete outpass history
-// for warden's hostel
 router.get(
-    "/warden-history",
+    "/history",
     protect,
     authorize("warden"),
     getWardenOutpassHistory
 );
 
-
-// Approve outpass
 router.patch(
     "/:outpassId/approve",
     protect,
@@ -196,8 +81,6 @@ router.patch(
     approveOutpass
 );
 
-
-// Reject outpass
 router.patch(
     "/:outpassId/reject",
     protect,
@@ -205,15 +88,83 @@ router.patch(
     rejectOutpass
 );
 
+// ======================================================
+// HOD / CLASS ADVISOR
+// ======================================================
+
+router.get(
+    "/academic-pending",
+    protect,
+    authorize("hod", "classAdvisor"),
+    getAcademicPendingOutpasses
+);
+
+router.patch(
+    "/:outpassId/academic-approve",
+    protect,
+    authorize("hod", "classAdvisor"),
+    approveAcademicOutpass
+);
+
+router.patch(
+    "/:outpassId/academic-reject",
+    protect,
+    authorize("hod", "classAdvisor"),
+    rejectAcademicOutpass
+);
+
+// ======================================================
+// SECURITY
+// ======================================================
+
+router.get(
+    "/approved",
+    protect,
+    authorize("security"),
+    getSecurityApprovedOutpasses
+);
+
+router.get(
+    "/validate/:outpassId",
+    protect,
+    authorize("security"),
+    validateOutpass
+);
+
+router.post(
+    "/:outpassId/scan-out",
+    protect,
+    authorize("security"),
+    scanOut
+);
+
+router.post(
+    "/:outpassId/scan-in",
+    protect,
+    authorize("security"),
+    scanIn
+);
+
+// ======================================================
+// STUDENT GATE
+// ======================================================
+
+router.get(
+    "/:outpassId/gate-status",
+    protect,
+    authorize("student"),
+    studentGateStatus
+);
+
+router.post(
+    "/:outpassId/gate-action",
+    protect,
+    authorize("student"),
+    studentConfirmGateAction
+);
 
 // ======================================================
 // GATE HISTORY
-// ======================================================
-//
-// SECURITY → All hostel gate records
-//
-// WARDEN → Only their hostel records
-//
 // ======================================================
 
 router.get(
@@ -221,82 +172,15 @@ router.get(
     protect,
     authorize(
         "security",
+        "student",
+        "parent",
         "warden"
     ),
     getGateHistory
 );
 
-
 // ======================================================
-// SECURITY ROUTES
-// ======================================================
-
-
-// Get all approved outpasses
-router.get(
-    "/security-approved",
-    protect,
-    authorize("security"),
-    getSecurityApprovedOutpasses
-);
-
-
-// Validate an outpass
-router.post(
-    "/validate",
-    protect,
-    authorize("security"),
-    validateOutpass
-);
-
-
-// Record student OUT
-router.post(
-    "/scan-out",
-    protect,
-    authorize("security"),
-    scanOut
-);
-
-
-// Record student IN
-router.post(
-    "/scan-in",
-    protect,
-    authorize("security"),
-    scanIn
-);
-
-
-// ======================================================
-// QR GATE ROUTES
-// ======================================================
-//
-// These routes are PUBLIC.
-//
-// First scan:
-//     Confirm Exit → OUT
-//
-// Second scan:
-//     Confirm Return → IN
-//
-// No student login required.
-// ======================================================
-
-router.post(
-    "/student-status",
-    studentGateStatus
-);
-
-
-router.post(
-    "/student-confirm",
-    studentConfirmGateAction
-);
-
-
-// ======================================================
-// EXPORT ROUTER
+// EXPORT
 // ======================================================
 
 module.exports = router;
