@@ -14,19 +14,39 @@ const gateLogSchema = new mongoose.Schema(
             required: true
         },
 
-        security: {
+        hostel: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Hostel",
+            required: false,
+            default: null
+        },
+
+        // Security user who records the exit.
+        // Public QR flow leaves this null.
+        outScannedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: false,
             default: null
         },
 
-        exitTime: {
+        // Security user who records the return.
+        // Public QR flow leaves this null.
+        inScannedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: false,
+            default: null
+        },
+
+        // Student exit time
+        outTime: {
             type: Date,
             default: null
         },
 
-        entryTime: {
+        // Student return time
+        inTime: {
             type: Date,
             default: null
         },
