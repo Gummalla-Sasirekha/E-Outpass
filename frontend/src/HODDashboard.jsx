@@ -76,6 +76,13 @@ const Icon = ({ name, size = 20 }) => {
                 <path d="m13 8 4 4-4 4" />
                 <path d="M9 12h8" />
             </>
+        ),
+
+        arrow: (
+            <>
+                <path d="M5 12h14" />
+                <path d="m13 6 6 6-6 6" />
+            </>
         )
     };
 
@@ -590,7 +597,9 @@ function HODDashboard() {
                                 size={19}
                             />
 
-                            Dashboard
+                            <span>
+                                Dashboard
+                            </span>
 
                         </button>
 
@@ -615,7 +624,9 @@ function HODDashboard() {
                                 size={19}
                             />
 
-                            Academic Approvals
+                            <span>
+                                Academic Approvals
+                            </span>
 
                         </button>
 
@@ -637,7 +648,9 @@ function HODDashboard() {
                             size={19}
                         />
 
-                        Logout
+                        <span>
+                            Logout
+                        </span>
 
                     </button>
 
@@ -652,7 +665,9 @@ function HODDashboard() {
 
             <main className="hod-main">
 
-                {/* MOBILE TOPBAR */}
+                {/* =================================================
+                    MOBILE TOPBAR
+                ================================================= */}
 
                 <header className="hod-topbar">
 
@@ -684,7 +699,7 @@ function HODDashboard() {
 
                     <section className="hod-hero">
 
-                        <div>
+                        <div className="hero-copy">
 
                             <span className="hero-eyebrow">
                                 {portalTitle}
@@ -698,6 +713,27 @@ function HODDashboard() {
                                 Review and manage weekday
                                 outpass requests from students.
                             </p>
+
+                        </div>
+
+
+                        <div className="hero-profile">
+
+                            <div className="hero-profile-avatar">
+                                {hodInitial}
+                            </div>
+
+                            <div>
+                                <strong>
+                                    {isClassAdvisor
+                                        ? "Class Advisor"
+                                        : "Head of Department"}
+                                </strong>
+
+                                <span>
+                                    Academic Review
+                                </span>
+                            </div>
 
                         </div>
 
@@ -751,16 +787,28 @@ function HODDashboard() {
 
 
                     {/* =================================================
-                        ACTIVITY
+                        OVERVIEW
                     ================================================= */}
 
-                    <section className="activity-section">
+                    <section className="overview-section">
 
-                        <div className="section-title-row">
+                        <div className="overview-heading">
 
-                            <h2>
-                                Academic Approval Activity
-                            </h2>
+                            <div>
+
+                                <span className="section-eyebrow">
+                                    OVERVIEW
+                                </span>
+
+                                <h2>
+                                    Academic Approval Activity
+                                </h2>
+
+                            </div>
+
+                            <span className="overview-status">
+                                Live
+                            </span>
 
                         </div>
 
@@ -888,7 +936,7 @@ function HODDashboard() {
 
 
                     {/* =================================================
-                        ACADEMIC REQUESTS
+                        APPROVAL WORKSPACE
                     ================================================= */}
 
                     <section
@@ -898,9 +946,9 @@ function HODDashboard() {
 
                         <div className="section-header">
 
-                            <div>
+                            <div className="section-header-copy">
 
-                                <span className="hero-eyebrow">
+                                <span className="section-eyebrow">
                                     WEEKDAY APPROVALS
                                 </span>
 
@@ -909,8 +957,9 @@ function HODDashboard() {
                                 </h2>
 
                                 <p>
-                                    Weekday outpass requests
-                                    requiring your academic approval.
+                                    Review weekday outpass
+                                    requests before they move
+                                    to the warden.
                                 </p>
 
                             </div>
@@ -930,11 +979,53 @@ function HODDashboard() {
                                     size={16}
                                 />
 
-                                Refresh
+                                <span>
+                                    {loading
+                                        ? "Refreshing..."
+                                        : "Refresh"}
+                                </span>
 
                             </button>
 
                         </div>
+
+
+                        {/* =================================================
+                            REQUEST SUMMARY STRIP
+                        ================================================= */}
+
+                        {!loading && outpasses.length > 0 && (
+
+                            <div className="request-summary">
+
+                                <div className="request-summary-icon">
+
+                                    <Icon
+                                        name="academic"
+                                        size={20}
+                                    />
+
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        {outpasses.length} request
+                                        {outpasses.length !== 1
+                                            ? "s"
+                                            : ""}{" "}
+                                        require your attention
+                                    </strong>
+
+                                    <span>
+                                        Review the details below
+                                        before approving or rejecting.
+                                    </span>
+
+                                </div>
+
+                            </div>
+                        )}
 
 
                         {/* =================================================
@@ -976,12 +1067,13 @@ function HODDashboard() {
                                 </div>
 
                                 <h3>
-                                    No pending requests
+                                    All caught up
                                 </h3>
 
                                 <p>
                                     There are currently no weekday
-                                    outpasses waiting for academic approval.
+                                    outpasses waiting for academic
+                                    approval.
                                 </p>
 
                             </div>
@@ -1002,7 +1094,9 @@ function HODDashboard() {
                                             className="academic-request-card"
                                         >
 
-                                            {/* HEADER */}
+                                            {/* =================================================
+                                                REQUEST CARD HEADER
+                                            ================================================= */}
 
                                             <div className="request-card-header">
 
@@ -1020,7 +1114,11 @@ function HODDashboard() {
                                                     </div>
 
 
-                                                    <div>
+                                                    <div className="student-heading-copy">
+
+                                                        <span className="request-label">
+                                                            STUDENT REQUEST
+                                                        </span>
 
                                                         <h3>
                                                             {
@@ -1029,7 +1127,7 @@ function HODDashboard() {
                                                             }
                                                         </h3>
 
-                                                        <span>
+                                                        <span className="student-id">
                                                             {
                                                                 outpass.student?.studentId ||
                                                                 outpass.outpassId ||
@@ -1043,13 +1141,19 @@ function HODDashboard() {
 
 
                                                 <span className="pending-badge">
+
+                                                    <span className="pending-dot" />
+
                                                     Academic Approval Pending
+
                                                 </span>
 
                                             </div>
 
 
-                                            {/* DETAILS */}
+                                            {/* =================================================
+                                                REQUEST DETAILS
+                                            ================================================= */}
 
                                             <div className="request-details">
 
@@ -1148,7 +1252,7 @@ function HODDashboard() {
                                                 </div>
 
 
-                                                <div className="detail-item">
+                                                <div className="detail-item detail-wide">
 
                                                     <span>
                                                         Place of Visit
@@ -1166,13 +1270,19 @@ function HODDashboard() {
                                             </div>
 
 
-                                            {/* REASON */}
+                                            {/* =================================================
+                                                REASON
+                                            ================================================= */}
 
                                             <div className="reason-box">
 
-                                                <span>
-                                                    Reason
-                                                </span>
+                                                <div className="reason-heading">
+
+                                                    <span>
+                                                        Reason for Outpass
+                                                    </span>
+
+                                                </div>
 
                                                 <p>
                                                     {
@@ -1184,20 +1294,26 @@ function HODDashboard() {
                                             </div>
 
 
-                                            {/* FOOTER */}
+                                            {/* =================================================
+                                                FOOTER
+                                            ================================================= */}
 
                                             <div className="request-card-footer">
 
-                                                <span className="outpass-id">
+                                                <div className="request-reference">
 
-                                                    Outpass ID:{" "}
+                                                    <span>
+                                                        OUTPASS ID
+                                                    </span>
 
-                                                    {
-                                                        outpass.outpassId ||
-                                                        "—"
-                                                    }
+                                                    <strong>
+                                                        {
+                                                            outpass.outpassId ||
+                                                            "—"
+                                                        }
+                                                    </strong>
 
-                                                </span>
+                                                </div>
 
 
                                                 <div className="request-actions">
@@ -1222,7 +1338,9 @@ function HODDashboard() {
                                                             size={15}
                                                         />
 
-                                                        Reject
+                                                        <span>
+                                                            Reject
+                                                        </span>
 
                                                     </button>
 
@@ -1247,7 +1365,14 @@ function HODDashboard() {
                                                             size={15}
                                                         />
 
-                                                        Approve
+                                                        <span>
+                                                            Approve & Continue
+                                                        </span>
+
+                                                        <Icon
+                                                            name="arrow"
+                                                            size={14}
+                                                        />
 
                                                     </button>
 
@@ -1361,8 +1486,6 @@ function HODDashboard() {
                         }
                     >
 
-                        {/* MODAL HEADER */}
-
                         <div className="modal-header">
 
                             <div>
@@ -1395,22 +1518,21 @@ function HODDashboard() {
                         </div>
 
 
-                        {/* DESCRIPTION */}
-
                         <p className="modal-description">
+
                             Please provide a reason for rejecting
-                            this outpass request.
+                            this outpass request. The student will
+                            be able to see the rejection reason.
+
                         </p>
 
 
-                        {/* LABEL */}
-
                         <label className="modal-label">
+
                             Rejection Reason
+
                         </label>
 
-
-                        {/* TEXTAREA */}
 
                         <textarea
                             value={rejectionReason}
@@ -1419,12 +1541,10 @@ function HODDashboard() {
                                     event.target.value
                                 )
                             }
-                            placeholder="Enter the reason..."
+                            placeholder="Enter the reason for rejecting this request..."
                             autoFocus
                         />
 
-
-                        {/* ACTIONS */}
 
                         <div className="modal-actions">
 
@@ -1434,7 +1554,9 @@ function HODDashboard() {
                                 onClick={closeRejectModal}
                                 disabled={actionLoading}
                             >
+
                                 Cancel
+
                             </button>
 
 
