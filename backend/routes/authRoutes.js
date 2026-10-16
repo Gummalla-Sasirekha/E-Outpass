@@ -1,8 +1,10 @@
+
 const express = require("express");
 
 const {
     registerUser,
-    loginUser
+    loginUser,
+    googleLogin
 } = require("../controllers/authController");
 
 const {
@@ -13,8 +15,9 @@ const {
 const router = express.Router();
 
 // Public routes
-router.post("/register", registerUser);
+// router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.post("/google", googleLogin);
 
 // Protected Warden-only test route
 router.get(
