@@ -15,7 +15,7 @@ const {
 const router = express.Router();
 
 // Public routes
-// router.post("/register", registerUser);
+router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/google", googleLogin);
 
