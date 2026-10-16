@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 
 // ======================================================
 // REGISTER USER
@@ -227,11 +228,93 @@ const loginUser = async (req, res) => {
     }
 };
 
+
+/**
+ * Google login: allow only existing E-Outpass users.
+ */
+const googleLogin = async (req, res) => {
+    try {
+        const { credential } = req.body || {};
+
+        if (!credential) {
+            return res.status(400).json({
+                message: "Google credential is required."
+            });
+        }
+
+        if (!process.env.GOOGLE_CLIENT_ID || !process.env.JWT_SECRET) {
+            return res.status(500).json({
+                message: "Google login is not configured."
+            });
+        }
+
+        const googleClient = new OAuth2Client(
+            process.env.GOOGLE_CLIENT_ID
+        );
+
+        const ticket = await googleClient.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID
+        });
+
+        const payload = ticket.getPayload();
+
+        if (
+            !payload ||
+            !payload.email ||
+            payload.email_verified !== true
+        ) {
+            return res.status(401).json({
+                message: "Google account email could not be verified."
+            });
+        }
+
+        const email = payload.email.trim().toLowerCase();
+
+        // Never create a user through Google login.
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(403).json({
+                message:
+                    "No E-Outpass account exists for this Google email. Please contact the administrator."
+            });
+        }
+
+        const token = jwt.sign(
+            {
+                userId: user._id.toString(),
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        );
+
+        return res.status(200).json({
+            message: "Google login successful.",
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (error) {
+        console.error("Google login error:", error.message);
+
+        return res.status(401).json({
+            message: "Google sign-in failed. Please try again."
+        });
+    }
+};
+
 // ======================================================
 // EXPORT
 // ======================================================
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    googleLogin
 };
