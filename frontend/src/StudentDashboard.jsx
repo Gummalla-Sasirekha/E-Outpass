@@ -1,165 +1,68 @@
+
 import { useEffect, useMemo, useState } from "react";
 import "./StudentDashboard.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Icon = ({ name, size = 20 }) => {
-    const paths = {
-        dashboard: (
-            <>
-                <rect x="4" y="4" width="6" height="6" rx="1" />
-                <rect x="14" y="4" width="6" height="6" rx="1" />
-                <rect x="4" y="14" width="6" height="6" rx="1" />
-                <rect x="14" y="14" width="6" height="6" rx="1" />
-            </>
-        ),
-        request: (
-            <>
-                <path d="M7 3h7l4 4v14H7z" />
-                <path d="M14 3v5h5" />
-                <path d="M10 13h6M13 10v6" />
-            </>
-        ),
-        child: (
-            <>
-                <circle cx="12" cy="8" r="3.5" />
-                <path d="M5 20a7 7 0 0 1 14 0" />
-            </>
-        ),
-        history: (
-            <>
-                <circle cx="12" cy="12" r="8" />
-                <path d="M12 8v5l3 2" />
-                <path d="M4 5v4h4" />
-            </>
-        ),
-        profile: (
-            <>
-                <circle cx="12" cy="8" r="3.5" />
-                <path d="M5 20a7 7 0 0 1 14 0" />
-            </>
-        ),
-        logout: (
-            <>
-                <path d="M10 4H5v16h5" />
-                <path d="M13 8l4 4-4 4M9 12h8" />
-            </>
-        ),
-        arrow: (
-            <>
-                <path d="M5 12h13" />
-                <path d="m13 7 5 5-5 5" />
-            </>
-        ),
-        total: (
-            <>
-                <path d="M6 3h9l4 4v14H6z" />
-                <path d="M15 3v5h4" />
-                <path d="M9 13h6M9 17h4" />
-            </>
-        ),
-        pending: (
-            <>
-                <circle cx="12" cy="12" r="8" />
-                <path d="M12 8v5l3 2" />
-            </>
-        ),
-        approved: (
-            <>
-                <circle cx="12" cy="12" r="8" />
-                <path d="m8.5 12 2.3 2.3 4.8-5" />
-            </>
-        ),
-        completed: (
-            <>
-                <circle cx="12" cy="12" r="8" />
-                <path d="m8.5 12 2.3 2.3 4.8-5" />
-            </>
-        ),
-        rejected: (
-            <>
-                <circle cx="12" cy="12" r="8" />
-                <path d="m9 9 6 6M15 9l-6 6" />
-            </>
-        ),
-        location: (
-            <>
-                <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
-                <circle cx="12" cy="10" r="2.5" />
-            </>
-        ),
-        refresh: (
-            <>
-                <path d="M20 11a8 8 0 0 0-14.8-4L4 9" />
-                <path d="M4 4v5h5" />
-                <path d="M4 13a8 8 0 0 0 14.8 4L20 15" />
-                <path d="M20 20v-5h-5" />
-            </>
-        ),
-        mail: (
-            <>
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-                <path d="m3 7 9 6 9-6" />
-            </>
-        ),
-        phone: (
-            <path d="M7 4h3l1.5 4-2 1.5a14 14 0 0 0 5 5l1.5-2 4 1.5v3c0 1-1 1.9-2 1.9C10.5 18.1 5.9 13.5 4.1 6.9 3.8 5.4 5.1 4 7 4Z" />
-        ),
-        shield: (
-            <>
-                <path d="M12 3 19 6v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" />
-                <path d="m9 12 2 2 4-4" />
-            </>
-        ),
-        calendar: (
-            <>
-                <rect x="3" y="5" width="18" height="16" rx="2" />
-                <path d="M16 3v4M8 3v4M3 10h18" />
-            </>
-        ),
-        clock: (
-            <>
-                <circle cx="12" cy="12" r="8" />
-                <path d="M12 8v5l3 2" />
-            </>
-        ),
-        x: (
-            <>
-                <circle cx="12" cy="12" r="8" />
-                <path d="m9 9 6 6M15 9l-6 6" />
-            </>
-        )
+    const shapes = {
+        menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+        bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></>,
+        home: <><path d="m3 11 9-8 9 8" /><path d="M5 10v10h14V10M9 20v-6h6v6" /></>,
+        history: <><circle cx="12" cy="12" r="8" /><path d="M12 8v5l3 2M4 5v4h4" /></>,
+        profile: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20a7 7 0 0 1 14 0" /></>,
+        logout: <><path d="M10 4H5v16h5M13 8l4 4-4 4M9 12h8" /></>,
+        search: <><circle cx="11" cy="11" r="7" /><path d="m16 16 4 4" /></>,
+        calendar: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></>,
+        clock: <><circle cx="12" cy="12" r="8" /><path d="M12 8v5l3 2" /></>,
+        check: <><circle cx="12" cy="12" r="9" /><path d="m8 12 3 3 5-6" /></>,
+        close: <path d="m6 6 12 12M18 6 6 18" />,
+        arrow: <path d="M5 12h14m-6-6 6 6-6 6" />,
+        total: <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 8h8M8 12h8M8 16h5" /></>,
+        rejected: <><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6m0-6-6 6" /></>,
+        location: <><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></>
     };
 
     return (
-        <svg
-            className="ui-icon"
-            width={size}
-            height={size}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-        >
-            {paths[name]}
+        <svg width={size} height={size} viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" strokeWidth="1.8"
+            strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            {shapes[name] || shapes.total}
         </svg>
     );
 };
+
+const formatDate = (value) => value
+    ? new Date(value).toLocaleDateString("en-IN", {
+        day: "2-digit", month: "short", year: "numeric"
+    })
+    : "Date unavailable";
+
+const formatDateTime = (value) => value
+    ? new Date(value).toLocaleString("en-IN", {
+        day: "2-digit", month: "short", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+    })
+    : "Time not recorded";
+
+const statusLabel = (status = "") =>
+    status.charAt(0).toUpperCase() + status.slice(1);
 
 function StudentDashboard() {
     const [student, setStudent] = useState(null);
     const [outpasses, setOutpasses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
-    const [gateOutpassId, setGateOutpassId] = useState(null);
-    const [gateAction, setGateAction] = useState(null);
-    const [gateLoading, setGateLoading] = useState(false);
+    const [page, setPage] = useState("home");
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [search, setSearch] = useState("");
+    const [filter, setFilter] = useState("all");
+    const [selected, setSelected] = useState(null);
+    const [timelineExpanded, setTimelineExpanded] = useState(0);
     const [gateMessage, setGateMessage] = useState("");
     const [gateError, setGateError] = useState("");
+    const [gateLoading, setGateLoading] = useState(false);
 
     const token = localStorage.getItem("token");
 
@@ -167,15 +70,9 @@ function StudentDashboard() {
         try {
             setLoading(true);
             setError("");
+            if (!token) throw new Error("Please log in again.");
 
-            if (!token) {
-                throw new Error("Please login again.");
-            }
-
-            const headers = {
-                Authorization: `Bearer ${token}`
-            };
-
+            const headers = { Authorization: `Bearer ${token}` };
             const [profileResponse, outpassResponse] = await Promise.all([
                 fetch(`${API_URL}/api/student/me`, { headers }),
                 fetch(`${API_URL}/api/student/outpasses`, { headers })
@@ -185,715 +82,261 @@ function StudentDashboard() {
             const outpassData = await outpassResponse.json();
 
             if (!profileResponse.ok) {
-                throw new Error(
-                    profileData.message || "Failed to load student profile."
-                );
+                throw new Error(profileData.message || "Unable to load student profile.");
             }
-
             if (!outpassResponse.ok) {
-                throw new Error(
-                    outpassData.message || "Failed to load outpasses."
-                );
+                throw new Error(outpassData.message || "Unable to load outpasses.");
             }
 
             setStudent(profileData.student);
             setOutpasses(outpassData.outpasses || []);
         } catch (err) {
-            console.error("Student dashboard error:", err);
-            setError(err.message || "Unable to load student dashboard.");
+            setError(err.message || "Unable to load Student Portal.");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        const match = window.location.pathname.match(/^\/gate\/(.+)$/);
-
-        if (!match) {
-            return;
-        }
-
-        try {
-            setGateOutpassId(decodeURIComponent(match[1]));
-        } catch {
-            setGateOutpassId(match[1]);
-        }
-    }, []);
-
-    useEffect(() => {
         fetchStudentData();
     }, []);
 
     useEffect(() => {
-        if (!gateOutpassId || !token) {
-            return;
-        }
+        const match = window.location.pathname.match(/^\/gate\/(.+)$/);
+        if (!match) return;
 
-        const matching = outpasses.find(
-            (item) => item.outpassId === gateOutpassId
-        );
-
-        setGateAction(
-            matching?.status === "completed" ? "completed" : "exit"
-        );
-    }, [gateOutpassId, outpasses, token]);
-
-    const confirmGateAction = async () => {
-        if (!gateOutpassId) {
-            return;
-        }
-
-        try {
-            setGateLoading(true);
-            setGateError("");
-            setGateMessage("");
-
-            const response = await fetch(
-                `${API_URL}/api/outpass/student-confirm`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        outpassId: gateOutpassId
-                    })
+        const id = decodeURIComponent(match[1]);
+        const findGatePass = async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/student/outpasses`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = await response.json();
+                const pass = (data.outpasses || []).find(
+                    (item) => item.outpassId === id
+                );
+                if (pass) {
+                    setSelected(pass);
+                    setPage("gate");
+                } else {
+                    setGateError("This QR code does not match one of your outpasses.");
+                    setPage("gate");
                 }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Unable to confirm gate action."
-                );
+            } catch {
+                setGateError("Unable to verify this outpass. Please try again.");
+                setPage("gate");
             }
+        };
+        if (token) findGatePass();
+    }, []);
 
-            if (data.action === "exit") {
-                setGateAction("outside");
-                setGateMessage(
-                    "Exit confirmed successfully. Have a safe trip!"
-                );
-            } else if (data.action === "return") {
-                setGateAction("completed");
-                setGateMessage(
-                    "Return confirmed successfully. Welcome back!"
-                );
-            } else {
-                setGateMessage(
-                    data.message || "Gate action confirmed."
-                );
-            }
+    const stats = useMemo(() => ({
+        total: outpasses.length,
+        pending: outpasses.filter((p) => p.status === "pending").length,
+        approved: outpasses.filter((p) => p.status === "approved").length,
+        rejected: outpasses.filter((p) => p.status === "rejected").length
+    }), [outpasses]);
 
-            await fetchStudentData();
-        } catch (err) {
-            setGateError(
-                err.message || "Unable to confirm gate action."
-            );
-        } finally {
-            setGateLoading(false);
-        }
+    const sortedOutpasses = useMemo(() => [...outpasses].sort((a, b) => {
+        const priority = { pending: 0, approved: 1, rejected: 2, completed: 3, expired: 4 };
+        const statusDiff = (priority[a.status] ?? 5) - (priority[b.status] ?? 5);
+        if (statusDiff) return statusDiff;
+        return new Date(b.createdAt || b.dateRequestedFor || 0)
+            - new Date(a.createdAt || a.dateRequestedFor || 0);
+    }), [outpasses]);
+
+    const visibleOutpasses = sortedOutpasses.filter((item) =>
+        (filter === "all" || item.status === filter) &&
+        (item.placeOfVisit || "").toLowerCase().includes(search.toLowerCase())
+    );
+
+    const latest = sortedOutpasses[0];
+    const name = student?.name || "Student";
+    const initial = name.trim().charAt(0).toUpperCase() || "S";
+
+    const openPage = (nextPage) => {
+        setPage(nextPage);
+        setDrawerOpen(false);
+        setNotificationsOpen(false);
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    const closeGateVerification = () => {
-        setGateOutpassId(null);
-        setGateAction(null);
-        setGateMessage("");
-        setGateError("");
-        window.history.replaceState({}, "", "/");
-    };
-
-    const handleLogout = () => {
+    const logout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         window.location.href = "/";
     };
 
-    const scrollToSection = (id) => {
-        document.getElementById(id)?.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    };
-
-    const goToDashboard = () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-
-    const goToHistory = () => {
-        scrollToSection("outpass-history-section");
-    };
-
-    const goToProfile = () => {
-        scrollToSection("student-profile-section");
-    };
-
-    const formatDate = (date) => {
-        if (!date) {
-            return "-";
+    const confirmGateAction = async () => {
+        if (!selected?.outpassId) return;
+        try {
+            setGateLoading(true);
+            setGateError("");
+            setGateMessage("");
+            const response = await fetch(`${API_URL}/api/outpass/student-confirm`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ outpassId: selected.outpassId })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || "Unable to confirm gate action.");
+            setGateMessage(data.action === "exit"
+                ? "Exit confirmed successfully. Have a safe trip!"
+                : data.action === "return"
+                    ? "Return confirmed successfully. Welcome back!"
+                    : data.message || "Gate action confirmed.");
+            await fetchStudentData();
+        } catch (err) {
+            setGateError(err.message || "Unable to confirm gate action.");
+        } finally {
+            setGateLoading(false);
         }
-
-        return new Date(date).toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        });
     };
 
-    const formatDateTime = (date) => {
-        if (!date) {
-            return "-";
-        }
+    const timeline = (item) => [
+        { title: "Request Submitted", detail: "Your parent submitted the request.", date: item.createdAt || item.requestedAt },
+        { title: "Academic Approval", detail: "Academic review, when required by the workflow.", date: item.classAdvisorApprovedAt || item.hodApprovedAt },
+        { title: "Warden Approval", detail: "The warden reviews the request.", date: item.wardenApprovedAt || item.approvedAt },
+        { title: "Ready for Departure", detail: "Pass and QR details are available when approved and valid.", date: item.approvedAt }
+    ];
 
-        return new Date(date).toLocaleString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-    };
+    if (loading) return <div className="sr-loading"><div className="sr-spinner" /><p>Loading Student Portal…</p></div>;
 
-    const getStatusText = (status) => ({
-        pending: "Pending",
-        approved: "Approved",
-        rejected: "Rejected",
-        completed: "Completed",
-        expired: "Expired"
-    }[status] || status);
-
-    const statusClass = (status) => `status-badge status-${status}`;
-
-    const latestOutpass = outpasses[0] || null;
-    const gateOutpass = outpasses.find(
-        (item) => item.outpassId === gateOutpassId
-    );
-
-    const stats = useMemo(() => ({
-        total: outpasses.length,
-        pending: outpasses.filter(
-            (item) => item.status === "pending"
-        ).length,
-        approved: outpasses.filter(
-            (item) => item.status === "approved"
-        ).length,
-        completed: outpasses.filter(
-            (item) => item.status === "completed"
-        ).length
-    }), [outpasses]);
-
-    const statusMessage = latestOutpass
-        ? ({
-            pending: {
-                title: "Waiting for Warden Approval",
-                text: "Your request has been submitted and is waiting for warden approval.",
-                icon: "clock"
-            },
-            approved: {
-                title: "Outpass Approved",
-                text: "Go to the main gate and scan the QR code displayed by Security.",
-                icon: "approved"
-            },
-            rejected: {
-                title: "Outpass Rejected",
-                text:
-                    latestOutpass.rejectionReason ||
-                    "Your outpass request was rejected by the warden.",
-                icon: "x"
-            },
-            completed: {
-                title: "Returned Successfully",
-                text: "Your return has been recorded at the main gate. This outpass is now completed.",
-                icon: "completed"
-            },
-            expired: {
-                title: "Outpass Expired",
-                text: "This outpass is no longer valid.",
-                icon: "clock"
-            }
-        }[latestOutpass.status] || {
-            title: "Outpass Status",
-            text: "Please check your outpass details.",
-            icon: "request"
-        })
-        : null;
-
-    if (loading) {
-        return (
-            <div className="student-loading">
-                <div className="student-spinner" />
-                <p>Loading Student Portal...</p>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="student-error-page">
-                <div className="student-error-card">
-                    <div className="student-error-icon">!</div>
-                    <h2>Something went wrong</h2>
-                    <p>{error}</p>
-                    <button onClick={fetchStudentData}>Try Again</button>
-                    <button
-                        className="error-logout"
-                        onClick={handleLogout}
-                    >
-                        Logout
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="parent-page student-page">
-            <aside className="parent-sidebar">
-                <div>
-                    <div className="sidebar-brand">
-                        <strong>E Outpass</strong>
-                        <span>Safer Campuses. Brighter Tomorrows.</span>
-                    </div>
-
-                    <nav className="sidebar-nav">
-                        <button
-                            className="sidebar-link active"
-                            type="button"
-                            onClick={goToDashboard}
-                        >
-                            <Icon name="dashboard" />
-                            Dashboard
-                        </button>
-
-                        <button
-                            className="sidebar-link"
-                            type="button"
-                            onClick={goToHistory}
-                        >
-                            <Icon name="history" />
-                            My Outpasses
-                        </button>
-
-                        <button
-                            className="sidebar-link"
-                            type="button"
-                            onClick={goToProfile}
-                        >
-                            <Icon name="profile" />
-                            Profile
-                        </button>
-                    </nav>
-                </div>
-
-                <div className="sidebar-bottom">
-                    <button
-                        className="sidebar-link"
-                        type="button"
-                        onClick={handleLogout}
-                    >
-                        <Icon name="logout" />
-                        Logout
-                    </button>
-                </div>
-            </aside>
-
-            <main className="parent-main" id="student-dashboard-top">
-                <header className="parent-topbar">
-                    <div className="mobile-brand">
-                        <strong>E Outpass</strong>
-                        <span>Safer Campuses. Brighter Tomorrows.</span>
-                    </div>
-                    <div className="topbar-actions">
-                        <div className="profile-chip">
-                            <span className="profile-avatar">
-                                {(student?.name || "S")
-                                    .charAt(0)
-                                    .toUpperCase()}
-                            </span>
-                        </div>
-
-                    </div>
-                </header>
-
-                <div className="parent-content">
-                    <section className="parent-hero">
-                        <div>
-                            <span className="hero-eyebrow">
-                                STUDENT PORTAL
-                            </span>
-
-                            <h1>
-                                Good morning, {student?.name?.split(" ")[0] || "Student"}!
-                            </h1>
-
-                            <p>
-                                Track your outpass requests and campus entry activity.
-                            </p>
-                        </div>
-
-                    </section>
-
-                    <section
-                        className="child-card"
-                        id="student-profile-section"
-                    >
-                        <div className="card-heading-row">
-                            <h2>Student Profile</h2>
-                        </div>
-
-                        <div className="child-main">
-                            <div className="child-avatar">
-                                {(student?.name || "S")
-                                    .charAt(0)
-                                    .toUpperCase()}
-                            </div>
-
-                            <div className="child-info">
-                                <h3>{student?.name || "Student"}</h3>
-                                <p>
-                                    {student?.course || "Student"}
-                                    <span>|</span>
-                                    ID {student?.studentId || "—"}
-                                    <span>|</span>
-                                    Room {student?.roomNumber || "—"}
-                                    <span>|</span>
-                                    {student?.hostel?.name || "Hostel"}
-                                </p>
-                            </div>
-
-                        </div>
-                    </section>
-
-                    <section className="activity-section">
-                        <div className="section-title-row">
-                            <h2>Outpass Activity</h2>
-                        </div>
-
-                        <div className="stats-grid">
-                            <div className="stat-card stat-blue">
-                                <div className="stat-icon">
-                                    <Icon name="total" />
-                                </div>
-                                <div>
-                                    <strong>{stats.total}</strong>
-                                    <span>Total Requests</span>
-                                </div>
-                            </div>
-
-                            <div className="stat-card stat-yellow">
-                                <div className="stat-icon">
-                                    <Icon name="pending" />
-                                </div>
-                                <div>
-                                    <strong>{stats.pending}</strong>
-                                    <span>Pending</span>
-                                </div>
-                            </div>
-
-                            <div className="stat-card stat-green">
-                                <div className="stat-icon">
-                                    <Icon name="approved" />
-                                </div>
-                                <div>
-                                    <strong>{stats.approved}</strong>
-                                    <span>Approved</span>
-                                </div>
-                            </div>
-
-                            <div className="stat-card stat-red">
-                                <div className="stat-icon">
-                                    <Icon name="completed" />
-                                </div>
-                                <div>
-                                    <strong>{stats.completed}</strong>
-                                    <span>Completed</span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section className="request-banner" id="latest-update">
-                        <div className="request-banner-icon">
-                            <Icon
-                                name={statusMessage?.icon || "request"}
-                                size={22}
-                            />
-                        </div>
-
-                        <div className="request-banner-copy">
-                            <h2>
-                                {statusMessage?.title || "No Outpass Activity Yet"}
-                            </h2>
-                            <p>
-                                {statusMessage?.text ||
-                                    "Your latest outpass status will appear here once a request is submitted."}
-                            </p>
-                        </div>
-
-                        <button
-                            className="primary-button"
-                            type="button"
-                            onClick={goToHistory}
-                        >
-                            My Outpasses
-                            <Icon name="arrow" size={15} />
-                        </button>
-                    </section>
-
-                    <section
-                        className="recent-section"
-                        id="outpass-history-section"
-                    >
-                        <div className="recent-heading">
-                            <div>
-                                <h2>My Outpasses</h2>
-                            </div>
-
-                            <button
-                                className="view-all-link"
-                                type="button"
-                                onClick={fetchStudentData}
-                                title="Refresh"
-                                aria-label="Refresh outpasses"
-                            >
-                                <Icon name="refresh" size={15} />
-                            </button>
-                        </div>
-
-                        {outpasses.length === 0 ? (
-                            <div className="empty-state">
-                                <div className="empty-icon">
-                                    <Icon name="request" />
-                                </div>
-                                <h3>No Outpasses Yet</h3>
-                                <p>
-                                    Your outpass requests will appear here once your parent submits one.
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="recent-table-wrap">
-                                <div className="recent-table-head">
-                                    <span>Destination</span>
-                                    <span>Purpose</span>
-                                    <span>Out Date</span>
-                                    <span>In Date</span>
-                                    <span>Status</span>
-                                    <span />
-                                </div>
-
-                                {outpasses.slice(0, 5).map((outpass) => (
-                                    <div
-                                        className="recent-row"
-                                        key={outpass._id || outpass.outpassId}
-                                    >
-                                        <div className="destination-cell">
-                                            <span className="location-icon">
-                                                <Icon name="location" size={16} />
-                                            </span>
-                                            <strong>
-                                                {outpass.placeOfVisit || "—"}
-                                            </strong>
-                                        </div>
-
-                                        <span className="purpose-cell">
-                                            {outpass.reason || "—"}
-                                        </span>
-
-                                        <span>
-                                            {formatDate(outpass.dateRequestedFor)}
-                                            <small>
-                                                {outpass.timeOfLeaving || "—"}
-                                            </small>
-                                        </span>
-
-                                        <span>
-                                            {outpass.expectedInTime
-                                                ? formatDate(outpass.dateRequestedFor)
-                                                : "—"}
-                                            <small>
-                                                {outpass.expectedInTime || "—"}
-                                            </small>
-                                        </span>
-
-                                        <span className={statusClass(outpass.status)}>
-                                            {getStatusText(outpass.status)}
-                                        </span>
-
-                                        <span className="row-arrow">
-                                            <Icon name="arrow" size={16} />
-                                        </span>
-
-                                        {outpass.status === "rejected" &&
-                                            outpass.rejectionReason && (
-                                                <div className="row-note rejected-note">
-                                                    <strong>Rejection reason</strong>
-                                                    <span>
-                                                        {outpass.rejectionReason}
-                                                    </span>
-                                                </div>
-                                            )}
-
-                                        {outpass.status === "approved" && (
-                                            <div className="row-note approved-note">
-                                                <span className="approved-dot">✓</span>
-                                                Approved — go to the main gate and scan the QR displayed by Security.
-                                            </div>
-                                        )}
-
-                                        {outpass.status === "completed" && (
-                                            <div className="row-note approved-note">
-                                                <span className="approved-dot">✓</span>
-                                                Return has been recorded successfully.
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </section>
-
-
-                </div>
-            </main>
-
-            <nav className="mobile-bottom-nav">
-                <button
-                    className="mobile-nav-item active"
-                    type="button"
-                    onClick={goToDashboard}
-                >
-                    <Icon name="dashboard" size={20} />
-                    <span>Home</span>
-                </button>
-
-                <button
-                    className="mobile-nav-item"
-                    type="button"
-                    onClick={goToHistory}
-                >
-                    <Icon name="history" size={20} />
-                    <span>Outpasses</span>
-                </button>
-
-                <button
-                    className="mobile-nav-item mobile-nav-logout"
-                    type="button"
-                    onClick={handleLogout}
-                >
-                    <Icon name="logout" size={19} />
-                    <span>Logout</span>
-                </button>
-            </nav>
-
-            {gateOutpassId && (
-                <div className="gate-modal-backdrop">
-                    <div className="gate-modal">
-                        <div className="gate-modal-head">
-                            <div>
-                                <p className="student-eyebrow">MAIN GATE</p>
-                                <h2>Outpass Verification</h2>
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={closeGateVerification}
-                                aria-label="Close"
-                            >
-                                ×
-                            </button>
-                        </div>
-
-                        {gateOutpass ? (
-                            <>
-                                <div className="gate-pass-summary">
-                                    <strong>{gateOutpass.outpassId}</strong>
-                                    <span>
-                                        {gateOutpass.placeOfVisit} • {formatDate(gateOutpass.dateRequestedFor)}
-                                    </span>
-                                </div>
-
-                                {gateError && (
-                                    <div className="gate-alert error">
-                                        {gateError}
-                                    </div>
-                                )}
-
-                                {gateMessage && (
-                                    <div className="gate-alert success">
-                                        {gateMessage}
-                                    </div>
-                                )}
-
-                                {gateAction === "exit" && (
-                                    <div className="gate-action">
-                                        <div className="gate-action-icon">
-                                            <Icon name="arrow" size={24} />
-                                        </div>
-                                        <h3>Confirm Exit</h3>
-                                        <p>
-                                            Confirm your exit to record your departure time.
-                                        </p>
-                                        <button
-                                            type="button"
-                                            onClick={confirmGateAction}
-                                            disabled={gateLoading}
-                                        >
-                                            {gateLoading
-                                                ? "Confirming..."
-                                                : "Confirm Exit"}
-                                        </button>
-                                    </div>
-                                )}
-
-                                {gateAction === "outside" && (
-                                    <div className="gate-action outside">
-                                        <div className="gate-action-icon">
-                                            <Icon name="location" size={24} />
-                                        </div>
-                                        <h3>Exit Recorded</h3>
-                                        <p>
-                                            Your exit has been recorded. When you return, scan Security's QR again.
-                                        </p>
-                                        <button
-                                            className="secondary"
-                                            type="button"
-                                            onClick={closeGateVerification}
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
-                                )}
-
-                                {gateAction === "completed" && (
-                                    <div className="gate-action completed">
-                                        <div className="gate-action-icon">
-                                            <Icon name="completed" size={24} />
-                                        </div>
-                                        <h3>Return Already Recorded</h3>
-                                        <p>
-                                            This outpass has already been completed.
-                                        </p>
-                                        <button
-                                            className="secondary"
-                                            type="button"
-                                            onClick={closeGateVerification}
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <div className="gate-alert error">
-                                This QR code does not belong to any of your outpasses.
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
+    if (error) return (
+        <div className="sr-error">
+            <h2>Unable to load Student Portal</h2>
+            <p>{error}</p>
+            <button type="button" onClick={fetchStudentData}>Try again</button>
+            <button type="button" onClick={logout}>Logout</button>
         </div>
     );
-}
 
-export default StudentDashboard;
+    return (
+        <div className="sr-app">
+            <header className="sr-topbar">
+                <button className="sr-icon-button" type="button" onClick={() => setDrawerOpen(true)} aria-label="Open menu"><Icon name="menu" /></button>
+                <strong>{page === "home" ? "E Outpass" : page === "outpasses" ? "My Outpasses" : page === "profile" ? "Profile" : page === "details" ? "Outpass Details" : "Gate Verification"}</strong>
+                <button className="sr-icon-button sr-bell" type="button" onClick={() => setNotificationsOpen(!notificationsOpen)} aria-label="Notifications">
+                    <Icon name="bell" />
+                    {stats.pending > 0 && <span className="sr-dot" />}
+                </button>
+            </header>
+
+            {notificationsOpen && (
+                <section className="sr-notifications">
+                    <div className="sr-heading"><h3>Request updates</h3><button type="button" onClick={() => setNotificationsOpen(false)}>Close</button></div>
+                    {sortedOutpasses.slice(0, 4).map((item) => (
+                        <button type="button" className="sr-notification" key={item._id || item.outpassId} onClick={() => { setSelected(item); openPage("details"); }}>
+                            <span className={`sr-status ${item.status}`}>{statusLabel(item.status)}</span>
+                            <span>{item.placeOfVisit || "Outpass request"}</span>
+                        </button>
+                    ))}
+                    {!outpasses.length && <p>No updates yet.</p>}
+                </section>
+            )}
+
+            {drawerOpen && <button type="button" className="sr-backdrop" aria-label="Close menu" onClick={() => setDrawerOpen(false)} />}
+            <aside className={`sr-drawer ${drawerOpen ? "open" : ""}`}>
+                <div className="sr-drawer-header">
+                    <button className="sr-close-drawer" type="button" onClick={() => setDrawerOpen(false)} aria-label="Close menu">×</button>
+                    <div className="sr-avatar">{initial}</div>
+                    <strong>{name}</strong>
+                    <span>{student?.course || "Student"}{student?.department ? ` · ${student.department}` : ""}</span>
+                </div>
+                <nav className="sr-drawer-links">
+                    <button className={page === "home" ? "active" : ""} type="button" onClick={() => openPage("home")}><Icon name="home" />Home</button>
+                    <button className={page === "outpasses" || page === "details" ? "active" : ""} type="button" onClick={() => openPage("outpasses")}><Icon name="history" />My Outpasses</button>
+                    <button className={page === "profile" ? "active" : ""} type="button" onClick={() => openPage("profile")}><Icon name="profile" />Profile</button>
+                </nav>
+                <button className="sr-logout" type="button" onClick={logout}><Icon name="logout" />Logout</button>
+            </aside>
+
+            <main className="sr-main">
+                {page === "home" && (
+                    <div className="sr-content">
+                        <section className="sr-welcome">
+                            <p>Good morning,</p><h1>{name.split(" ")[0]}! 👋</h1>
+                            <p>Here's your outpass overview.</p>
+                        </section>
+
+                        <section className="sr-stats">
+                            {[
+                                { key: "total", label: "Total", icon: "total", color: "mint" },
+                                { key: "pending", label: "Pending", icon: "clock", color: "amber" },
+                                { key: "approved", label: "Approved", icon: "check", color: "blue" },
+                                { key: "rejected", label: "Rejected", icon: "rejected", color: "rose" }
+                            ].map((item) => (
+                                <button type="button" key={item.key} className={`sr-stat ${item.color}`} onClick={() => { setFilter(item.key === "total" ? "all" : item.key); openPage("outpasses"); }}>
+                                    <Icon name={item.icon} size={20} /><strong>{stats[item.key]}</strong><span>{item.label}</span>
+                                </button>
+                            ))}
+                        </section>
+
+                        <section className="sr-card">
+                            <div className="sr-heading"><h2>Latest Outpass</h2><button className="sr-link" type="button" onClick={() => openPage("outpasses")}>View all</button></div>
+                            {latest ? (
+                                <button type="button" className="sr-latest" onClick={() => { setSelected(latest); openPage("details"); }}>
+                                    <div className="sr-card-title"><strong>{latest.placeOfVisit || "Destination not provided"}</strong><span className={`sr-status ${latest.status}`}>{statusLabel(latest.status)}</span></div>
+                                    <p>{latest.reason || "Outpass request"}</p>
+                                    <span className="sr-meta"><Icon name="calendar" size={16} />{formatDate(latest.dateRequestedFor)}</span>
+                                    <span className="sr-meta"><Icon name="clock" size={16} />{latest.timeOfLeaving || "—"} – {latest.expectedInTime || "—"}</span>
+                                    <span className="sr-link">View details <Icon name="arrow" size={16} /></span>
+                                </button>
+                            ) : <div className="sr-empty"><Icon name="history" size={28} /><strong>No outpasses yet</strong><p>Your parent's requests will appear here.</p></div>}
+                        </section>
+
+                        <section className="sr-card">
+                            <div className="sr-heading"><h2>Approval Timeline</h2>{latest && <button className="sr-link" type="button" onClick={() => { setSelected(latest); openPage("details"); }}>View details</button>}</div>
+                            {!latest ? <p className="sr-muted">Your approval journey will appear when a request is submitted.</p> : (
+                                <div className="sr-timeline">
+                                    {timeline(latest).map((stage, index) => (
+                                        <button type="button" className={`sr-stage ${timelineExpanded === index ? "expanded" : ""}`} key={stage.title} onClick={() => setTimelineExpanded(timelineExpanded === index ? -1 : index)}>
+                                            <span className={`sr-marker ${latest.status === "rejected" ? "rejected" : index === 0 || (latest.status === "approved" && index < 4) || (latest.status === "pending" && index === 0) ? "complete" : ""}`}>{latest.status === "rejected" && index === 1 ? "!" : index === 0 || (latest.status === "approved" && index < 4) ? "✓" : index + 1}</span>
+                                            <span className="sr-stage-copy"><strong>{stage.title}</strong>{timelineExpanded === index && <small>{stage.detail}<br />{stage.date ? formatDateTime(stage.date) : "Awaiting this stage"}</small>}</span>
+                                        </button>
+                                    ))}
+                                    {latest.status === "rejected" && <p className="sr-rejection">Rejected: {latest.rejectionReason || "See request details."}</p>}
+                                </div>
+                            )}
+                        </section>
+
+                        <section className="sr-card">
+                            <div className="sr-heading"><h2>Recent Activity</h2><button className="sr-link" type="button" onClick={() => openPage("outpasses")}>View all</button></div>
+                            {sortedOutpasses.slice(0, 3).map((item) => (
+                                <button className="sr-activity" type="button" key={item._id || item.outpassId} onClick={() => { setSelected(item); openPage("details"); }}>
+                                    <span className="sr-activity-icon"><Icon name="history" /></span>
+                                    <span><strong>{statusLabel(item.status)}</strong><small>{item.placeOfVisit || "Outpass request"} · {formatDate(item.dateRequestedFor)}</small></span><Icon name="arrow" size={16} />
+                                </button>
+                            ))}
+                            {!outpasses.length && <p className="sr-muted">Recent updates will appear here.</p>}
+                        </section>
+                    </div>
+                )}
+
+                {page === "outpasses" && (
+                    <div className="sr-content">
+                        <section className="sr-page-intro"><h1>My Outpasses</h1><p>Track your requests and approval status.</p></section>
+                        <label className="sr-search"><Icon name="search" /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search destination..." /></label>
+                        <div className="sr-filters">
+                            {[
+                                { key: "all", label: "All", count: stats.total },
+                                { key: "pending", label: "Pending", count: stats.pending },
+                                { key: "approved", label: "Approved", count: stats.approved },
+                                { key: "rejected", label: "Rejected", count: stats.rejected }
+                            ].map((item) => (
+                                <button type="button" key={item.key} className={filter === item.key ? "active" : ""} onClick={() => setFilter(item.key)}>
+                                    <strong>{item.count.toString().padStart(2, "0")}</strong><span>{item.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                        <div className="sr-request-list">
+                            {visibleOutpasses.map((item) => (
+                                <button type="button" className="sr-request-card" key={item._id || item.outpassId} onClick={() => { setSelected(item); openPage("details"); }}>
+                                    <div className="sr-card-title"><span><strong>{item.placeOfVisit || "Destination not provided"}</strong><small>{item.passType || item.type || "Outpass"}</small></span><span className={`sr-status ${item.status}`}>{statusLabel(item.status)}</span></div>
+                                    <span className="sr-meta"><Icon name="calendar" size={16} />{formatDate(item.dateRequestedFor)}</span>
+                                    <span className="sr-meta"><Icon name="clock" size={16} />{item.timeOfLeaving || "—"} – {item.expectedInTime || "—"}</span>
+                                    {item.status === "rejected" && item.rejectionReason && <p className="sr-rejection">Reason: {item.rejectionReason}</p>}
+                                    <span className="sr-link">View details <Icon name="arrow" size={16} /></span
