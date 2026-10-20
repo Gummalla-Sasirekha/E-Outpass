@@ -340,3 +340,231 @@ function StudentDashboard() {
                                     <span className="sr-meta"><Icon name="clock" size={16} />{item.timeOfLeaving || "—"} – {item.expectedInTime || "—"}</span>
                                     {item.status === "rejected" && item.rejectionReason && <p className="sr-rejection">Reason: {item.rejectionReason}</p>}
                                     <span className="sr-link">View details <Icon name="arrow" size={16} /></span
+
+                                </button>
+                            ))}
+                            {visibleOutpasses.length === 0 && (
+                                <div className="sr-empty">
+                                    <Icon name="history" size={28} />
+                                    <strong>No outpasses found</strong>
+                                    <p>Try another filter or search destination.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {page === "details" && selected && (
+                    <div className="sr-content">
+                        <button
+                            type="button"
+                            className="sr-link"
+                            onClick={() => openPage("outpasses")}
+                        >
+                            ← Back to My Outpasses
+                        </button>
+
+                        <section className="sr-card">
+                            <div className="sr-heading">
+                                <h2>Outpass Details</h2>
+                                <span className={`sr-status ${selected.status}`}>
+                                    {statusLabel(selected.status)}
+                                </span>
+                            </div>
+
+                            <h3>{selected.placeOfVisit || "Destination not provided"}</h3>
+
+                            <p>{selected.reason || "No reason provided"}</p>
+
+                            <span className="sr-meta">
+                                <Icon name="calendar" size={16} />
+                                {formatDate(selected.dateRequestedFor)}
+                            </span>
+
+                            <span className="sr-meta">
+                                <Icon name="clock" size={16} />
+                                Leaving: {selected.timeOfLeaving || "—"}
+                            </span>
+
+                            <span className="sr-meta">
+                                <Icon name="clock" size={16} />
+                                Expected return: {selected.expectedInTime || "—"}
+                            </span>
+
+                            <span className="sr-meta">
+                                Pass type: {selected.passType || selected.type || "Outpass"}
+                            </span>
+
+                            {selected.status === "rejected" && (
+                                <p className="sr-rejection">
+                                    Rejection reason: {selected.rejectionReason || "No reason provided."}
+                                </p>
+                            )}
+
+                            <h3>Approval Timeline</h3>
+
+                            <div className="sr-timeline">
+                                {timeline(selected).map((stage, index) => (
+                                    <div className="sr-stage" key={stage.title}>
+                                        <span className="sr-marker">
+                                            {index + 1}
+                                        </span>
+                                        <span className="sr-stage-copy">
+                                            <strong>{stage.title}</strong>
+                                            <small>{stage.detail}</small>
+                                            <small>
+                                                {stage.date
+                                                    ? formatDateTime(stage.date)
+                                                    : "Awaiting this stage"}
+                                            </small>
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+                )}
+
+                {page === "profile" && (
+                    <div className="sr-content">
+                        <section className="sr-page-intro">
+                            <h1>My Profile</h1>
+                            <p>View your student information.</p>
+                        </section>
+
+                        <section className="sr-card sr-profile">
+                            <div className="sr-avatar">
+                                {initial}
+                            </div>
+
+                            <h2>{name}</h2>
+                            <p>{student?.course || "Course not available"}</p>
+
+                            <div className="sr-profile-fields">
+                                <div>
+                                    <span>Student ID</span>
+                                    <strong>{student?.studentId || "Not available"}</strong>
+                                </div>
+
+                                <div>
+                                    <span>Department</span>
+                                    <strong>{student?.department || "Not available"}</strong>
+                                </div>
+
+                                <div>
+                                    <span>Hostel</span>
+                                    <strong>
+                                        {student?.hostel?.name ||
+                                            student?.hostelName ||
+                                            "Not available"}
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>Room</span>
+                                    <strong>{student?.roomNumber || "Not available"}</strong>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="sr-logout"
+                                onClick={logout}
+                            >
+                                <Icon name="logout" />
+                                Logout
+                            </button>
+                        </section>
+                    </div>
+                )}
+
+                {page === "gate" && (
+                    <div className="sr-content">
+                        <section className="sr-card">
+                            <div className="sr-heading">
+                                <h2>Gate Verification</h2>
+                                <button
+                                    type="button"
+                                    className="sr-link"
+                                    onClick={() => openPage("home")}
+                                >
+                                    Close
+                                </button>
+                            </div>
+
+                            {gateError && (
+                                <p className="sr-rejection">{gateError}</p>
+                            )}
+
+                            {selected ? (
+                                <>
+                                    <h3>{selected.placeOfVisit || "Outpass"}</h3>
+                                    <p>
+                                        Status: {statusLabel(selected.status)}
+                                    </p>
+
+                                    {gateMessage && (
+                                        <p className="sr-success">{gateMessage}</p>
+                                    )}
+
+                                    {selected.status === "approved" && (
+                                        <button
+                                            type="button"
+                                            className="sr-primary-button"
+                                            onClick={confirmGateAction}
+                                            disabled={gateLoading}
+                                        >
+                                            {gateLoading
+                                                ? "Confirming..."
+                                                : "Confirm Exit / Return"}
+                                        </button>
+                                    )}
+
+                                    {selected.status !== "approved" && (
+                                        <p>
+                                            This outpass is not currently approved.
+                                            Please contact the campus authorities if you need help.
+                                        </p>
+                                    )}
+                                </>
+                            ) : (
+                                <p>Unable to find this outpass.</p>
+                            )}
+                        </section>
+                    </div>
+                )}
+            </main>
+
+            <nav className="sr-bottom-nav">
+                <button
+                    type="button"
+                    className={page === "home" ? "active" : ""}
+                    onClick={() => openPage("home")}
+                >
+                    <Icon name="home" />
+                    <span>Home</span>
+                </button>
+
+                <button
+                    type="button"
+                    className={page === "outpasses" || page === "details" ? "active" : ""}
+                    onClick={() => openPage("outpasses")}
+                >
+                    <Icon name="history" />
+                    <span>My Outpasses</span>
+                </button>
+
+                <button
+                    type="button"
+                    className={page === "profile" ? "active" : ""}
+                    onClick={() => openPage("profile")}
+                >
+                    <Icon name="profile" />
+                    <span>Profile</span>
+                </button>
+            </nav>
+        </div>
+    );
+}
+
+export default StudentDashboard;
